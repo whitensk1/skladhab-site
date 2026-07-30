@@ -1,75 +1,32 @@
 {
-  "brandName": "Успешное Дело",
+  "brandName": "DLUCK",
   "legalName": "ООО «ТПК «Успешное Дело»",
-  "tagline": "Фулфилмент и упаковка для маркетплейсов",
-  "geo": "Москва",
-  "lang": "ru",
-  "ctaPrimary": "Оставить заявку",
-  "ctaSecondary": "Позвонить",
+  "tagline": "Элитный фулфилмент. Дорого. Безупречно.",
+  "positioning": "premium_expensive_quality",
+  "siteUrl": "https://dluck.ru/",
   "contacts": {
     "phone": "+74952550131",
     "phoneDisplay": "+7 (495) 255-01-31",
     "phoneAnton": null,
-    "phoneAntonDisplay": null,
-    "phoneAntonNote": "WhatsApp и Telegram",
     "email": "info@dluck.ru",
-    "telegram": null,
-    "telegramUrl": null,
-    "whatsapp": null,
-    "addressWarehouse": "г. Москва, Волоколамское шоссе, 73",
-    "addressLegal": "125424, г. Москва, Волоколамское ш., д. 73",
-    "workHours": "Две смены: дневная и ночная"
+    "address": "г. Москва, Волоколамское шоссе, 73"
   },
   "legal": {
     "inn": "7736253420",
-    "ogrn": "1157746884173",
-    "kpp": "773301001"
+    "ogrn": "1157746884173"
   },
   "metrics": {
     "revenueLastYear": "5 млрд ₽",
     "staff": "100",
-    "warehouseAreaM2": "2 000",
+    "warehouseAreaM2": "2000",
     "unitsPerYear": "5 млн",
-    "sinceYear": 2018,
-    "quoteMinutes": null,
-    "priceFromPerUnit": null
+    "sinceYear": 2018
   },
-  "paymentModel": "индивидуальный расчёт",
-  "marketplaces": ["Wildberries", "Ozon", "Яндекс Маркет"],
-  "schemes": ["FBO", "FBS"],
   "features": {
     "hasPublicPrice": false,
     "individualQuote": true,
     "honestSignFullCycle": true,
     "ownFleet": true,
-    "ownThermoTunnels": true,
-    "allPackagingMaterials": true,
-    "twoShifts": true,
-    "showPricePage": false,
-    "showCalculatorLive": false,
-    "showReviews": false,
-    "showResponsibilityBlock": false
-  },
-  "partners": [
-    "Nestlé",
-    "Nescafé",
-    "Purina",
-    "Nutella",
-    "Johnson",
-    "Zewa",
-    "Finish",
-    "Starbucks",
-    "Dolce Gusto",
-    "Bushido",
-    "Master Fresh",
-    "Nevskaya Kosmetika"
-  ],
-  "lead": {
-    "channel": "phone_and_form",
-    "successMessage": "Заявка отправлена. Мы свяжемся с вами для индивидуального расчёта."
-  },
-  "seo": {
-    "homeTitle": "Успешное Дело — фулфилмент и упаковка для маркетплейсов | Москва",
-    "homeDescription": "ООО «Успешное Дело»: фулфилмент FBO/FBS, упаковка, Честный Знак, собственный автопарк. Склад ~2 000 м², две смены. Москва."
+    "twoShifts": true
   }
 }
