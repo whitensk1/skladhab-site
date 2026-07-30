@@ -2,95 +2,38 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Прайс фулфилмента — СкладХаб | Москва</title>
-  <meta name="description" content="Структура тарифов фулфилмента: приёмка, маркировка, упаковка, хранение, логистика. Точные ₽ — в смете по ТЗ." />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f2744'/%3E%3Ctext x='16' y='21' text-anchor='middle' fill='white' font-size='12' font-family='system-ui' font-weight='700'%3EСХ%3C/text%3E%3C/svg%3E" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Расчёт стоимости — Успешное Дело</title>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
   <header class="site-header">
     <div class="inner">
-      <a class="logo" href="index.html"><span class="logo-mark">СХ</span> СкладХаб</a>
-      <button type="button" class="nav-toggle" id="nav-toggle" aria-label="Меню" aria-expanded="false"><span></span><span></span><span></span></button>
-      <nav class="nav" id="nav">
-        <a href="index.html#services">Услуги</a>
-        <a href="price.html">Прайс</a>
-        <a href="calculator.html">Мастер</a>
-        <a href="contacts.html">Контакты</a>
-      </nav>
+      <a class="logo" href="index.html">Успешное Дело</a>
       <div class="header-actions">
-        <a class="btn btn-primary" href="index.html#lead">Получить смету</a>
+        <a class="btn btn-primary" href="index.html#contact">Оставить заявку</a>
       </div>
     </div>
   </header>
-
-  <section class="page-hero">
+  <section class="page-hero-light">
     <div class="container">
-      <h1>Цены на услуги фулфилмента</h1>
-      <p>Структура операций готова. Цифры в ₽ появятся после утверждения прайса — без чужих тарифов и «случайных от N ₽».</p>
-    </div>
-  </section>
-
-  <main class="section" style="padding-top:32px">
-    <div class="container">
-      <div class="banner-soft">
-        Статус прайса: <strong>ожидаем данные</strong>. Запросите актуальный прайс или смету — пришлём после короткой заявки.
-      </div>
-
-      <div class="grid-2" style="margin-bottom:32px">
-        <article class="card">
-          <h3>Получить прайс</h3>
-          <p>Файл/таблица с актуальными тарифами после подтверждения.</p>
-          <a class="btn btn-primary" href="index.html#lead" style="margin-top:14px">Запросить прайс</a>
-        </article>
-        <article class="card">
-          <h3>Смета по партии</h3>
-          <p>Опишите ТЗ — посчитаем операции. Цель: ориентир за 20 минут.</p>
-          <a class="btn btn-line" href="calculator.html" style="margin-top:14px">Мастер заявки</a>
-        </article>
-      </div>
-
-      <div id="price-root">
-        <!-- categories rendered by JS from content/price.json -->
-      </div>
-
-      <p class="disclaimer" style="margin-top:24px">
-        Ориентировочная структура. Не является публичной офертой, пока прайс не утверждён и не датирован.
-        Стоимость зависит от операций, материалов, объёма и логистики.
+      <h1>Индивидуальный расчёт</h1>
+      <p>
+        Публичного прайс-листа нет: к каждому клиенту — индивидуальный подход и просчёт
+        под категорию, объём и требования маркетплейса.
       </p>
     </div>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div>
-          <a class="logo" href="index.html"><span class="logo-mark">СХ</span> СкладХаб</a>
-        </div>
-        <div>
-          <h4>Разделы</h4>
-          <ul>
-            <li><a href="index.html">Главная</a></li>
-            <li><a href="calculator.html">Мастер</a></li>
-            <li><a href="privacy.html">ПДн</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4>CTA</h4>
-          <ul>
-            <li><a href="index.html#lead">Получить смету</a></li>
-          </ul>
-        </div>
-      </div>
-      <p class="footer-note">© <span data-year></span> СкладХаб · тарифы уточняются</p>
+  </section>
+  <main class="section">
+    <div class="container" style="max-width:560px;text-align:center">
+      <p style="color:var(--muted);margin:0 0 24px">
+        Позвоните <a href="tel:+74952550131" style="font-weight:700;color:var(--ink)">+7 (495) 255-01-31</a>
+        или оставьте заявку — подготовим предложение.
+      </p>
+      <a class="btn btn-primary" href="index.html#contact">Оставить заявку</a>
     </div>
-  </footer>
-  <div class="sticky-cta"><a class="btn btn-primary" href="index.html#lead">Получить смету</a></div>
+  </main>
   <script src="js/main.js"></script>
-  <script src="js/price-page.js"></script>
 </body>
 </html>

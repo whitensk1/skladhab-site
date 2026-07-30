@@ -1,62 +1,75 @@
 {
-  "brandName": "СкладХаб",
-  "brandNote": "Временное рабочее имя до утверждения бренда (Q-01)",
-  "tagline": "Фулфилмент для маркетплейсов",
-  "geo": "в Москве",
+  "brandName": "Успешное Дело",
+  "legalName": "ООО «ТПК «Успешное Дело»",
+  "tagline": "Фулфилмент и упаковка для маркетплейсов",
+  "geo": "Москва",
   "lang": "ru",
-  "ctaPrimary": "Получить смету",
-  "ctaSecondary": "Смотреть прайс",
+  "ctaPrimary": "Оставить заявку",
+  "ctaSecondary": "Позвонить",
   "contacts": {
-    "phone": null,
-    "phoneDisplay": null,
-    "email": null,
+    "phone": "+74952550131",
+    "phoneDisplay": "+7 (495) 255-01-31",
+    "phoneAnton": null,
+    "phoneAntonDisplay": null,
+    "phoneAntonNote": "WhatsApp и Telegram",
+    "email": "info@dluck.ru",
     "telegram": null,
     "telegramUrl": null,
     "whatsapp": null,
-    "addressWarehouse": null,
-    "addressLegal": null,
-    "workHours": null
+    "addressWarehouse": "г. Москва, Волоколамское шоссе, 73",
+    "addressLegal": "125424, г. Москва, Волоколамское ш., д. 73",
+    "workHours": "Две смены: дневная и ночная"
+  },
+  "legal": {
+    "inn": "7736253420",
+    "ogrn": "1157746884173",
+    "kpp": "773301001"
   },
   "metrics": {
-    "priceFromPerUnit": null,
-    "processHoursFrom": null,
-    "fbsShipmentsPerDay": null,
-    "quoteMinutes": 20,
-    "insuranceRub": null,
-    "minUnits": 1,
-    "warehouseAreaM2": null
+    "revenueLastYear": "5 млрд ₽",
+    "staff": "100",
+    "warehouseAreaM2": "2 000",
+    "unitsPerYear": "5 млн",
+    "sinceYear": 2018,
+    "quoteMinutes": null,
+    "priceFromPerUnit": null
   },
-  "paymentModel": null,
-  "marketplaces": ["Wildberries", "Ozon"],
+  "paymentModel": "индивидуальный расчёт",
+  "marketplaces": ["Wildberries", "Ozon", "Яндекс Маркет"],
   "schemes": ["FBO", "FBS"],
   "features": {
-    "hasWmsClientLk": false,
-    "hasHonestSignApi": false,
-    "hasPublicOffer": false,
-    "payAfterService": null,
-    "compensationMarketplaceFines": null,
+    "hasPublicPrice": false,
+    "individualQuote": true,
+    "honestSignFullCycle": true,
+    "ownFleet": true,
+    "ownThermoTunnels": true,
+    "allPackagingMaterials": true,
+    "twoShifts": true,
+    "showPricePage": false,
     "showCalculatorLive": false,
     "showReviews": false,
-    "showWarehouseGallery": false,
-    "showTechBlock": false,
     "showResponsibilityBlock": false
   },
+  "partners": [
+    "Nestlé",
+    "Nescafé",
+    "Purina",
+    "Nutella",
+    "Johnson",
+    "Zewa",
+    "Finish",
+    "Starbucks",
+    "Dolce Gusto",
+    "Bushido",
+    "Master Fresh",
+    "Nevskaya Kosmetika"
+  ],
   "lead": {
-    "channel": "console",
-    "telegramBotTokenEnv": "TELEGRAM_BOT_TOKEN",
-    "telegramChatIdEnv": "TELEGRAM_CHAT_ID",
-    "slaResponse": "В рабочее время ответим как можно быстрее",
-    "successMessage": "Заявка принята. Мы свяжемся с вами в ближайшее время."
-  },
-  "analytics": {
-    "ymCounterId": null
+    "channel": "phone_and_form",
+    "successMessage": "Заявка отправлена. Мы свяжемся с вами для индивидуального расчёта."
   },
   "seo": {
-    "homeTitle": "СкладХаб — фулфилмент для Wildberries и Ozon в Москве | FBO и FBS",
-    "homeDescription": "Приёмка, маркировка, упаковка, FBO и FBS для селлеров. Смета по ТЗ за 20 минут. Москва."
-  },
-  "socialProof": {
-    "reviews": []
-  },
-  "notes": "null/TBD — из OPEN-QUESTIONS. Не подставлять чужие прайсы."
+    "homeTitle": "Успешное Дело — фулфилмент и упаковка для маркетплейсов | Москва",
+    "homeDescription": "ООО «Успешное Дело»: фулфилмент FBO/FBS, упаковка, Честный Знак, собственный автопарк. Склад ~2 000 м², две смены. Москва."
+  }
 }
