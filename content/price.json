@@ -1,0 +1,78 @@
+{
+  "currency": "RUB",
+  "vatIncluded": null,
+  "priceDate": null,
+  "disclaimer": "Ориентировочные тарифы. Точная смета — после ТЗ. Не является публичной офертой, пока не утверждена.",
+  "status": "awaiting_data",
+  "volumeTiers": [
+    { "from": 1, "to": 100, "pricePerUnitFrom": null },
+    { "from": 100, "to": 300, "pricePerUnitFrom": null },
+    { "from": 300, "to": 500, "pricePerUnitFrom": null },
+    { "from": 500, "to": 1000, "pricePerUnitFrom": null },
+    { "from": 1000, "to": 2000, "pricePerUnitFrom": null },
+    { "from": 2000, "to": 10000, "pricePerUnitFrom": null },
+    { "from": 10000, "to": null, "pricePerUnitFrom": null }
+  ],
+  "categories": {
+    "receiving": {
+      "title": "Приёмка товара",
+      "items": [
+        { "id": "recv_box", "name": "Приём короба", "unit": "короб", "priceFrom": null },
+        { "id": "recv_bag", "name": "Приём скотчмешка / баула", "unit": "шт", "priceFrom": null },
+        { "id": "recv_pallet", "name": "Приём паллеты", "unit": "паллета", "priceFrom": null },
+        { "id": "recv_simple", "name": "Простая приёмка", "unit": "ед", "priceFrom": null },
+        { "id": "recv_complex", "name": "Сложная приёмка (сорт. цвет/размер)", "unit": "ед", "priceFrom": null },
+        { "id": "recv_visual", "name": "Визуальный осмотр", "unit": "ед", "priceFrom": null },
+        { "id": "recv_defect", "name": "Отбраковка", "unit": "ед", "priceFrom": null }
+      ]
+    },
+    "processing": {
+      "title": "Обработка и маркировка",
+      "items": [
+        { "id": "pack_1", "name": "Упаковка (кат. 1)", "unit": "ед", "priceFrom": null },
+        { "id": "pack_2", "name": "Упаковка (кат. 2)", "unit": "ед", "priceFrom": null },
+        { "id": "label_sku", "name": "Маркировка 1 ШК", "unit": "ед", "priceFrom": null },
+        { "id": "label_cz", "name": "Маркировка 1 КЗ / ЧЗ", "unit": "ед", "priceFrom": null },
+        { "id": "tag_replace", "name": "Замена бирки", "unit": "ед", "priceFrom": null },
+        { "id": "insert", "name": "Вложение вкладыша / инструкции", "unit": "ед", "priceFrom": null },
+        { "id": "kit_3", "name": "Формирование комплекта (до 3)", "unit": "комплект", "priceFrom": null },
+        { "id": "kit_5", "name": "Формирование комплекта (до 5)", "unit": "комплект", "priceFrom": null },
+        { "id": "sticker", "name": "Стикер / визитка", "unit": "ед", "priceFrom": null }
+      ]
+    },
+    "materials": {
+      "title": "Упаковочные материалы",
+      "items": [
+        { "id": "zip", "name": "Zip Lock (размеры — уточнить)", "unit": "шт", "priceFrom": null },
+        { "id": "bopp", "name": "БОПП пакет", "unit": "шт", "priceFrom": null },
+        { "id": "bubble", "name": "ВПП / пупырка", "unit": "м² или ед", "priceFrom": null },
+        { "id": "pvd", "name": "ПВД рукав", "unit": "м² или ед", "priceFrom": null },
+        { "id": "courier", "name": "Курьерский пакет", "unit": "шт", "priceFrom": null }
+      ]
+    },
+    "storage_shipping": {
+      "title": "Хранение и отгрузка",
+      "items": [
+        { "id": "storage_day", "name": "Хранение (после N дней)", "unit": "куб/день", "priceFrom": null },
+        { "id": "box_form", "name": "Формирование короба", "unit": "короб", "priceFrom": null },
+        { "id": "pallet_form", "name": "Паллетирование", "unit": "паллета", "priceFrom": null },
+        { "id": "pickup_moscow", "name": "Забор по Москве", "unit": "рейс", "priceFrom": null },
+        { "id": "pickup_market", "name": "Забор с рынка (Садовод/ЮВ/ТЯК…)", "unit": "рейс", "priceFrom": null },
+        { "id": "ship_fbo", "name": "Доставка на склад МП (FBO)", "unit": "короб/паллета", "priceFrom": null },
+        { "id": "ship_fbs", "name": "Отгрузка FBS", "unit": "ед", "priceFrom": null }
+      ]
+    }
+  },
+  "logisticsByWarehouse": {
+    "status": "awaiting_data",
+    "note": "Опционально: таблица ₽ до Коледино, Электросталь, Кавказский и т.д.",
+    "rows": []
+  },
+  "awaiting": [
+    "Заполнить priceFrom по всем строкам",
+    "vatIncluded: true/false",
+    "priceDate",
+    "Правила скидок от объёма",
+    "Мин. сумма / мин. партия"
+  ]
+}

@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Фулфилмент для Wildberries и Ozon — FBO и FBS</title>
+    <meta
+      name="description"
+      content="Приёмка, маркировка, упаковка, отгрузка на маркетплейсы. Смета по ТЗ. Бренд и тарифы уточняются."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../src/css/styles.css" />
+  </head>
+  <body>
+    <div class="banner-tbd">
+      Черновик сайта · данные с пометкой
+      <span class="tbd">УТОЧНИТЬ</span> ждут владельца ·
+      <a href="../OPEN-QUESTIONS.md">OPEN-QUESTIONS.md</a>
+    </div>
+
+    <header class="site-header">
+      <div class="container inner">
+        <a class="logo" href="index.html"><span class="tbd">Бренд</span></a>
+        <nav class="nav" aria-label="Основное">
+          <a href="#services">Услуги</a>
+          <a href="#pricing">Цены</a>
+          <a href="#process">Как работаем</a>
+          <a href="#faq">FAQ</a>
+          <a href="contacts.html">Контакты</a>
+        </nav>
+        <div class="header-actions">
+          <a class="header-phone" href="tel:"><span class="tbd">телефон</span></a>
+          <a class="btn btn-primary" href="#lead">Получить смету</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- HERO -->
+      <section class="hero">
+        <div class="container hero-grid">
+          <div>
+            <span class="eyebrow">Fulfillment · FBO / FBS</span>
+            <h1>
+              Фулфилмент для Wildberries и Ozon
+              <span class="tbd">в Москве</span>
+            </h1>
+            <p class="sub">
+              Приёмка, маркировка, упаковка и отгрузка на маркетплейсы. Смета за
+              <span class="tbd">20</span> минут.
+              <span class="tbd">модель оплаты</span>.
+            </p>
+
+            <div class="metrics">
+              <div class="metric">
+                <strong>от <span class="tbd">₽</span>/ед</strong>
+                <span>ориентир unit-экономики</span>
+              </div>
+              <div class="metric">
+                <strong>от <span class="tbd">N</span> ч</strong>
+                <span>скорость обработки</span>
+              </div>
+              <div class="metric">
+                <strong><span class="tbd">N</span>× / сутки</strong>
+                <span>отгрузки FBS</span>
+              </div>
+              <div class="metric">
+                <strong>партия от <span class="tbd">N</span></strong>
+                <span>минимальный объём</span>
+              </div>
+            </div>
+
+            <div class="hero-cta">
+              <a class="btn btn-primary" href="#lead">Получить смету</a>
+              <a class="btn btn-ghost" href="price.html">Смотреть прайс</a>
+            </div>
+
+            <div class="trust-row">
+              <span>Работаем с:</span>
+              <span class="pill">Wildberries</span>
+              <span class="pill">Ozon</span>
+              <span class="pill tbd">+ МП</span>
+            </div>
+          </div>
+
+          <aside class="hero-card" id="lead-card">
+            <h3>Быстрый расчёт</h3>
+            <p>Опишите партию — пришлём смету. Пример ТЗ уже в поле ниже.</p>
+            <form class="form" data-lead-form data-source="hero">
+              <label>
+                Имя
+                <input name="name" required autocomplete="name" placeholder="Как к вам обращаться" />
+              </label>
+              <label>
+                Телефон
+                <input name="phone" required type="tel" autocomplete="tel" placeholder="+7 …" />
+              </label>
+              <label>
+                Telegram
+                <input name="telegram" placeholder="@username" />
+              </label>
+              <label>
+                Комментарий / ТЗ
+                <textarea
+                  name="message"
+                  required
+                  placeholder="Пример: 500 шт, zip 15×20, 1 ШК + ЧЗ, FBO WB Коледино, забор с Южных Ворот."
+                ></textarea>
+              </label>
+              <label class="check">
+                <input type="checkbox" name="consent" required />
+                <span
+                  >Согласен на обработку данных.
+                  <a href="privacy.html">Политика</a></span
+                >
+              </label>
+              <button type="submit" class="btn btn-primary btn-block">Получить смету</button>
+              <div class="form-success" role="status"></div>
+            </form>
+          </aside>
+        </div>
+      </section>
+
+      <!-- PAINS -->
+      <section class="section section-alt" id="pains">
+        <div class="container">
+          <h2>Снимаем операционную боль селлера</h2>
+          <p class="lead">Сайт продаёт предсказуемость цены, сроков и ответственности — не «просто склад».</p>
+          <div class="grid-4">
+            <article class="card">
+              <h3>Не успеваю в слот</h3>
+              <p>Планируем обработку и отгрузку под окно поставки на МП.</p>
+            </article>
+            <article class="card">
+              <h3>Боюсь пересорта и штрафов</h3>
+              <p>
+                Контроль маркировки и упаковки.
+                <span class="tbd">регламент ответственности</span>
+              </p>
+            </article>
+            <article class="card">
+              <h3>Непонятна цена</h3>
+              <p>Смета по ТЗ. Прайс и сценарии — на отдельной странице (когда заполните тарифы).</p>
+            </article>
+            <article class="card">
+              <h3>Нет времени на склад</h3>
+              <p>Полный цикл: приёмка → обработка → FBO/FBS → отчёт.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- SEGMENTS -->
+      <section class="section" id="segments">
+        <div class="container">
+          <h2>Кому подходит</h2>
+          <p class="lead">Три сегмента — разный акцент в обещании.</p>
+          <div class="grid-3">
+            <article class="card">
+              <h3>Начинающим</h3>
+              <p>Проведём за руку, снизим риск типичных ошибок первой поставки.</p>
+            </article>
+            <article class="card">
+              <h3>Средним селлерам</h3>
+              <p>Стабильные отгрузки, учёт, возможность масштабироваться.</p>
+            </article>
+            <article class="card">
+              <h3>Крупным</h3>
+              <p><span class="tbd">индивидуальные условия и SLA</span></p>
+            </article>
+          </div>
+          <p style="margin-top: 1.25rem; color: var(--muted)">
+            Не берём: <span class="tbd">запрещённые категории, лимиты КГТ</span>
+          </p>
+        </div>
+      </section>
+
+      <!-- SERVICES -->
+      <section class="section section-alt" id="services">
+        <div class="container">
+          <h2>Услуги под ключ</h2>
+          <p class="lead">Ядро оффера. Допы (Китай, фото, карточки) — только после подтверждения, не в hero.</p>
+          <div class="grid-3">
+            <article class="card">
+              <div class="num">01</div>
+              <h3>Приёмка и осмотр</h3>
+              <p>Приём партий, визуальный контроль, фиксация расхождений.</p>
+            </article>
+            <article class="card">
+              <div class="num">02</div>
+              <h3>Отбраковка и маркировка</h3>
+              <p>ШК, <span class="tbd">ЧЗ/КИЗ</span>, сортировка, контроль брака.</p>
+            </article>
+            <article class="card">
+              <div class="num">03</div>
+              <h3>Упаковка и комплекты</h3>
+              <p>Упаковка по требованиям МП, вкладыши, комплектация.</p>
+            </article>
+            <article class="card">
+              <div class="num">04</div>
+              <h3>FBO</h3>
+              <p>Подготовка и отгрузка на склады маркетплейсов.</p>
+            </article>
+            <article class="card">
+              <div class="num">05</div>
+              <h3>FBS</h3>
+              <p>Сборка и регулярные отгрузки <span class="tbd">N раз в сутки</span>.</p>
+            </article>
+            <article class="card">
+              <div class="num">06</div>
+              <h3>Возвраты</h3>
+              <p>Работа с возвратами и рекламациями <span class="tbd">условия</span>.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROCESS -->
+      <section class="section" id="process">
+        <div class="container">
+          <h2>Как мы работаем</h2>
+          <p class="lead">Прозрачный путь от заявки до оплаты.</p>
+          <div class="steps">
+            <div class="step">
+              <div>
+                <h3>Заявка и ТЗ</h3>
+                <p>Оставляете параметры партии в форме или мессенджере.</p>
+              </div>
+            </div>
+            <div class="step">
+              <div>
+                <h3>Смета</h3>
+                <p>Согласуем стоимость и состав работ за <span class="tbd">N мин</span>.</p>
+              </div>
+            </div>
+            <div class="step">
+              <div>
+                <h3>Забор или привоз</h3>
+                <p><span class="tbd">зоны забора / рынки / ТК</span></p>
+              </div>
+            </div>
+            <div class="step">
+              <div>
+                <h3>Обработка</h3>
+                <p>Приёмка, маркировка, упаковка по ТЗ.</p>
+              </div>
+            </div>
+            <div class="step">
+              <div>
+                <h3>Отгрузка + отчёт</h3>
+                <p>FBO/FBS, статусы <span class="tbd">канал уведомлений</span>.</p>
+              </div>
+            </div>
+            <div class="step">
+              <div>
+                <h3>Оплата</h3>
+                <p><span class="tbd">по факту / схема оплаты</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PRICING TEASER -->
+      <section class="section section-alt" id="pricing">
+        <div class="container">
+          <h2>Цены — по-честному</h2>
+          <p class="lead">
+            Пока тарифы не внесены в <code>content/price.json</code>, на сайте нет чужих «от 3 ₽».
+            Запросите прайс или смету.
+          </p>
+          <div class="notice">
+            <strong>Ждём информацию (Q-04, Q-05):</strong> полный прайс, шкала объёма, 3 сценарные сметы,
+            НДС, дата актуальности. После этого появятся таблицы и блоки «≈ N ₽/ед».
+          </div>
+          <div class="hero-cta">
+            <a class="btn btn-primary" href="price.html">Структура прайса</a>
+            <a class="btn btn-ghost" href="calculator.html">Мастер заявки</a>
+            <a class="btn btn-ghost" href="#lead">Получить смету</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- WAREHOUSE -->
+      <section class="section" id="warehouse">
+        <div class="container">
+          <h2>Склад</h2>
+          <p class="lead">
+            Адрес: <span class="tbd">адрес склада</span>. Режим:
+            <span class="tbd">часы работы</span>.
+          </p>
+          <div class="grid-3">
+            <article class="card">
+              <h3>Безопасность</h3>
+              <p><span class="tbd">камеры / охрана / страховка на N ₽</span></p>
+            </article>
+            <article class="card">
+              <h3>Условия</h3>
+              <p><span class="tbd">м², температура, тип хранения</span></p>
+            </article>
+            <article class="card">
+              <h3>Фото</h3>
+              <p>Положите файлы в <code>public/images/warehouse/</code> — подключим галерею.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="section section-alt" id="faq">
+        <div class="container">
+          <h2>Частые вопросы</h2>
+          <p class="lead">Ответы с пометками — из FAQ JSON; закрываются через OPEN-QUESTIONS.</p>
+          <div class="faq">
+            <details open>
+              <summary>Что входит в фулфилмент?</summary>
+              <p>
+                Приёмка, проверка, маркировка, упаковка, хранение, отгрузка FBO/FBS. Точный набор — в
+                смете.
+              </p>
+            </details>
+            <details>
+              <summary>С какими маркетплейсами работаете?</summary>
+              <p><span class="tbd">список МП (Q-03)</span>. Черновик: WB, Ozon.</p>
+            </details>
+            <details>
+              <summary>Сколько стоит?</summary>
+              <p>
+                Зависит от ТЗ и объёма. Публичный прайс — после заполнения
+                <code>content/price.json</code>.
+              </p>
+            </details>
+            <details>
+              <summary>Какие данные нужны для точного расчёта?</summary>
+              <p>
+                Дата груза, адрес забора, контакт, объём/вес/места, МП и склад, FBO/FBS; по товару —
+                артикул, ШК, кол-во, габариты, упаковка, маркировка, допы.
+              </p>
+            </details>
+            <details>
+              <summary>Минимальная партия?</summary>
+              <p><span class="tbd">от N шт (Q-12)</span></p>
+            </details>
+            <details>
+              <summary>Как оплата и документы?</summary>
+              <p><span class="tbd">оплата, ЭДО, оферта (Q-07)</span></p>
+            </details>
+            <details>
+              <summary>Что если ошибка склада?</summary>
+              <p><span class="tbd">матрица ответственности (Q-08)</span></p>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <!-- FINAL CTA -->
+      <section class="section" id="lead">
+        <div class="container">
+          <h2>Получите смету</h2>
+          <p class="lead">Один главный CTA на всём сайте. Канал доставки лида — Q-14.</p>
+          <div class="hero-card" style="max-width: 520px">
+            <form class="form" data-lead-form data-source="footer-cta">
+              <label>
+                Имя
+                <input name="name" required autocomplete="name" />
+              </label>
+              <label>
+                Телефон
+                <input name="phone" required type="tel" autocomplete="tel" />
+              </label>
+              <label>
+                Telegram
+                <input name="telegram" />
+              </label>
+              <label>
+                ТЗ партии
+                <textarea
+                  name="message"
+                  required
+                  placeholder="Пример: 500 шт, zip, 2 ШК, визитка, WB Коледино"
+                ></textarea>
+                <span class="form-note">Чем подробнее ТЗ — тем точнее смета.</span>
+              </label>
+              <label class="check">
+                <input type="checkbox" name="consent" required />
+                <span>Согласен с <a href="privacy.html">политикой</a></span>
+              </label>
+              <button type="submit" class="btn btn-primary btn-block">Получить смету</button>
+              <div class="form-success" role="status"></div>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <div class="logo"><span class="tbd">Бренд</span></div>
+          <p class="footer-muted">Фулфилмент для маркетплейсов. Черновик пакета fulfillment-site.</p>
+        </div>
+        <div>
+          <strong style="color: #fff">Разделы</strong>
+          <p><a href="price.html">Прайс</a></p>
+          <p><a href="calculator.html">Калькулятор / мастер</a></p>
+          <p><a href="contacts.html">Контакты</a></p>
+        </div>
+        <div>
+          <strong style="color: #fff">Документы</strong>
+          <p><a href="privacy.html">Политика ПДн</a></p>
+          <p><span class="tbd">Оферта</span></p>
+        </div>
+      </div>
+      <div class="container footer-bottom">
+        <span>© <span data-year></span> <span class="tbd">юрлицо</span></span>
+        <span>Собрано как результат работы агента</span>
+      </div>
+    </footer>
+
+    <div class="sticky-cta">
+      <a class="btn btn-ghost" href="price.html">Прайс</a>
+      <a class="btn btn-primary" href="#lead">Получить смету</a>
+    </div>
+
+    <script src="../src/js/main.js"></script>
+  </body>
+</html>

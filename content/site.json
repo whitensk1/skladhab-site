@@ -1,0 +1,62 @@
+{
+  "brandName": "СкладХаб",
+  "brandNote": "Временное рабочее имя до утверждения бренда (Q-01)",
+  "tagline": "Фулфилмент для маркетплейсов",
+  "geo": "в Москве",
+  "lang": "ru",
+  "ctaPrimary": "Получить смету",
+  "ctaSecondary": "Смотреть прайс",
+  "contacts": {
+    "phone": null,
+    "phoneDisplay": null,
+    "email": null,
+    "telegram": null,
+    "telegramUrl": null,
+    "whatsapp": null,
+    "addressWarehouse": null,
+    "addressLegal": null,
+    "workHours": null
+  },
+  "metrics": {
+    "priceFromPerUnit": null,
+    "processHoursFrom": null,
+    "fbsShipmentsPerDay": null,
+    "quoteMinutes": 20,
+    "insuranceRub": null,
+    "minUnits": 1,
+    "warehouseAreaM2": null
+  },
+  "paymentModel": null,
+  "marketplaces": ["Wildberries", "Ozon"],
+  "schemes": ["FBO", "FBS"],
+  "features": {
+    "hasWmsClientLk": false,
+    "hasHonestSignApi": false,
+    "hasPublicOffer": false,
+    "payAfterService": null,
+    "compensationMarketplaceFines": null,
+    "showCalculatorLive": false,
+    "showReviews": false,
+    "showWarehouseGallery": false,
+    "showTechBlock": false,
+    "showResponsibilityBlock": false
+  },
+  "lead": {
+    "channel": "console",
+    "telegramBotTokenEnv": "TELEGRAM_BOT_TOKEN",
+    "telegramChatIdEnv": "TELEGRAM_CHAT_ID",
+    "slaResponse": "В рабочее время ответим как можно быстрее",
+    "successMessage": "Заявка принята. Мы свяжемся с вами в ближайшее время."
+  },
+  "analytics": {
+    "ymCounterId": null
+  },
+  "seo": {
+    "homeTitle": "СкладХаб — фулфилмент для Wildberries и Ozon в Москве | FBO и FBS",
+    "homeDescription": "Приёмка, маркировка, упаковка, FBO и FBS для селлеров. Смета по ТЗ за 20 минут. Москва."
+  },
+  "socialProof": {
+    "reviews": []
+  },
+  "notes": "null/TBD — из OPEN-QUESTIONS. Не подставлять чужие прайсы."
+}

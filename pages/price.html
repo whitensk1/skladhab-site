@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Прайс — фулфилмент</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../src/css/styles.css" />
+  </head>
+  <body>
+    <div class="banner-tbd">
+      Прайс: структура готова · ₽ = null · заполните
+      <code>content/price.json</code>
+    </div>
+
+    <header class="site-header">
+      <div class="container inner">
+        <a class="logo" href="index.html"><span class="tbd">Бренд</span></a>
+        <nav class="nav">
+          <a href="index.html#services">Услуги</a>
+          <a href="price.html">Цены</a>
+          <a href="calculator.html">Калькулятор</a>
+          <a href="index.html#lead">Смета</a>
+        </nav>
+        <div class="header-actions">
+          <a class="btn btn-primary" href="#get-price">Получить прайс</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="container page-hero">
+        <h1>Тарифы на фулфилмент</h1>
+        <p class="lead" style="margin: 0">
+          Дата актуальности: <span class="tbd">priceDate</span>. НДС:
+          <span class="tbd">включён / нет</span>. Источник данных:
+          <code>content/price.json</code>.
+        </p>
+      </div>
+
+      <section class="section">
+        <div class="container">
+          <div class="notice">
+            <strong>Ждём информацию (Q-04):</strong> цены по строкам приёмки, обработки, материалов,
+            хранения и логистики; шкала ₽/ед от объёма; правила минимума заказа. Пока в таблицах —
+            плейсхолдеры, без чужих цифр конкурентов.
+          </div>
+
+          <h2 style="margin-top: 0">Приёмка</h2>
+          <div class="table-wrap" style="margin-bottom: 2rem">
+            <table>
+              <thead>
+                <tr>
+                  <th>Услуга</th>
+                  <th>Ед.</th>
+                  <th>от, ₽</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Приём короба</td>
+                  <td>короб</td>
+                  <td><span class="tbd">—</span></td>
+                </tr>
+                <tr>
+                  <td>Простая приёмка</td>
+                  <td>ед</td>
+                  <td><span class="tbd">—</span></td>
+                </tr>
+                <tr>
+                  <td>Сложная приёмка (цвет/размер)</td>
+                  <td>ед</td>
+                  <td><span class="tbd">—</span></td>
+                </tr>
+                <tr>
+                  <td>Отбраковка</td>
+                  <td>ед</td>
+                  <td><span class="tbd">—</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2>Обработка и маркировка</h2>
+          <div class="table-wrap" style="margin-bottom: 2rem">
+            <table>
+              <thead>
+                <tr>
+                  <th>Услуга</th>
+                  <th>Ед.</th>
+                  <th>от, ₽</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Упаковка (кат. 1 / 2)</td>
+                  <td>ед</td>
+                  <td><span class="tbd">—</span></td>
+                </tr>
+                <tr>
+                  <td>Маркировка 1 ШК</td>
+                  <td>ед</td>
+                  <td><span class="tbd">—</span></td>
+                </tr>
+                <tr>
+                  <td>Маркировка ЧЗ / КЗ</td>
+                  <td>ед</td>
+                  <td><span class="tbd">—</span></td>
+                </tr>
+                <tr>
+                  <td>Формирование комплекта</td>
+                  <td>комплект</td>
+                  <td><span class="tbd">—</span></td>
+                </tr>
+                <tr>
+                  <td>Вкладыш / стикер</td>
+                  <td>ед</td>
+                  <td><span class="tbd">—</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2>Хранение и отгрузка</h2>
+          <div class="table-wrap" style="margin-bottom: 2rem">
+            <table>
+              <thead>
+                <tr>
+                  <th>Услуга</th>
+                  <th>Ед.</th>
+                  <th>от, ₽</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Хранение</td>
+                  <td>куб/день</td>
+                  <td><span class="tbd">—</span></td>
+                </tr>
+                <tr>
+                  <td>Забор по Москве / с рынка</td>
+                  <td>рейс</td>
+                  <td><span class="tbd">—</span></td>
+                </tr>
+                <tr>
+                  <td>Доставка FBO на склад МП</td>
+                  <td>короб/паллета</td>
+                  <td><span class="tbd">—</span></td>
+                </tr>
+                <tr>
+                  <td>Отгрузка FBS</td>
+                  <td>ед</td>
+                  <td><span class="tbd">—</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2>Шкала объёма (₽/ед «под ключ» — ориентир)</h2>
+          <div class="table-wrap" style="margin-bottom: 2rem">
+            <table>
+              <thead>
+                <tr>
+                  <th>Объём, шт</th>
+                  <th>от ₽/ед</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1–100</td>
+                  <td><span class="tbd">—</span></td>
+                </tr>
+                <tr>
+                  <td>100–300</td>
+                  <td><span class="tbd">—</span></td>
+                </tr>
+                <tr>
+                  <td>300–1000</td>
+                  <td><span class="tbd">—</span></td>
+                </tr>
+                <tr>
+                  <td>1000+</td>
+                  <td><span class="tbd">—</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2>Примеры смет (Q-05)</h2>
+          <p class="lead">Три сценария из <code>content/scenarios.json</code> — ₽ пока null.</p>
+          <div class="grid-3">
+            <article class="card">
+              <h3>Старт · одежда · 100 ед</h3>
+              <p>Итого: <span class="tbd">₽</span> · ≈ <span class="tbd">₽</span>/ед</p>
+            </article>
+            <article class="card">
+              <h3>Средний · косметика · 180 ед</h3>
+              <p>Итого: <span class="tbd">₽</span> · ≈ <span class="tbd">₽</span>/ед</p>
+            </article>
+            <article class="card">
+              <h3>Объём · электроника · 1100 ед</h3>
+              <p>Итого: <span class="tbd">₽</span> · ≈ <span class="tbd">₽</span>/ед</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-alt" id="get-price">
+        <div class="container">
+          <h2>Получить актуальный прайс / смету</h2>
+          <div class="hero-card" style="max-width: 520px">
+            <form class="form" data-lead-form data-source="price-page">
+              <label>
+                Имя
+                <input name="name" required />
+              </label>
+              <label>
+                Телефон
+                <input name="phone" required type="tel" />
+              </label>
+              <label>
+                Telegram
+                <input name="telegram" />
+              </label>
+              <label>
+                Что нужно
+                <textarea name="message" required>
+Нужен полный прайс и ориентир по моей категории товара:
+</textarea
+                >
+              </label>
+              <label class="check">
+                <input type="checkbox" name="consent" required />
+                <span>Согласен с <a href="privacy.html">политикой</a></span>
+              </label>
+              <button class="btn btn-primary btn-block" type="submit">Отправить</button>
+              <div class="form-success"></div>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-bottom" style="margin: 0; border: 0; padding-top: 0">
+        <a href="index.html">← На главную</a>
+        <span>© <span data-year></span></span>
+      </div>
+    </footer>
+
+    <div class="sticky-cta">
+      <a class="btn btn-primary" href="#get-price">Получить прайс</a>
+    </div>
+    <script src="../src/js/main.js"></script>
+  </body>
+</html>

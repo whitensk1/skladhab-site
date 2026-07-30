@@ -1,0 +1,71 @@
+{
+  "status": "awaiting_data",
+  "disclaimer": "Примеры для ориентира unit-экономики. Не оферта. Заполняются после прайса.",
+  "scenarios": [
+    {
+      "id": "small_apparel",
+      "title": "Старт · одежда",
+      "marketplace": "Wildberries",
+      "scheme": "FBO",
+      "warehouse": "[УТОЧНИТЬ: склад]",
+      "product": "Одежда (футболки / брюки)",
+      "units": 100,
+      "boxes": 5,
+      "operations": [
+        "Приёмка",
+        "Пересчёт",
+        "Маркировка ШК",
+        "Упаковка Zip-lock",
+        "Отгрузка коробами"
+      ],
+      "totalRub": null,
+      "perUnitRub": null,
+      "lineItems": []
+    },
+    {
+      "id": "mid_cosmetics",
+      "title": "Средний · косметика",
+      "marketplace": "Ozon",
+      "scheme": "FBO",
+      "warehouse": "[УТОЧНИТЬ: склад]",
+      "product": "Косметика",
+      "units": 180,
+      "boxes": 2,
+      "operations": [
+        "Приёмка",
+        "Маркировка ШК",
+        "Упаковка ВПП",
+        "Отгрузка"
+      ],
+      "totalRub": null,
+      "perUnitRub": null,
+      "lineItems": []
+    },
+    {
+      "id": "volume_electronics",
+      "title": "Объём · электроника",
+      "marketplace": "Ozon",
+      "scheme": "FBO",
+      "warehouse": "[УТОЧНИТЬ: склад]",
+      "product": "Электроника мелкой габаритки",
+      "units": 1100,
+      "boxes": 11,
+      "pallets": 1,
+      "operations": [
+        "Приёмка",
+        "Маркировка ШК",
+        "Упаковка",
+        "Паллетирование",
+        "Отгрузка"
+      ],
+      "totalRub": null,
+      "perUnitRub": null,
+      "lineItems": []
+    }
+  ],
+  "awaiting": [
+    "Реальные операции и ₽ по каждой строке",
+    "Можно ли публиковать на сайте",
+    "Актуальные склады назначения"
+  ]
+}

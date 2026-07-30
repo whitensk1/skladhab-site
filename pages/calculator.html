@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Калькулятор / мастер сметы</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../src/css/styles.css" />
+  </head>
+  <body>
+    <div class="banner-tbd">
+      Live-расчёт ₽ выключен · нужен Q-06 (формула) + Q-04 (прайс)
+    </div>
+
+    <header class="site-header">
+      <div class="container inner">
+        <a class="logo" href="index.html"><span class="tbd">Бренд</span></a>
+        <nav class="nav">
+          <a href="price.html">Прайс</a>
+          <a href="calculator.html">Калькулятор</a>
+          <a href="index.html#lead">Смета</a>
+        </nav>
+        <a class="btn btn-primary" href="index.html">На главную</a>
+      </div>
+    </header>
+
+    <main>
+      <div class="container page-hero">
+        <h1>Калькулятор стоимости</h1>
+        <p class="lead" style="margin: 0">
+          Пока нет утверждённой формулы — это <strong>мастер заявки</strong>: собираем ТЗ и
+          отправляем менеджеру. Итоговую сумму на экране <em>не показываем</em> (чтобы не
+          врать).
+        </p>
+      </div>
+
+      <section class="section">
+        <div class="container" style="max-width: 640px" data-wizard>
+          <div class="notice">
+            <strong>Ждём для live-калькулятора:</strong>
+            <ol style="margin: 0.5rem 0 0; padding-left: 1.2rem">
+              <li>Полный прайс (<code>price.json</code>)</li>
+              <li>Поля ввода и правила (вес, габариты, сложность)</li>
+              <li>Формулу: какие строки суммировать</li>
+              <li>Дисклеймер «ориентир ±X% / не оферта»</li>
+              <li>Куда слать конфигурацию (Telegram/CRM)</li>
+            </ol>
+          </div>
+
+          <div class="wizard-steps" aria-hidden="true">
+            <span data-wizard-dot class="active">1. МП</span>
+            <span data-wizard-dot>2. Объём</span>
+            <span data-wizard-dot>3. Операции</span>
+            <span data-wizard-dot>4. Логистика</span>
+            <span data-wizard-dot>5. Контакты</span>
+          </div>
+
+          <div class="hero-card">
+            <!-- step 0 -->
+            <div class="wizard-panel active">
+              <h3>Маркетплейс и схема</h3>
+              <div class="form">
+                <label>
+                  Маркетплейс
+                  <select name="mp">
+                    <option>Wildberries</option>
+                    <option>Ozon</option>
+                    <option>Яндекс.Маркет</option>
+                    <option>Другой / несколько</option>
+                  </select>
+                </label>
+                <label>
+                  Схема
+                  <select name="scheme">
+                    <option>FBO</option>
+                    <option>FBS</option>
+                    <option>FBO + FBS</option>
+                    <option>Пока не знаю</option>
+                  </select>
+                </label>
+                <button type="button" class="btn btn-primary" data-wizard-next>Далее</button>
+              </div>
+            </div>
+
+            <!-- step 1 -->
+            <div class="wizard-panel">
+              <h3>Объём и категория</h3>
+              <div class="form">
+                <label>
+                  Примерное кол-во единиц
+                  <input name="units" type="number" min="1" placeholder="например 500" />
+                </label>
+                <label>
+                  Категория товара
+                  <select name="category">
+                    <option>Одежда</option>
+                    <option>Косметика</option>
+                    <option>Электроника</option>
+                    <option>Дом / товары</option>
+                    <option>Другое</option>
+                  </select>
+                </label>
+                <div class="hero-cta">
+                  <button type="button" class="btn btn-ghost" data-wizard-prev>Назад</button>
+                  <button type="button" class="btn btn-primary" data-wizard-next>Далее</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- step 2 -->
+            <div class="wizard-panel">
+              <h3>Маркировка и упаковка</h3>
+              <div class="form">
+                <label>
+                  Маркировка
+                  <select name="labels">
+                    <option>Только ШК</option>
+                    <option>ШК + Честный Знак</option>
+                    <option>Уже промаркировано</option>
+                    <option>Нужна консультация</option>
+                  </select>
+                </label>
+                <label>
+                  Упаковка
+                  <select name="pack">
+                    <option>Zip-lock</option>
+                    <option>БОПП / пакет</option>
+                    <option>ВПП / пупырка</option>
+                    <option>ПВД / термоусадка</option>
+                    <option>Свой материал / не знаю</option>
+                  </select>
+                </label>
+                <div class="hero-cta">
+                  <button type="button" class="btn btn-ghost" data-wizard-prev>Назад</button>
+                  <button type="button" class="btn btn-primary" data-wizard-next>Далее</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- step 3 -->
+            <div class="wizard-panel">
+              <h3>Логистика</h3>
+              <div class="form">
+                <label>
+                  Забор груза
+                  <select name="pickup">
+                    <option>Привезу сам на склад</option>
+                    <option>Нужен забор по Москве</option>
+                    <option>Садовод / ЮВ / ТЯК</option>
+                    <option>ТК / другой город</option>
+                  </select>
+                </label>
+                <label>
+                  Дополнительно
+                  <textarea name="extra" placeholder="Склад МП, брак-контроль, комплекты…"></textarea>
+                </label>
+                <div class="hero-cta">
+                  <button type="button" class="btn btn-ghost" data-wizard-prev>Назад</button>
+                  <button type="button" class="btn btn-primary" data-wizard-next>Далее</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- step 4 -->
+            <div class="wizard-panel">
+              <h3>Контакты — отправим смету</h3>
+              <form class="form" data-lead-form data-source="calculator-wizard">
+                <label>
+                  Имя
+                  <input name="name" required />
+                </label>
+                <label>
+                  Телефон
+                  <input name="phone" type="tel" required />
+                </label>
+                <label>
+                  Telegram
+                  <input name="telegram" />
+                </label>
+                <label>
+                  Собранное ТЗ
+                  <textarea name="message" required rows="8"></textarea>
+                </label>
+                <label class="check">
+                  <input type="checkbox" name="consent" required />
+                  <span>Согласен с <a href="privacy.html">политикой</a></span>
+                </label>
+                <div class="hero-cta">
+                  <button type="button" class="btn btn-ghost" data-wizard-prev>Назад</button>
+                  <button type="submit" class="btn btn-primary">Получить смету</button>
+                </div>
+                <div class="form-success"></div>
+                <p class="form-note">
+                  Здесь не будет «Итого 12 345 ₽», пока не подключим формулу из Q-06.
+                </p>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-bottom" style="margin: 0; border: 0; padding-top: 0">
+        <a href="index.html">← На главную</a>
+        <span>© <span data-year></span></span>
+      </div>
+    </footer>
+    <script src="../src/js/main.js"></script>
+  </body>
+</html>
