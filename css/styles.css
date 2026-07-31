@@ -210,7 +210,7 @@ button { cursor: pointer; border: 0; background: none; }
   color: var(--muted);
 }
 
-/* H1 + periodic gold wave along the letterforms */
+/* H1 + gold wave ONLY on letter contours (stroke + moving mask) */
 .hero-title {
   position: relative;
   display: block;
@@ -223,7 +223,8 @@ button { cursor: pointer; border: 0; background: none; }
   color: var(--ink);
 }
 .hero-title__text,
-.hero-title__wave {
+.hero-title__wave,
+.hero-title__glow {
   display: block;
 }
 .hero-title__text {
@@ -231,7 +232,8 @@ button { cursor: pointer; border: 0; background: none; }
   z-index: 1;
   color: var(--ink);
 }
-.hero-title__wave {
+/* Soft ambient gold rim (very faint, always) */
+.hero-title__glow {
   position: absolute;
   left: 0;
   top: 0;
@@ -239,47 +241,78 @@ button { cursor: pointer; border: 0; background: none; }
   z-index: 2;
   pointer-events: none;
   color: transparent;
-  background-image: linear-gradient(
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 1px rgba(196, 163, 90, 0.22);
+  opacity: 0.55;
+}
+/* Moving gold contour band */
+.hero-title__wave {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  z-index: 3;
+  pointer-events: none;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 1.6px #f0d78a;
+  paint-order: stroke fill;
+  filter:
+    drop-shadow(0 0 2px rgba(255, 220, 140, 0.85))
+    drop-shadow(0 0 12px rgba(196, 163, 90, 0.55))
+    drop-shadow(0 0 28px rgba(196, 163, 90, 0.28));
+  /* reveal only a slim band of the outline */
+  -webkit-mask-image: linear-gradient(
     105deg,
     transparent 0%,
-    transparent 36%,
-    rgba(168, 135, 62, 0.05) 42%,
-    rgba(196, 163, 90, 0.45) 47%,
-    rgba(255, 236, 186, 0.95) 50%,
-    rgba(196, 163, 90, 0.55) 53%,
-    rgba(168, 135, 62, 0.08) 58%,
-    transparent 64%,
+    transparent 40%,
+    rgba(0, 0, 0, 0.15) 45%,
+    #000 49%,
+    #000 51%,
+    rgba(0, 0, 0, 0.15) 55%,
+    transparent 60%,
     transparent 100%
   );
-  background-size: 240% 100%;
-  background-repeat: no-repeat;
-  background-position: 140% 0;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  /* soft gold rim light so the sweep reads as contour, not fill */
-  filter:
-    drop-shadow(0 0 0.6px rgba(196, 163, 90, 0.35))
-    drop-shadow(0 0 10px rgba(196, 163, 90, 0.12));
-  animation: gold-wave 7.5s cubic-bezier(0.45, 0, 0.2, 1) infinite;
+  mask-image: linear-gradient(
+    105deg,
+    transparent 0%,
+    transparent 40%,
+    rgba(0, 0, 0, 0.15) 45%,
+    #000 49%,
+    #000 51%,
+    rgba(0, 0, 0, 0.15) 55%,
+    transparent 60%,
+    transparent 100%
+  );
+  -webkit-mask-size: 280% 100%;
+  mask-size: 280% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: 160% 0;
+  mask-position: 160% 0;
+  animation: gold-contour 14s cubic-bezier(0.4, 0, 0.15, 1) infinite;
 }
-@keyframes gold-wave {
-  0%, 12% {
-    background-position: 140% 0;
+@keyframes gold-contour {
+  0%, 8% {
+    -webkit-mask-position: 160% 0;
+    mask-position: 160% 0;
     opacity: 0;
   }
-  18% { opacity: 1; }
-  55% {
-    background-position: -140% 0;
+  14% { opacity: 1; }
+  72% {
+    -webkit-mask-position: -160% 0;
+    mask-position: -160% 0;
     opacity: 1;
   }
-  62%, 100% {
-    background-position: -140% 0;
+  82%, 100% {
+    -webkit-mask-position: -160% 0;
+    mask-position: -160% 0;
     opacity: 0;
   }
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-title__wave { animation: none; opacity: 0; }
+  .hero-title__glow { opacity: 0.35; }
   .hero-bg-video { animation: none; }
 }
 .hero .lead {
@@ -395,43 +428,67 @@ button { cursor: pointer; border: 0; background: none; }
   letter-spacing: 0.04em;
 }
 
-/* Partners — keep large */
+/* Partners — large logos, narrower band, B&W → color on hover */
 .partners {
-  padding: 48px 0 56px;
+  padding: 40px 0 48px;
   border-bottom: 1px solid var(--line);
   background: #fff;
   overflow: hidden;
 }
+.partners-inner {
+  width: min(920px, calc(100% - 48px));
+  margin: 0 auto;
+}
 .partners-label {
   text-align: center;
-  font-size: 11px;
+  font-size: clamp(0.95rem, 1.6vw, 1.15rem);
   font-weight: 800;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 24px;
+  color: var(--ink);
+  margin-bottom: 20px;
 }
-.marquee { overflow: hidden; }
+.marquee {
+  overflow: hidden;
+  border-radius: 18px;
+  /* side fades so the strip feels narrower / finished */
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    #000 8%,
+    #000 92%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    #000 8%,
+    #000 92%,
+    transparent 100%
+  );
+}
 .marquee-track {
   display: flex;
   align-items: center;
-  gap: 88px;
+  gap: 72px;
   width: max-content;
   animation: marquee 56s linear infinite;
-  padding: 20px 0;
+  padding: 12px 0;
 }
 .marquee-track img {
   height: 224px;
   width: auto;
   max-width: 480px;
   object-fit: contain;
-  filter: grayscale(0.15);
-  opacity: 0.9;
-  transition: opacity 0.2s, filter 0.2s;
+  filter: grayscale(1) contrast(1.05);
+  opacity: 0.72;
+  transition: opacity 0.35s var(--ease), filter 0.35s var(--ease), transform 0.35s var(--ease);
+  cursor: default;
 }
 .marquee-track img:hover {
   opacity: 1;
-  filter: grayscale(0);
+  filter: grayscale(0) contrast(1);
+  transform: scale(1.03);
 }
 @keyframes marquee {
   from { transform: translateX(0); }
@@ -493,31 +550,38 @@ button { cursor: pointer; border: 0; background: none; }
   pointer-events: none;
 }
 .about-dark > .container { position: relative; z-index: 1; }
-.about-dark .section-head {
-  max-width: 720px;
-  margin-bottom: 48px;
+.about-dark .section-head,
+.about-head {
+  max-width: none;
+  width: 100%;
+  margin: 0 0 40px;
+  text-align: left;
 }
-.about-dark .section-head h2 {
+.about-dark .section-head h2,
+.about-head h2 {
   color: #fff;
-  font-size: clamp(2.4rem, 5vw, 3.6rem);
-  letter-spacing: 0.12em;
+  font-size: clamp(2.6rem, 6vw, 4.2rem);
+  letter-spacing: -0.035em;
   font-weight: 800;
-  margin: 0 0 16px;
+  margin: 0 0 18px;
+  line-height: 1.05;
 }
 .about-kicker {
-  margin: 0 0 12px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.2em;
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--gold);
 }
 .about-tag {
-  margin: 0 auto;
-  max-width: 36ch;
+  margin: 0;
+  max-width: none;
+  width: 100%;
   color: rgba(255, 255, 255, 0.62);
-  font-size: 1.08rem;
-  line-height: 1.5;
+  font-size: clamp(1.05rem, 1.8vw, 1.2rem);
+  line-height: 1.55;
+  font-weight: 500;
 }
 .about-grid {
   display: grid;
