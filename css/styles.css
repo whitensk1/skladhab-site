@@ -187,18 +187,19 @@ button { cursor: pointer; border: 0; background: none; }
 .stat-icon {
   width: 100%;
   aspect-ratio: 1;
-  max-height: 140px;
   border-radius: 14px;
   overflow: hidden;
   background: #fff;
   border: 1px solid var(--line);
   display: grid;
   place-items: center;
+  padding: 10px;
 }
 .stat-icon img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
 }
 .stat strong {
   display: block;
@@ -505,7 +506,7 @@ button { cursor: pointer; border: 0; background: none; }
   .hero { min-height: 90svh; }
   .marquee-track { gap: 64px; }
   .marquee-track img { height: 160px; max-width: 360px; }
-  .stat-icon { max-height: 120px; }
+
 }
 @media (max-width: 560px) {
   .stats { grid-template-columns: 1fr; }
