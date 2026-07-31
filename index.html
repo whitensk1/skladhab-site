@@ -59,55 +59,59 @@
   </header>
 
   <main>
-    <!-- HERO -->
+    <!-- HERO — layout like ffspace.ru -->
     <section class="hero">
-      <div class="hero-bg" aria-hidden="true">
-        <video class="hero-bg-video" autoplay muted loop playsinline poster="media/hero/warehouse-still.jpg">
-          <source src="media/hero/warehouse-ai.mp4" type="video/mp4" />
-          <source src="media/hero/warehouse-loop.mp4" type="video/mp4" />
-        </video>
-        <div class="hero-bg-layer"></div>
-      </div>
-      <div class="hero-veil" aria-hidden="true"></div>
       <div class="container hero-inner">
-        <p class="kicker">Фулфилмент · Москва</p>
-        <h1 class="hero-title">
-          <span class="hero-title__text">Фулфилмент<br />в Москве</span>
-          <span class="hero-title__glow" aria-hidden="true">Фулфилмент<br />в Москве</span>
-          <span class="hero-title__wave" aria-hidden="true">Фулфилмент<br />в Москве</span>
-        </h1>
+        <h1 class="hero-title">Фулфилмент в&nbsp;Москве</h1>
 
-        <div class="seller-bar" data-seller-bar data-mp="wb">
-          <div class="seller-pill" data-seller-pill>
-            <span class="seller-pill__for">для селлеров</span>
-            <span class="seller-pill__name" data-seller-name>Wildberries</span>
+        <div class="hero-for" data-seller-bar data-mp="wb">
+          <span class="hero-for__label">для</span>
+          <div class="hero-for__logos" aria-live="polite">
+            <span class="hero-mp is-active" data-mp-icon="wb" title="Wildberries">
+              <img src="media/hero-ui/wb-logo.svg" alt="Wildberries" height="28" />
+            </span>
+            <span class="hero-mp" data-mp-icon="ozon" title="Ozon">
+              <img src="media/hero-ui/ozon-logo.svg" alt="Ozon" height="28" />
+            </span>
+            <span class="hero-mp" data-mp-icon="ym" title="Яндекс Маркет">
+              <img src="media/marketplaces/yandex-market.svg" alt="Яндекс Маркет" height="40" width="40" />
+            </span>
           </div>
-          <div class="seller-icons" aria-label="Маркетплейсы">
-            <div class="mp-icon is-active" data-mp-icon="wb" title="Wildberries">
-              <img src="media/marketplaces/wb.svg" alt="Wildberries" width="56" height="56" />
-            </div>
-            <div class="mp-icon" data-mp-icon="ozon" title="Ozon">
-              <img src="media/marketplaces/ozon.svg" alt="Ozon" width="56" height="56" />
-            </div>
-            <div class="mp-icon" data-mp-icon="ym" title="Яндекс Маркет">
-              <img src="media/marketplaces/yandex-market.svg" alt="Яндекс Маркет" width="56" height="56" />
-            </div>
+          <div class="hero-for__pill" data-seller-pill>
+            <span data-seller-name>Wildberries</span>
           </div>
         </div>
 
         <p class="hero-sub">
-          Избавим от рутинных забот по подготовке и доставке товара на маркетплейсы.
-          По специальным условиям — <strong>индивидуальный расчёт</strong>.
+          Избавим от&nbsp;рутинных забот по&nbsp;подготовке и&nbsp;доставке товара
+          на&nbsp;маркетплейсы
         </p>
-        <div class="hero-pillars">
-          <div class="pillar"><strong>Быстро</strong><span>Две смены, ритм без «конца рабочего дня»</span></div>
-          <div class="pillar"><strong>Надёжно</strong><span>Свои склады ~2&nbsp;000&nbsp;м² и контроль процессов</span></div>
-          <div class="pillar"><strong>Прозрачно</strong><span>Понятные условия под ваш объём и категорию</span></div>
+
+        <div class="hero-features">
+          <div class="hero-feature">
+            <span class="hero-feature__icon" aria-hidden="true">
+              <img src="media/hero-ui/rocket.svg" alt="" width="22" height="22" />
+            </span>
+            <span class="hero-feature__text">Быстро</span>
+          </div>
+          <div class="hero-feature">
+            <span class="hero-feature__icon" aria-hidden="true">
+              <img src="media/hero-ui/shield.svg" alt="" width="22" height="22" />
+            </span>
+            <span class="hero-feature__text">Надёжно</span>
+          </div>
+          <div class="hero-feature">
+            <span class="hero-feature__icon" aria-hidden="true">
+              <img src="media/hero-ui/cube.svg" alt="" width="22" height="22" />
+            </span>
+            <span class="hero-feature__text">Прозрачно</span>
+          </div>
         </div>
+
         <div class="hero-cta">
           <a class="btn btn-primary btn-lg" href="#contact">Получить индивидуальный расчёт</a>
-          <a class="btn btn-ghost btn-lg" href="tel:+74952550131">Позвонить</a>
         </div>
+        <p class="hero-note">Проконсультируем и&nbsp;пришлём подробную калькуляцию</p>
       </div>
     </section>
 
