@@ -67,6 +67,80 @@
     reveals.forEach((el) => el.classList.add("is-in"));
   }
 
+  /* Topic pills — explanations */
+  const topics = {
+    fbo: {
+      title: "FBO / FBS",
+      html: `
+        <p><strong>FBO</strong> (Fulfillment by Operator / площадка) — товар хранится и отгружается со склада маркетплейса. Мы готовим партию: упаковка, маркировка, комплектность — и отправляем на склад площадки.</p>
+        <p><strong>FBS</strong> (Fulfillment by Seller) — заказ приходит на наш склад, мы комплектуем и отгружаем уже под конкретный заказ клиента площадки.</p>
+        <p>Работаем с ведущими маркетплейсами России. Схема и объём — под ваш бренд и задачу.</p>
+      `,
+    },
+    cz: {
+      title: "«Честный Знак»",
+      html: `
+        <p>Государственная система маркировки товаров. Для ряда категорий (одежда, обувь, молочка, вода и др.) без кодов Data Matrix товар нельзя легально продавать.</p>
+        <p>Мы закрываем <strong>полный цикл</strong>: нанесение, считывание, отчётность и подготовка к приёмке на маркетплейсах — без «дыр» в цепочке.</p>
+      `,
+    },
+    fleet: {
+      title: "Свой автопарк",
+      html: `
+        <p>После упаковки доставляем своим транспортом — на склады маркетплейсов и по запросу в регионы. Не зависим от «свободных машин» сторонних перевозчиков в пиковые дни.</p>
+        <div class="topic-fleet">
+          <img src="media/fleet/van-1.jpg" alt="Автопарк DLUCK" loading="lazy" />
+          <img src="media/fleet/fleet.jpg" alt="Транспорт компании" loading="lazy" />
+        </div>
+      `,
+    },
+    shifts: {
+      title: "Две смены",
+      html: `
+        <p><strong>Дневная и ночная</strong> смены — непрерывный операционный ритм. Крупные партии, срочные отгрузки и подготовка к слотам маркетплейсов не упираются в «конец рабочего дня».</p>
+        <p>Это снижает простои и помогает держать сроки, когда объём растёт.</p>
+      `,
+    },
+    thermo: {
+      title: "Термотоннели",
+      html: `
+        <p>Собственное оборудование для термоусадки плёнки. Товар фиксируется плотно, аккуратно и единообразно — меньше боя, пыли и претензий на приёмке.</p>
+        <p>Подходит для групповой упаковки и подготовки партий под FBO/FBS. Материалы подбираем под категорию.</p>
+      `,
+    },
+  };
+
+  const modal = document.getElementById("topic-modal");
+  const topicTitle = document.getElementById("topic-title");
+  const topicBody = document.getElementById("topic-body");
+
+  function openTopic(key) {
+    const data = topics[key];
+    if (!data || !modal || !topicTitle || !topicBody) return;
+    topicTitle.textContent = data.title;
+    topicBody.innerHTML = data.html;
+    modal.hidden = false;
+    document.body.classList.add("topic-open");
+    const closeBtn = modal.querySelector(".topic-modal__close");
+    if (closeBtn) closeBtn.focus();
+  }
+
+  function closeTopic() {
+    if (!modal) return;
+    modal.hidden = true;
+    document.body.classList.remove("topic-open");
+  }
+
+  document.querySelectorAll("[data-topic]").forEach((btn) => {
+    btn.addEventListener("click", () => openTopic(btn.getAttribute("data-topic")));
+  });
+  document.querySelectorAll("[data-close-topic]").forEach((el) => {
+    el.addEventListener("click", closeTopic);
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && modal && !modal.hidden) closeTopic();
+  });
+
   document.querySelectorAll("[data-lead-form]").forEach((form) => {
     form.addEventListener("submit", (e) => {
       e.preventDefault();
