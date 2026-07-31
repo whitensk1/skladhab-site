@@ -22,6 +22,36 @@
     } catch (_) {}
   });
 
+  /* Seller pill: WB ↔ Ozon ↔ Yandex Market + matching icon color */
+  (function sellerBarCycle() {
+    const bar = document.querySelector("[data-seller-bar]");
+    if (!bar) return;
+    const nameEl = bar.querySelector("[data-seller-name]");
+    const icons = Array.from(bar.querySelectorAll("[data-mp-icon]"));
+    const cycle = [
+      { key: "wb", name: "Wildberries" },
+      { key: "ozon", name: "Ozon" },
+      { key: "ym", name: "Яндекс Маркет" },
+    ];
+    let i = 0;
+    const apply = () => {
+      const item = cycle[i];
+      bar.setAttribute("data-mp", item.key);
+      if (nameEl) nameEl.textContent = item.name;
+      icons.forEach((el) => {
+        el.classList.toggle("is-active", el.getAttribute("data-mp-icon") === item.key);
+      });
+    };
+    apply();
+    const reduced =
+      window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) return;
+    setInterval(() => {
+      i = (i + 1) % cycle.length;
+      apply();
+    }, 3200);
+  })();
+
   // Optional: fill Anton's phone from query ?anton=+79...
   try {
     const anton = new URLSearchParams(location.search).get("anton");
