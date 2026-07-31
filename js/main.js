@@ -8,24 +8,18 @@
     el.textContent = String(new Date().getFullYear());
   });
 
-  /* Hero: «для» + marketplace logos/pill cycle (WB → Ozon → Yandex) */
+  /* Hero: static «для селлеров» pill color cycle + logo highlight */
   (function sellerBarCycle() {
     const bar = document.querySelector("[data-seller-bar]");
     if (!bar) return;
-    const nameEl = bar.querySelector("[data-seller-name]");
     const icons = Array.from(bar.querySelectorAll("[data-mp-icon]"));
-    const cycle = [
-      { key: "wb", name: "Wildberries" },
-      { key: "ozon", name: "Ozon" },
-      { key: "ym", name: "Яндекс Маркет" },
-    ];
+    const cycle = ["wb", "ozon", "ym"];
     let i = 0;
     const apply = () => {
-      const item = cycle[i];
-      bar.setAttribute("data-mp", item.key);
-      if (nameEl) nameEl.textContent = item.name;
+      const key = cycle[i];
+      bar.setAttribute("data-mp", key);
       icons.forEach((el) => {
-        el.classList.toggle("is-active", el.getAttribute("data-mp-icon") === item.key);
+        el.classList.toggle("is-active", el.getAttribute("data-mp-icon") === key);
       });
     };
     apply();

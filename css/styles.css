@@ -178,85 +178,28 @@ strong { font-weight: 700; }
   color: var(--ink);
 }
 
-/* «для» + logos + colored name pill */
+/* Seller pill (static text) + marketplace logos */
 .hero-for {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 12px 16px;
-  margin: 0 auto 22px;
-}
-.hero-for__label {
-  font-size: clamp(1.25rem, 2.8vw, 1.75rem);
-  font-weight: 700;
-  color: var(--ink);
-  letter-spacing: -0.02em;
-}
-.hero-for__logos {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.hero-mp {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 44px;
-  min-width: 44px;
-  padding: 0 10px;
-  border-radius: 12px;
-  background: #f5f5f5;
-  border: 1px solid var(--line);
-  filter: grayscale(1);
-  opacity: 0.45;
-  transition: filter 0.5s var(--ease), opacity 0.5s var(--ease), background 0.5s, border-color 0.5s, transform 0.5s var(--ease), box-shadow 0.5s;
-}
-.hero-mp img {
-  height: 22px;
-  width: auto;
-  max-width: 96px;
-  object-fit: contain;
-}
-.hero-mp[data-mp-icon="ym"] {
-  padding: 4px;
-  border-radius: 50%;
-  width: 44px;
-  height: 44px;
-}
-.hero-mp[data-mp-icon="ym"] img {
-  height: 100%;
-  width: 100%;
-  max-width: none;
-}
-.hero-mp.is-active {
-  filter: grayscale(0);
-  opacity: 1;
-  background: #fff;
-  border-color: transparent;
-  transform: scale(1.06);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-}
-.hero-for[data-mp="wb"] .hero-mp[data-mp-icon="wb"].is-active {
-  box-shadow: 0 8px 24px rgba(203, 17, 171, 0.22);
-}
-.hero-for[data-mp="ozon"] .hero-mp[data-mp-icon="ozon"].is-active {
-  box-shadow: 0 8px 24px rgba(0, 91, 255, 0.22);
-}
-.hero-for[data-mp="ym"] .hero-mp[data-mp-icon="ym"].is-active {
-  box-shadow: 0 8px 24px rgba(255, 204, 0, 0.35);
+  gap: 14px 18px;
+  margin: 0 auto 28px;
 }
 .hero-for__pill {
   display: inline-flex;
   align-items: center;
-  padding: 10px 18px;
+  justify-content: center;
+  padding: 12px 22px;
   border-radius: 999px;
   font-weight: 800;
   font-size: clamp(0.95rem, 1.8vw, 1.1rem);
   letter-spacing: -0.02em;
+  white-space: nowrap;
   color: #fff;
   background: #cb11ab;
-  transition: background 0.55s var(--ease), color 0.55s var(--ease), box-shadow 0.55s;
+  transition: background 0.55s var(--ease), color 0.55s var(--ease), box-shadow 0.55s var(--ease);
   box-shadow: 0 8px 22px rgba(203, 17, 171, 0.28);
 }
 .hero-for[data-mp="wb"] .hero-for__pill {
@@ -273,6 +216,55 @@ strong { font-weight: 700; }
   background: #ffcc00;
   color: #1a1a1a;
   box-shadow: 0 8px 22px rgba(255, 204, 0, 0.35);
+}
+.hero-for__logos {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hero-mp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  padding: 8px 14px;
+  border-radius: 14px;
+  background: #f3f3f3;
+  border: 1px solid rgba(35, 35, 35, 0.06);
+  /* gray by default */
+  filter: grayscale(1);
+  opacity: 0.5;
+  transition:
+    filter 0.5s var(--ease),
+    opacity 0.5s var(--ease),
+    background 0.5s var(--ease),
+    transform 0.5s var(--ease),
+    box-shadow 0.5s var(--ease),
+    border-color 0.5s var(--ease);
+}
+.hero-mp img {
+  display: block;
+  height: 26px;
+  width: auto;
+  max-width: 120px;
+  object-fit: contain;
+}
+.hero-mp.is-active {
+  filter: grayscale(0);
+  opacity: 1;
+  background: #fff;
+  border-color: transparent;
+  transform: scale(1.05);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+}
+.hero-for[data-mp="wb"] .hero-mp[data-mp-icon="wb"].is-active {
+  box-shadow: 0 8px 24px rgba(203, 17, 171, 0.22);
+}
+.hero-for[data-mp="ozon"] .hero-mp[data-mp-icon="ozon"].is-active {
+  box-shadow: 0 8px 24px rgba(0, 91, 255, 0.22);
+}
+.hero-for[data-mp="ym"] .hero-mp[data-mp-icon="ym"].is-active {
+  box-shadow: 0 8px 24px rgba(255, 204, 0, 0.35);
 }
 
 .hero-sub {
