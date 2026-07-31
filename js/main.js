@@ -8,6 +8,20 @@
     el.textContent = String(new Date().getFullYear());
   });
 
+  /* Soft, slow hero warehouse atmosphere */
+  document.querySelectorAll(".hero-bg-video").forEach((video) => {
+    try {
+      video.playbackRate = 0.35;
+      video.defaultPlaybackRate = 0.35;
+      const slow = () => {
+        video.playbackRate = 0.35;
+      };
+      video.addEventListener("play", slow);
+      video.addEventListener("loadeddata", slow);
+      if (video.readyState >= 2) slow();
+    } catch (_) {}
+  });
+
   // Optional: fill Anton's phone from query ?anton=+79...
   try {
     const anton = new URLSearchParams(location.search).get("anton");
