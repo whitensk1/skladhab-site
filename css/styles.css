@@ -139,14 +139,66 @@ strong { font-weight: 700; }
 .btn-lg { min-height: 52px; padding: 0 28px; font-size: 15px; }
 .btn-block { width: 100%; }
 
-/* Hero — compact clean */
+/* Hero — warehouse bg + frosted glass card */
 .hero {
-  padding: 48px 0 40px;
+  position: relative;
+  padding: 56px 0 52px;
   text-align: center;
-  background: #fff;
+  background: #eef2f7;
   border-bottom: 1px solid var(--line);
+  overflow: hidden;
+  min-height: min(72svh, 680px);
+  display: flex;
+  align-items: center;
 }
-.hero-inner { max-width: 860px; }
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.hero-bg-video {
+  position: absolute;
+  inset: -4%;
+  width: 108%;
+  height: 108%;
+  object-fit: cover;
+  filter: grayscale(0.35) blur(1.2px) brightness(1.05) contrast(0.98);
+  opacity: 0.42;
+  animation: hero-drift 80s ease-in-out infinite alternate;
+}
+.hero-bg-still {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(238, 242, 247, 0.55) 0%, rgba(238, 242, 247, 0.72) 100%),
+    url("../media/hero/warehouse-still.jpg") center / cover no-repeat;
+  filter: grayscale(0.25);
+  opacity: 0.55;
+  z-index: -1;
+}
+@keyframes hero-drift {
+  from { transform: scale(1.04) translate3d(-1%, 0, 0); }
+  to { transform: scale(1.1) translate3d(1.2%, -0.5%, 0); }
+}
+.hero > .container {
+  position: relative;
+  z-index: 1;
+}
+.hero-glass {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: clamp(28px, 4vw, 44px) clamp(20px, 4vw, 40px);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 24px 64px rgba(15, 40, 80, 0.1);
+  backdrop-filter: blur(18px) saturate(1.15);
+  -webkit-backdrop-filter: blur(18px) saturate(1.15);
+}
 .hero-title {
   margin: 0 auto 18px;
   font-size: clamp(2.4rem, 6.5vw, 4rem);
@@ -156,7 +208,7 @@ strong { font-weight: 700; }
   color: var(--ink);
 }
 
-/* Seller pill + circle logos */
+/* Seller pill + logos in ORIGINAL shape (not cropped to circle) */
 .hero-for {
   display: flex;
   align-items: center;
@@ -196,42 +248,47 @@ strong { font-weight: 700; }
 .hero-for__logos {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 .hero-mp {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  overflow: hidden;
-  background: #eceff3;
-  border: 2px solid #fff;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
-  /* gray by default; full color when .is-active */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  min-width: 88px;
+  padding: 8px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(28, 31, 38, 0.08);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+  /* gray by default; full color when active */
   filter: grayscale(1);
-  opacity: 0.48;
-  transition: filter 0.5s var(--ease), opacity 0.5s, transform 0.5s, box-shadow 0.5s;
+  opacity: 0.5;
+  transition: filter 0.5s var(--ease), opacity 0.5s, transform 0.5s, box-shadow 0.5s, background 0.5s;
 }
 .hero-mp img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: 28px;
+  width: auto;
+  max-width: 110px;
+  object-fit: contain;
   object-position: center;
   display: block;
 }
 .hero-mp.is-active {
   filter: grayscale(0);
   opacity: 1;
-  transform: scale(1.1);
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.12);
+  transform: scale(1.06);
+  background: #fff;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.1);
 }
 .hero-for[data-mp="wb"] .hero-mp[data-mp-icon="wb"].is-active {
-  box-shadow: 0 10px 26px rgba(203, 17, 171, 0.35);
+  box-shadow: 0 10px 26px rgba(203, 17, 171, 0.28);
 }
 .hero-for[data-mp="ozon"] .hero-mp[data-mp-icon="ozon"].is-active {
-  box-shadow: 0 10px 26px rgba(0, 91, 255, 0.35);
+  box-shadow: 0 10px 26px rgba(0, 91, 255, 0.28);
 }
 .hero-for[data-mp="ym"] .hero-mp[data-mp-icon="ym"].is-active {
-  box-shadow: 0 10px 26px rgba(255, 204, 0, 0.4);
+  box-shadow: 0 10px 26px rgba(255, 204, 0, 0.35);
 }
 
 .hero-sub {
@@ -385,11 +442,14 @@ strong { font-weight: 700; }
   border-radius: 14px;
   overflow: hidden;
   background: #fafbfc;
+  display: grid;
+  place-items: center;
+  padding: 6px;
 }
 .stat-icon img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 .stat-body strong {
   display: block;
@@ -836,8 +896,11 @@ body.topic-open { overflow: hidden; }
   .field-row { grid-template-columns: 1fr; }
   .stats { grid-template-columns: 1fr; }
   .steps-row { grid-template-columns: 1fr 1fr; }
-  .hero { padding: 36px 0 32px; }
+  .hero { padding: 32px 0 36px; min-height: auto; }
+  .hero-glass { padding: 24px 16px; border-radius: 22px; }
   .section { padding: 40px 0; }
   .logo-img { height: 40px; }
   .marquee-track img { height: 64px; }
+  .hero-mp { min-width: 72px; height: 44px; padding: 6px 10px; }
+  .hero-mp img { height: 24px; max-width: 88px; }
 }
