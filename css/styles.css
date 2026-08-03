@@ -199,13 +199,14 @@ strong { font-weight: 700; }
   gap: 10px;
 }
 .hero-mp {
-  width: 52px;
-  height: 52px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   overflow: hidden;
   background: #eceff3;
   border: 2px solid #fff;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  /* gray by default; full color when .is-active */
   filter: grayscale(1);
   opacity: 0.48;
   transition: filter 0.5s var(--ease), opacity 0.5s, transform 0.5s, box-shadow 0.5s;
@@ -214,6 +215,8 @@ strong { font-weight: 700; }
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
+  display: block;
 }
 .hero-mp.is-active {
   filter: grayscale(0);
