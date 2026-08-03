@@ -745,21 +745,23 @@ body.topic-open { overflow: hidden; }
   gap: 20px;
   align-items: flex-start;
 }
-.footer-brand-block { max-width: 320px; }
+.footer-brand-block { max-width: 420px; }
 .footer-logo {
-  height: 44px;
+  height: 96px;
   width: auto;
-  margin-bottom: 8px;
+  max-width: min(320px, 80vw);
+  margin-bottom: 12px;
   object-fit: contain;
 }
-.footer-name {
-  display: block;
-  color: var(--ink);
-  font-size: 1.05rem;
-  letter-spacing: -0.02em;
-  margin-bottom: 4px;
+.footer-tag {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: -0.01em;
 }
-.footer-tag { font-size: 13px; }
+@media (max-width: 640px) {
+  .footer-logo { height: 72px; }
+}
 .footer-links {
   display: flex;
   flex-wrap: wrap;
