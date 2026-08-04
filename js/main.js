@@ -95,7 +95,7 @@
   }
 
   // Stagger cards inside common grids when parent section is revealed
-  document.querySelectorAll(".services-grid, .steps-row, .feature-grid, .stats-premium").forEach((grid) => {
+  document.querySelectorAll(".services-grid, .steps-row, .steps-detail, .feature-grid, .stats-premium").forEach((grid) => {
     if (!grid.classList.contains("reveal") && !grid.classList.contains("reveal-stagger")) {
       grid.classList.add("reveal-stagger");
     }
