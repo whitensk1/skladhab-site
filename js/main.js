@@ -8,6 +8,19 @@
     el.textContent = String(new Date().getFullYear());
   });
 
+  /* Next-panel peeks: oval label at bottom naming the block below (not clickable) */
+  (function panelNextLabels() {
+    document.querySelectorAll("[data-panel][data-next]").forEach((panel) => {
+      const label = String(panel.getAttribute("data-next") || "").trim();
+      if (!label) return;
+      const el = document.createElement("div");
+      el.className = "panel-next";
+      el.setAttribute("aria-hidden", "true");
+      el.textContent = label;
+      panel.appendChild(el);
+    });
+  })();
+
   /* Floating capsule header: solid at top → semi-transparent independent bar on scroll */
   (function headerScroll() {
     const header = document.querySelector(".site-header");
