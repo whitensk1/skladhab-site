@@ -426,7 +426,7 @@ strong { font-weight: 700; }
   justify-content: center;
   gap: clamp(12px, 2vw, 22px);
   width: 100%;
-  max-width: 980px;
+  max-width: 1080px; /* was 980 — room for wider glass + slider */
   margin: 0 auto;
 }
 .hero-glass {
@@ -439,7 +439,7 @@ strong { font-weight: 700; }
   --hero-fg-soft: color-mix(in srgb, #6b7280 calc((1 - var(--glass-see)) * 100%), rgba(255, 255, 255, 0.88) calc(var(--glass-see) * 100%));
   flex: 1 1 auto;
   width: 100%;
-  max-width: 880px;
+  max-width: 968px; /* ~10% wider than 880px */
   margin: 0;
   padding: clamp(28px, 4vw, 44px) clamp(20px, 4vw, 40px);
   border-radius: 28px;
