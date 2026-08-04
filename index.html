@@ -577,18 +577,27 @@
               <span>Согласен на обработку ПДн и с <a href="privacy.html">политикой</a></span>
             </label>
             <div class="field field--captcha" data-captcha-wrap>
-              <label for="human-check">Проверка: <span data-captcha-q>…</span> = ? *</label>
-              <input
-                id="human-check"
-                name="human_check"
-                type="text"
-                inputmode="numeric"
-                autocomplete="off"
-                required
-                placeholder="Ответ числом"
-                data-captcha-input
-              />
-              <p class="field-hint">Простая проверка, что заявку отправляет человек (без Google / США).</p>
+              <!-- Yandex SmartCaptcha («Я не робот») — ключ в js/form-config.js -->
+              <div
+                class="smart-captcha"
+                data-smartcaptcha-box
+                style="height: 100px"
+                hidden
+              ></div>
+              <!-- Fallback, пока нет client key SmartCaptcha -->
+              <div class="captcha-math" data-captcha-math>
+                <label for="human-check">Проверка: <span data-captcha-q>…</span> = ? *</label>
+                <input
+                  id="human-check"
+                  name="human_check"
+                  type="text"
+                  inputmode="numeric"
+                  autocomplete="off"
+                  placeholder="Ответ числом"
+                  data-captcha-input
+                />
+                <p class="field-hint">Временно простая проверка. После ключа Яндекс SmartCaptcha — галочка «Я не робот».</p>
+              </div>
             </div>
             <button type="submit" class="btn btn-primary btn-block" data-lead-submit>Отправить заявку</button>
             <div class="form-success" role="status"></div>

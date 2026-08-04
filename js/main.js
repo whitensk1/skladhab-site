@@ -1275,14 +1275,16 @@
   });
 
   /*
-    Lead form — no US form backends (no Formspree / reCAPTCHA).
-    Delivery: Telegram deep-link and/or mailto on the user's device.
-    Human check: local math captcha + honeypot.
+    Lead form — Telegram/mailto (no US form backend).
+    Human check: Yandex SmartCaptcha checkbox when client key is set;
+    otherwise local math captcha + honeypot.
   */
   (function leadForms() {
     const cfg = window.UD_LEADS || {};
     const delivery = String(cfg.delivery || "both").toLowerCase();
     const tgUser = String(cfg.telegramUser || "anton111289").replace(/^@/, "");
+    const ycKey = String(cfg.smartCaptchaClientKey || "").trim();
+    const useSmartCaptcha = !!ycKey;
 
     const showMsg = (form, kind, text) => {
       const success = form.querySelector(".form-success");
@@ -1317,12 +1319,34 @@
         payload.message || "—",
       ].join("\n");
 
+    let smartScriptLoading = null;
+    const loadSmartCaptchaScript = () => {
+      if (document.querySelector("script[data-yc-smartcaptcha]")) {
+        return Promise.resolve(true);
+      }
+      if (smartScriptLoading) return smartScriptLoading;
+      smartScriptLoading = new Promise((resolve) => {
+        const s = document.createElement("script");
+        /* Official widget: auto-mounts .smart-captcha[data-sitekey] */
+        s.src = "https://smartcaptcha.cloud.yandex.ru/captcha.js";
+        s.defer = true;
+        s.dataset.ycSmartcaptcha = "1";
+        s.onload = () => resolve(true);
+        s.onerror = () => resolve(false);
+        document.head.appendChild(s);
+      });
+      return smartScriptLoading;
+    };
+
     document.querySelectorAll("[data-lead-form]").forEach((form) => {
       const submitBtn =
         form.querySelector("[data-lead-submit]") || form.querySelector('[type="submit"]');
+      const smartBox = form.querySelector("[data-smartcaptcha-box]");
+      const mathWrap = form.querySelector("[data-captcha-math]");
       const qEl = form.querySelector("[data-captcha-q]");
       const captchaInput = form.querySelector("[data-captcha-input]");
       let captchaAnswer = 0;
+      let widgetId = null;
 
       const rollCaptcha = () => {
         const a = 2 + Math.floor(Math.random() * 8);
@@ -1331,7 +1355,68 @@
         if (qEl) qEl.textContent = a + " + " + b;
         if (captchaInput) captchaInput.value = "";
       };
-      rollCaptcha();
+
+      if (useSmartCaptcha && smartBox) {
+        if (mathWrap) mathWrap.hidden = true;
+        if (captchaInput) captchaInput.required = false;
+        smartBox.hidden = false;
+        smartBox.setAttribute("data-sitekey", ycKey);
+        smartBox.classList.add("smart-captcha");
+        loadSmartCaptchaScript().then((ok) => {
+          if (!ok) {
+            console.warn("[lead] SmartCaptcha script failed — math fallback");
+            if (mathWrap) mathWrap.hidden = false;
+            smartBox.hidden = true;
+            rollCaptcha();
+            return;
+          }
+          /* If auto-mount missed the node, try explicit render */
+          window.setTimeout(() => {
+            try {
+              if (
+                !form.querySelector('input[name="smart-token"]') &&
+                window.smartCaptcha &&
+                typeof window.smartCaptcha.render === "function"
+              ) {
+                widgetId = window.smartCaptcha.render(smartBox, {
+                  sitekey: ycKey,
+                  hl: "ru",
+                });
+              }
+            } catch (err) {
+              console.warn("[lead] SmartCaptcha render", err);
+            }
+          }, 100);
+        });
+      } else {
+        if (smartBox) smartBox.hidden = true;
+        if (mathWrap) mathWrap.hidden = false;
+        if (captchaInput) captchaInput.required = true;
+        rollCaptcha();
+      }
+
+      const getSmartToken = () => {
+        const hidden = form.querySelector('input[name="smart-token"]');
+        if (hidden && hidden.value) return String(hidden.value).trim();
+        try {
+          if (window.smartCaptcha && typeof window.smartCaptcha.getResponse === "function") {
+            if (widgetId != null) {
+              return String(window.smartCaptcha.getResponse(widgetId) || "").trim();
+            }
+            return String(window.smartCaptcha.getResponse() || "").trim();
+          }
+        } catch (_) {}
+        return "";
+      };
+
+      const resetSmart = () => {
+        try {
+          if (window.smartCaptcha && typeof window.smartCaptcha.reset === "function") {
+            if (widgetId != null) window.smartCaptcha.reset(widgetId);
+            else window.smartCaptcha.reset();
+          }
+        } catch (_) {}
+      };
 
       form.addEventListener("submit", (e) => {
         e.preventDefault();
@@ -1366,14 +1451,22 @@
           return;
         }
 
-        const human = String(fd.get("human_check") || captchaInput?.value || "")
-          .replace(/\s/g, "")
-          .replace(/[^\d-]/g, "");
-        if (String(captchaAnswer) !== human) {
-          showMsg(form, "err", "Неверный ответ в проверке. Попробуйте ещё раз.");
-          rollCaptcha();
-          if (captchaInput) captchaInput.focus();
-          return;
+        if (useSmartCaptcha && smartBox && !smartBox.hidden) {
+          const token = getSmartToken();
+          if (!token) {
+            showMsg(form, "err", "Поставьте галочку «Я не робот».");
+            return;
+          }
+        } else {
+          const human = String(fd.get("human_check") || captchaInput?.value || "")
+            .replace(/\s/g, "")
+            .replace(/[^\d-]/g, "");
+          if (String(captchaAnswer) !== human) {
+            showMsg(form, "err", "Неверный ответ в проверке. Попробуйте ещё раз.");
+            rollCaptcha();
+            if (captchaInput) captchaInput.focus();
+            return;
+          }
         }
 
         showMsg(form, "clear", "");
@@ -1401,7 +1494,6 @@
             if (mailto) {
               const subject = encodeURIComponent("Заявка на фулфилмент — Успешное Дело");
               const body = encodeURIComponent(text);
-              /* slight delay so Telegram can open first when both */
               window.setTimeout(() => {
                 window.location.href = "mailto:" + mailto + "?subject=" + subject + "&body=" + body;
               }, useTg ? 500 : 0);
@@ -1425,11 +1517,13 @@
               (office ? " Также можно позвонить: " + office : "")
           );
           form.reset();
-          rollCaptcha();
+          if (useSmartCaptcha) resetSmart();
+          else rollCaptcha();
         } catch (err) {
           console.warn("[lead] submit failed", err);
           showMsg(form, "err", "Не удалось открыть мессенджер или почту. Напишите нам в Telegram.");
-          rollCaptcha();
+          if (useSmartCaptcha) resetSmart();
+          else rollCaptcha();
         } finally {
           if (submitBtn) {
             submitBtn.classList.remove("is-loading");

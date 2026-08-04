@@ -2176,6 +2176,16 @@ strong { font-weight: 700; }
 .field--captcha input {
   max-width: 160px;
 }
+.field--captcha .smart-captcha {
+  min-height: 100px;
+  max-width: 100%;
+}
+.field--captcha .smart-captcha[hidden] {
+  display: none !important;
+}
+.captcha-math[hidden] {
+  display: none !important;
+}
 .btn-primary.is-loading {
   opacity: 0.72;
   pointer-events: none;
