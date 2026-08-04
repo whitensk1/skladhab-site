@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>УД · Лови ящики</title>
+  <meta name="theme-color" content="#cb11ab" />
+  <link rel="icon" type="image/png" href="../media/brand/logo-ud-mark.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #1c1f26;
+      --accent: #cb11ab;
+      --accent-deep: #a00a88;
+      --floor: #d8dde6;
+      --sky1: #faf6fb;
+      --sky2: #f0e4f4;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+      font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+      background: #120f16;
+      color: #fff;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .wrap {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: max(8px, env(safe-area-inset-top)) 10px max(10px, env(safe-area-inset-bottom));
+      gap: 8px;
+    }
+    .hud {
+      width: min(420px, 100%);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    .hud b { color: #ffd6f3; font-weight: 800; }
+    .lives { letter-spacing: 2px; color: #ff6b8a; }
+    .speed-bar {
+      width: min(420px, 100%);
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .speed-bar > i {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #e85cc8, #cb11ab 50%, #ff4d6d);
+      border-radius: inherit;
+      transition: width 0.15s linear;
+    }
+    .stage {
+      position: relative;
+      width: min(420px, 100%);
+      aspect-ratio: 9 / 14;
+      max-height: min(78vh, 680px);
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.1),
+        0 24px 60px rgba(0, 0, 0, 0.45);
+      background: #1a1520;
+      touch-action: none;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: none;
+    }
+    .overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 22px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 20%, rgba(203, 17, 171, 0.35), transparent 60%),
+        rgba(12, 10, 16, 0.82);
+      backdrop-filter: blur(6px);
+      z-index: 2;
+    }
+    .overlay[hidden] { display: none !important; }
+    .overlay h1 {
+      margin: 0 0 10px;
+      font-size: clamp(1.45rem, 5vw, 1.85rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+    }
+    .overlay p {
+      margin: 0 0 12px;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 0.95rem;
+      line-height: 1.45;
+      max-width: 28ch;
+    }
+    .overlay .deal {
+      margin: 8px 0 18px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(203, 17, 171, 0.22);
+      border: 1px solid rgba(255, 180, 230, 0.35);
+      color: #fff;
+      font-size: 0.92rem;
+      font-weight: 700;
+      line-height: 1.4;
+      max-width: 30ch;
+    }
+    .overlay .deal span {
+      display: block;
+      margin-top: 4px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    .btn {
+      appearance: none;
+      border: 0;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 800;
+      font-size: 0.95rem;
+      padding: 14px 28px;
+      border-radius: 999px;
+      color: #fff;
+      background: linear-gradient(135deg, #e61bc0, #cb11ab 50%, #a00a88);
+      box-shadow: 0 10px 28px rgba(203, 17, 171, 0.4);
+      transition: transform 0.15s ease, filter 0.15s;
+    }
+    .btn:hover { filter: brightness(1.06); transform: translateY(-1px); }
+    .btn:active { transform: scale(0.97); }
+    .hint {
+      margin-top: 14px;
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.5);
+      line-height: 1.4;
+    }
+    .brand {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.45);
+    }
+    .stat-line {
+      margin: 0 0 16px;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.75);
+    }
+    .stat-line strong { color: #ffd6f3; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="brand">Успешное Дело · мини-игра</div>
+    <div class="hud">
+      <div>Ящики: <b id="score">0</b> / 100</div>
+      <div class="lives" id="lives" aria-label="Жизни">❤ ❤ ❤</div>
+      <div>Скор.: <b id="speedLvl">1</b></div>
+    </div>
+    <div class="speed-bar" title="Скорость падения"><i id="speedFill"></i></div>
+    <div class="stage" id="stage">
+      <canvas id="game" width="420" height="653" aria-label="Игра: лови ящики"></canvas>
+
+      <div class="overlay" id="screen-start">
+        <h1>Лови ящики!</h1>
+        <p>Кладовщик «УД» ловит падающие коробки. Скорость растёт — выдержать 100 почти нереально.</p>
+        <div class="deal">
+          Соберите <strong>100 ящиков</strong> — получите скидку на фулфилмент
+          <span>*предложение для самых ловких (и упрямых)</span>
+        </div>
+        <button type="button" class="btn" id="btn-start">Начать смену</button>
+        <div class="hint">← → / A D / мышь / палец<br />3 жизни · пропустил ящик — минус жизнь</div>
+      </div>
+
+      <div class="overlay" id="screen-over" hidden>
+        <h1>Смена окончена</h1>
+        <p>Ты проиграл — не отчаивайся. На складе всегда есть вторая попытка.</p>
+        <p class="stat-line">Поймано: <strong id="final-score">0</strong> · рекорд: <strong id="best-score">0</strong></p>
+        <div class="deal" id="almost-deal" hidden>
+          Ещё чуть-чуть до скидки… но 100 ящиков — это уже легенда склада.
+        </div>
+        <button type="button" class="btn" id="btn-retry">Начать заново</button>
+        <div class="hint">Скорость на максимуме ловит только теория 😉</div>
+      </div>
+
+      <div class="overlay" id="screen-win" hidden>
+        <h1>Невероятно!</h1>
+        <p>100 ящиков? Вы либо читер, либо легенда «Успешного Дела».</p>
+        <p class="stat-line">Напишите нам: <strong>скидка за 100 ящиков</strong></p>
+        <button type="button" class="btn" id="btn-win">Ещё раз</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+(function () {
+  const canvas = document.getElementById("game");
+  const ctx = canvas.getContext("2d");
+  const scoreEl = document.getElementById("score");
+  const livesEl = document.getElementById("lives");
+  const speedLvlEl = document.getElementById("speedLvl");
+  const speedFill = document.getElementById("speedFill");
+  const screenStart = document.getElementById("screen-start");
+  const screenOver = document.getElementById("screen-over");
+  const screenWin = document.getElementById("screen-win");
+  const finalScoreEl = document.getElementById("final-score");
+  const bestScoreEl = document.getElementById("best-score");
+  const almostDeal = document.getElementById("almost-deal");
+
+  const W = canvas.width;
+  const H = canvas.height;
+  const TARGET = 100;
+  const MAX_SPEED_LVL = 100;
+  const FLOOR_Y = H - 52;
+
+  const state = {
+    running: false,
+    score: 0,
+    lives: 3,
+    boxes: [],
+    particles: [],
+    playerX: W / 2,
+    playerTarget: W / 2,
+    keys: { left: false, right: false },
+    spawnTimer: 0,
+    elapsed: 0,
+    lastT: 0,
+    best: 0,
+  };
+
+  try {
+    state.best = Number(localStorage.getItem("ud-catch-best") || 0) || 0;
+  } catch (_) {}
+
+  function speedLevel() {
+    /* grows with score + time; soft cap approach to 100 */
+    const byScore = state.score * 1.15;
+    const byTime = state.elapsed * 2.4;
+    return Math.min(MAX_SPEED_LVL, 1 + byScore + byTime);
+  }
+
+  function fallSpeed() {
+    const lvl = speedLevel();
+    /* px/sec: ~120 at start → ~900+ at max (nearly uncatchable) */
+    return 120 + (lvl / MAX_SPEED_LVL) * 820;
+  }
+
+  function spawnInterval() {
+    const lvl = speedLevel();
+    return Math.max(0.28, 1.15 - (lvl / MAX_SPEED_LVL) * 0.95);
+  }
+
+  function playerW() {
+    return 54;
+  }
+  function playerH() {
+    return 72;
+  }
+
+  function spawnBox() {
+    const size = 28 + Math.random() * 18;
+    state.boxes.push({
+      x: 24 + Math.random() * (W - 48),
+      y: -size,
+      w: size,
+      h: size * 0.78,
+      rot: (Math.random() - 0.5) * 0.4,
+      spin: (Math.random() - 0.5) * 2.2,
+      hue: Math.random() < 0.15 ? "accent" : "box",
+    });
+  }
+
+  function burst(x, y, ok) {
+    for (let i = 0; i < 10; i++) {
+      state.particles.push({
+        x,
+        y,
+        vx: (Math.random() - 0.5) * 220,
+        vy: -40 - Math.random() * 180,
+        life: 0.35 + Math.random() * 0.35,
+        t: 0,
+        ok,
+      });
+    }
+  }
+
+  function resetGame() {
+    state.score = 0;
+    state.lives = 3;
+    state.boxes = [];
+    state.particles = [];
+    state.playerX = W / 2;
+    state.playerTarget = W / 2;
+    state.spawnTimer = 0.4;
+    state.elapsed = 0;
+    state.lastT = 0;
+    state.running = true;
+    screenStart.hidden = true;
+    screenOver.hidden = true;
+    screenWin.hidden = true;
+    updateHud();
+  }
+
+  function updateHud() {
+    scoreEl.textContent = String(state.score);
+    const hearts = [];
+    for (let i = 0; i < 3; i++) hearts.push(i < state.lives ? "❤" : "♡");
+    livesEl.textContent = hearts.join(" ");
+    const lvl = Math.floor(speedLevel());
+    speedLvlEl.textContent = String(lvl);
+    speedFill.style.width = Math.min(100, (speedLevel() / MAX_SPEED_LVL) * 100) + "%";
+  }
+
+  function gameOver() {
+    state.running = false;
+    if (state.score > state.best) {
+      state.best = state.score;
+      try {
+        localStorage.setItem("ud-catch-best", String(state.best));
+      } catch (_) {}
+    }
+    finalScoreEl.textContent = String(state.score);
+    bestScoreEl.textContent = String(state.best);
+    almostDeal.hidden = state.score < 30;
+    screenOver.hidden = false;
+  }
+
+  function win() {
+    state.running = false;
+    if (state.score > state.best) {
+      state.best = state.score;
+      try {
+        localStorage.setItem("ud-catch-best", String(state.best));
+      } catch (_) {}
+    }
+    screenWin.hidden = false;
+  }
+
+  function update(dt) {
+    if (!state.running) return;
+    state.elapsed += dt;
+
+    const move = 380 + speedLevel() * 1.2;
+    if (state.keys.left) state.playerTarget -= move * dt;
+    if (state.keys.right) state.playerTarget += move * dt;
+    state.playerTarget = Math.max(playerW() / 2 + 8, Math.min(W - playerW() / 2 - 8, state.playerTarget));
+    state.playerX += (state.playerTarget - state.playerX) * Math.min(1, 14 * dt);
+
+    state.spawnTimer -= dt;
+    if (state.spawnTimer <= 0) {
+      spawnBox();
+      state.spawnTimer = spawnInterval() * (0.75 + Math.random() * 0.5);
+    }
+
+    const py = FLOOR_Y - playerH();
+    const px = state.playerX - playerW() / 2;
+    const pw = playerW();
+    const ph = playerH();
+    const catchY = py + ph * 0.35;
+
+    for (let i = state.boxes.length - 1; i >= 0; i--) {
+      const b = state.boxes[i];
+      b.y += fallSpeed() * dt;
+      b.rot += b.spin * dt;
+
+      const bx = b.x - b.w / 2;
+      const by = b.y - b.h / 2;
+      const hit =
+        bx < px + pw &&
+        bx + b.w > px &&
+        by + b.h > catchY &&
+        by < py + ph &&
+        b.y < FLOOR_Y + 10;
+
+      if (hit) {
+        state.score += 1;
+        burst(b.x, b.y, true);
+        state.boxes.splice(i, 1);
+        updateHud();
+        if (state.score >= TARGET) {
+          win();
+          return;
+        }
+        continue;
+      }
+
+      if (b.y - b.h / 2 > FLOOR_Y + 8) {
+        state.lives -= 1;
+        burst(b.x, FLOOR_Y - 8, false);
+        state.boxes.splice(i, 1);
+        updateHud();
+        if (state.lives <= 0) {
+          gameOver();
+          return;
+        }
+      }
+    }
+
+    for (let i = state.particles.length - 1; i >= 0; i--) {
+      const p = state.particles[i];
+      p.t += dt;
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      p.vy += 520 * dt;
+      if (p.t >= p.life) state.particles.splice(i, 1);
+    }
+  }
+
+  function roundRect(x, y, w, h, r) {
+    const rr = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + rr, y);
+    ctx.arcTo(x + w, y, x + w, y + h, rr);
+    ctx.arcTo(x + w, y + h, x, y + h, rr);
+    ctx.arcTo(x, y + h, x, y, rr);
+    ctx.arcTo(x, y, x + w, y, rr);
+    ctx.closePath();
+  }
+
+  function drawBg() {
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, "#f7eef8");
+    g.addColorStop(0.55, "#efe4f3");
+    g.addColorStop(1, "#e4dce8");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+
+    /* soft warehouse racks */
+    ctx.save();
+    ctx.globalAlpha = 0.18;
+    for (let col = 0; col < 5; col++) {
+      const x = 18 + col * 88;
+      ctx.fillStyle = "#6b5a78";
+      ctx.fillRect(x, 40, 10, H - 120);
+      for (let row = 0; row < 6; row++) {
+        ctx.fillRect(x, 70 + row * 70, 64, 8);
+      }
+    }
+    ctx.restore();
+
+    /* floor */
+    ctx.fillStyle = "#cfd5df";
+    ctx.fillRect(0, FLOOR_Y, W, H - FLOOR_Y);
+    ctx.fillStyle = "rgba(203, 17, 171, 0.18)";
+    ctx.fillRect(0, FLOOR_Y, W, 4);
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(16, FLOOR_Y + 18);
+    ctx.lineTo(W - 16, FLOOR_Y + 18);
+    ctx.stroke();
+  }
+
+  function drawBox(b) {
+    ctx.save();
+    ctx.translate(b.x, b.y);
+    ctx.rotate(b.rot);
+    const w = b.w;
+    const h = b.h;
+    const g = ctx.createLinearGradient(-w / 2, -h / 2, w / 2, h / 2);
+    if (b.hue === "accent") {
+      g.addColorStop(0, "#f0a0d8");
+      g.addColorStop(1, "#cb11ab");
+    } else {
+      g.addColorStop(0, "#e8c9a6");
+      g.addColorStop(1, "#c49a6c");
+    }
+    ctx.fillStyle = g;
+    roundRect(-w / 2, -h / 2, w, h, 5);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(80, 50, 20, 0.25)";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    /* tape */
+    ctx.fillStyle = "rgba(255, 255, 255, 0.45)";
+    ctx.fillRect(-w / 2, -3, w, 6);
+    ctx.restore();
+  }
+
+  function drawPlayer() {
+    const x = state.playerX;
+    const y = FLOOR_Y - playerH();
+    const w = playerW();
+    const h = playerH();
+    const bob = Math.sin(state.elapsed * 10) * (state.keys.left || state.keys.right ? 2.2 : 0.6);
+
+    ctx.save();
+    ctx.translate(x, y + bob);
+
+    /* shadow */
+    ctx.fillStyle = "rgba(28, 31, 38, 0.15)";
+    ctx.beginPath();
+    ctx.ellipse(0, h - 2, w * 0.42, 6, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    /* legs */
+    ctx.fillStyle = "#2a3344";
+    roundRect(-16, h - 28, 12, 26, 4);
+    ctx.fill();
+    roundRect(4, h - 28, 12, 26, 4);
+    ctx.fill();
+
+    /* shoes */
+    ctx.fillStyle = "#1a1f2a";
+    roundRect(-18, h - 8, 16, 7, 3);
+    ctx.fill();
+    roundRect(2, h - 8, 16, 7, 3);
+    ctx.fill();
+
+    /* body / UD shirt */
+    const bodyG = ctx.createLinearGradient(-20, 10, 20, 50);
+    bodyG.addColorStop(0, "#3a4a66");
+    bodyG.addColorStop(1, "#243044");
+    ctx.fillStyle = bodyG;
+    roundRect(-20, 14, 40, 36, 10);
+    ctx.fill();
+
+    /* shirt logo UD */
+    ctx.fillStyle = "#cb11ab";
+    roundRect(-14, 22, 28, 18, 5);
+    ctx.fill();
+    ctx.fillStyle = "#fff";
+    ctx.font = "800 12px 'Plus Jakarta Sans', system-ui, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("УД", 0, 31);
+
+    /* arms */
+    ctx.fillStyle = "#f0c9b0";
+    roundRect(-28, 20, 10, 22, 5);
+    ctx.fill();
+    roundRect(18, 20, 10, 22, 5);
+    ctx.fill();
+    ctx.fillStyle = "#2a3344";
+    roundRect(-28, 18, 10, 8, 3);
+    ctx.fill();
+    roundRect(18, 18, 10, 8, 3);
+    ctx.fill();
+
+    /* head */
+    ctx.fillStyle = "#f2cbb4";
+    ctx.beginPath();
+    ctx.arc(0, 6, 14, 0, Math.PI * 2);
+    ctx.fill();
+
+    /* hair */
+    ctx.fillStyle = "#3b2a1f";
+    ctx.beginPath();
+    ctx.ellipse(0, -2, 14, 10, 0, Math.PI, 0);
+    ctx.fill();
+
+    /* eyes */
+    ctx.fillStyle = "#1c1f26";
+    ctx.beginPath();
+    ctx.arc(-5, 6, 1.6, 0, Math.PI * 2);
+    ctx.arc(5, 6, 1.6, 0, Math.PI * 2);
+    ctx.fill();
+
+    /* smile */
+    ctx.strokeStyle = "#1c1f26";
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.arc(0, 9, 4, 0.15, Math.PI - 0.15);
+    ctx.stroke();
+
+    /* cap */
+    ctx.fillStyle = "#cb11ab";
+    roundRect(-15, -8, 30, 8, 4);
+    ctx.fill();
+    ctx.fillRect(-16, -2, 32, 4);
+
+    ctx.restore();
+  }
+
+  function drawParticles() {
+    for (const p of state.particles) {
+      const a = 1 - p.t / p.life;
+      ctx.globalAlpha = a;
+      ctx.fillStyle = p.ok ? "#cb11ab" : "#ff6b8a";
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 3.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function draw() {
+    drawBg();
+    for (const b of state.boxes) drawBox(b);
+    drawPlayer();
+    drawParticles();
+
+    if (state.running && speedLevel() > 70) {
+      ctx.fillStyle = "rgba(203, 17, 171, " + ((speedLevel() - 70) / 100) * 0.12 + ")";
+      ctx.fillRect(0, 0, W, H);
+    }
+  }
+
+  function loop(ts) {
+    if (!state.lastT) state.lastT = ts;
+    let dt = (ts - state.lastT) / 1000;
+    state.lastT = ts;
+    dt = Math.min(0.033, dt);
+    update(dt);
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  /* input */
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A" || e.key === "ф" || e.key === "Ф") {
+      state.keys.left = true;
+      e.preventDefault();
+    }
+    if (e.key === "ArrowRight" || e.key === "d" || e.key === "D" || e.key === "в" || e.key === "В") {
+      state.keys.right = true;
+      e.preventDefault();
+    }
+    if ((e.key === "Enter" || e.key === " ") && !state.running) {
+      if (!screenStart.hidden || !screenOver.hidden || !screenWin.hidden) resetGame();
+    }
+  });
+  window.addEventListener("keyup", (e) => {
+    if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A" || e.key === "ф" || e.key === "Ф") state.keys.left = false;
+    if (e.key === "ArrowRight" || e.key === "d" || e.key === "D" || e.key === "в" || e.key === "В") state.keys.right = false;
+  });
+
+  function pointerToX(clientX) {
+    const rect = canvas.getBoundingClientRect();
+    const x = ((clientX - rect.left) / rect.width) * W;
+    state.playerTarget = Math.max(playerW() / 2 + 8, Math.min(W - playerW() / 2 - 8, x));
+  }
+  canvas.addEventListener("pointerdown", (e) => {
+    canvas.setPointerCapture(e.pointerId);
+    pointerToX(e.clientX);
+  });
+  canvas.addEventListener("pointermove", (e) => {
+    if (e.buttons || e.pointerType === "touch") pointerToX(e.clientX);
+  });
+
+  document.getElementById("btn-start").addEventListener("click", resetGame);
+  document.getElementById("btn-retry").addEventListener("click", resetGame);
+  document.getElementById("btn-win").addEventListener("click", resetGame);
+
+  updateHud();
+  draw();
+  requestAnimationFrame(loop);
+})();
+  </script>
+</body>
+</html>

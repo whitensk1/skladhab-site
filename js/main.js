@@ -543,6 +543,40 @@
     }, 3200);
   })();
 
+  /* Mini-game popup: warehouse catch (УД) */
+  (function openWarehouseGame() {
+    const btn = document.querySelector("[data-open-game]");
+    if (!btn) return;
+    btn.addEventListener("click", () => {
+      const url = "game/ud-catch.html";
+      const w = 460;
+      const h = 780;
+      const left = Math.max(0, Math.round((window.screen.width - w) / 2));
+      const top = Math.max(0, Math.round((window.screen.height - h) / 2));
+      const features = [
+        `width=${w}`,
+        `height=${h}`,
+        `left=${left}`,
+        `top=${top}`,
+        "menubar=no",
+        "toolbar=no",
+        "location=no",
+        "status=no",
+        "resizable=yes",
+        "scrollbars=no",
+      ].join(",");
+      const win = window.open(url, "udCatchGame", features);
+      if (!win) {
+        /* popup blocked — open in same tab */
+        window.location.href = url;
+      } else {
+        try {
+          win.focus();
+        } catch (_) {}
+      }
+    });
+  })();
+
   /* Hero glass opacity slider — see background video through the plaque */
   (function heroGlassOpacity() {
     const glass = document.querySelector("[data-hero-glass]");
