@@ -543,11 +543,11 @@
     }, 3200);
   })();
 
-  /* Mini-game popup: warehouse catch (УД) */
+  /* Mini-game popup: warehouse catch (УД) — nav «Получи скидку» + floating launch */
   (function openWarehouseGame() {
-    const btn = document.querySelector("[data-open-game]");
-    if (!btn) return;
-    btn.addEventListener("click", () => {
+    const btns = document.querySelectorAll("[data-open-game]");
+    if (!btns.length) return;
+    const open = () => {
       const url = "game/ud-catch.html";
       const w = 460;
       const h = 780;
@@ -567,14 +567,19 @@
       ].join(",");
       const win = window.open(url, "udCatchGame", features);
       if (!win) {
-        /* popup blocked — open in same tab */
         window.location.href = url;
       } else {
         try {
           win.focus();
         } catch (_) {}
       }
-    });
+      /* close mobile nav if open */
+      const nav = document.getElementById("nav");
+      const toggle = document.getElementById("nav-toggle");
+      if (nav) nav.classList.remove("is-open");
+      if (toggle) toggle.setAttribute("aria-expanded", "false");
+    };
+    btns.forEach((btn) => btn.addEventListener("click", open));
   })();
 
   /* Hero glass opacity slider — see background video through the plaque */
