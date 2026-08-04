@@ -906,6 +906,47 @@ strong { font-weight: 700; }
   line-height: 1.45;
 }
 
+/* Audience pallets — progressive load volume */
+.audience-cards { gap: 12px; }
+.audience-card {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 14px;
+  align-items: center;
+  padding: 12px 14px 12px 12px;
+  overflow: hidden;
+  transition: transform 0.25s var(--ease), box-shadow 0.25s;
+}
+.audience-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(203, 17, 171, 0.08);
+}
+.audience-photo {
+  width: 96px;
+  height: 96px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--soft);
+  flex-shrink: 0;
+}
+.audience-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+.audience-body h3 {
+  margin: 0 0 4px;
+  font-size: 1.05rem;
+}
+.audience-body p {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
 /* Steps — photo + expanded copy (2-col cards) */
 .steps-detail {
   list-style: none;
