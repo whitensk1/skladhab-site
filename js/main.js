@@ -222,7 +222,9 @@
       const next = Math.max(0, Math.min(panels.length - 1, i + dir));
       const el = panels[next];
       if (!el) return;
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      /* Desktop: flush to viewport top (scroll-margin is 0).
+         Mobile keeps scroll-margin under the menu via CSS. */
+      el.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
     };
 
     /* One fixed peek at viewport bottom — updates with the active panel */

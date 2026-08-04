@@ -15,9 +15,10 @@
   --max: 1120px;
   --header-h: 64px;
   --header-top: 12px;
-  /* Content safe field under floating capsule (does NOT offset scroll-snap) */
+  /* Floating capsule size (mobile content pad + anchors use this) */
   --header-offset: calc(var(--header-top) + var(--header-h) + 10px);
-  --panel-pad-y: var(--header-offset);
+  /* Desktop panel content pad — NOT the snap offset under the menu */
+  --panel-pad-y: clamp(20px, 3.2vh, 40px);
   /* Room for fixed next-peek at viewport bottom */
   --panel-next-space: 52px;
   --font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -31,9 +32,9 @@
 html {
   scroll-behavior: smooth;
   scroll-snap-type: y mandatory;
-  /* No scroll-padding: panels snap to full viewport so bottom stays on screen.
-     Content clears the floating menu via internal --header-offset padding. */
+  /* Desktop: panels snap flush to viewport edges (no gap under menu) */
   scroll-padding-top: 0;
+  scroll-padding-bottom: 0;
 }
 body {
   margin: 0;
@@ -43,18 +44,30 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
-/* Full-viewport panels: one flick → whole block fits the screen */
+/*
+  Full-viewport panels (desktop default):
+  one panel = exact viewport, snap top/bottom to screen edges.
+  Mobile overrides padding so content sits under the floating menu.
+*/
 main > section,
 .partners {
   position: relative;
   scroll-snap-align: start;
   scroll-snap-stop: always;
+  box-sizing: border-box;
   min-height: 100svh;
   min-height: 100dvh;
-  box-sizing: border-box;
-  /* top: under menu; bottom: room for fixed next-peek */
-  padding-top: var(--header-offset);
+  height: 100svh;
+  height: 100dvh;
+  max-height: 100svh;
+  max-height: 100dvh;
+  /* modest content inset — floating capsule overlays the panel, snap stays flush */
+  padding-top: var(--panel-pad-y);
   padding-bottom: max(var(--panel-pad-y), calc(var(--panel-next-space) + 16px));
+  overflow-x: hidden;
+  overflow-y: auto;
+  scroll-margin-top: 0;
+  scroll-margin-bottom: 0;
 }
 /* Skip layout/paint work for off-screen panels (big perf win) */
 main > section:not(.hero),
@@ -63,7 +76,7 @@ main > section:not(.hero),
   contain-intrinsic-size: auto 100svh;
 }
 
-/* In-page anchors still clear the floating capsule */
+/* Desktop anchors: no offset — panel sticks to the top edge */
 #contact,
 #services,
 #why,
@@ -72,7 +85,7 @@ main > section:not(.hero),
 #faq,
 #security,
 #convenience {
-  scroll-margin-top: var(--header-offset);
+  scroll-margin-top: 0;
 }
 
 /* Next-block peek — always fixed to viewport bottom (not to panel bottom) */
@@ -310,8 +323,7 @@ strong { font-weight: 700; }
 .btn-lg { min-height: 52px; padding: 0 28px; font-size: 15px; }
 .btn-block { width: 100%; }
 
-/* Hero — full viewport warehouse + glass
-   Vertical pad comes from main > section (under menu + room for next peek) */
+/* Hero — full viewport warehouse + glass (edge-to-edge on desktop) */
 .hero {
   position: relative;
   text-align: center;
@@ -319,7 +331,14 @@ strong { font-weight: 700; }
   border-bottom: 0;
   overflow: hidden;
   min-height: 100svh;
+  min-height: 100dvh;
   height: 100svh;
+  height: 100dvh;
+  max-height: 100svh;
+  max-height: 100dvh;
+  /* glass is flex-centered; no extra top pad under the floating capsule */
+  padding-top: 0;
+  padding-bottom: 0;
   display: flex;
   align-items: center;
   box-sizing: border-box;
@@ -2353,7 +2372,7 @@ body.topic-open { overflow: hidden; }
   :root {
     --header-h: 58px;
     --header-top: max(10px, env(safe-area-inset-top, 0px));
-    /* Safe field: content starts under floating capsule (not the block itself) */
+    /* Phone: content starts under floating capsule */
     --header-offset: calc(var(--header-top) + var(--header-h) + 12px);
     --panel-pad-y: var(--header-offset);
     /* Bottom chrome: phone + messenger FABs + next-peek pill */
@@ -2361,6 +2380,17 @@ body.topic-open { overflow: hidden; }
     --panel-next-space: 44px;
     --content-safe-bottom: calc(var(--fab-space) + var(--panel-next-space) + 8px);
     --sticky-cta-space: var(--fab-space);
+  }
+  /* Phone: anchors clear the menu when jumping between blocks */
+  #contact,
+  #services,
+  #why,
+  #how,
+  #about,
+  #faq,
+  #security,
+  #convenience {
+    scroll-margin-top: var(--header-offset);
   }
   .site-header {
     width: min(var(--max), calc(100% - 20px));
@@ -2374,12 +2404,15 @@ body.topic-open { overflow: hidden; }
    */
   main > section,
   .partners {
+    height: auto;
+    max-height: none;
     min-height: 100svh;
     min-height: 100dvh;
     padding-top: var(--header-offset);
     padding-bottom: var(--content-safe-bottom);
     justify-content: flex-start;
     box-sizing: border-box;
+    overflow: visible;
   }
   .section {
     padding-top: var(--header-offset);
@@ -2391,6 +2424,7 @@ body.topic-open { overflow: hidden; }
     min-height: 100svh;
     min-height: 100dvh;
     height: auto;
+    max-height: none;
     /* keep glass roughly in the middle of the safe content band */
     align-items: center;
   }
@@ -2600,13 +2634,13 @@ html[data-display-mode="5k"] .display-mode-badge {
   }
 }
 
-/* Shared scale helpers for large modes */
+/* Shared scale helpers for large modes (desktop: still flush snap, modest pad) */
 html[data-display-mode="2k"],
 html[data-display-mode="4k"],
 html[data-display-mode="5k"] {
-  /* header offset recompute when --header-h changes */
   --header-offset: calc(var(--header-top) + var(--header-h) + 12px);
-  --panel-pad-y: var(--header-offset);
+  /* do NOT tie panel pad to header — desktop panels stay edge-to-edge */
+  --panel-pad-y: clamp(24px, 3.5vh, 48px);
 }
 
 /* —— 2K (~2560 CSS px and similar) —— */
@@ -2959,7 +2993,7 @@ html[data-display-mode="5k"] .display-mode-badge {
     --header-h: 78px;
     --header-top: 16px;
     --header-offset: calc(var(--header-top) + var(--header-h) + 12px);
-    --panel-pad-y: var(--header-offset);
+    --panel-pad-y: clamp(24px, 3.5vh, 48px);
     font-size: 17.5px;
   }
   html:not([data-display-mode]) .hero-title {
@@ -2979,7 +3013,7 @@ html[data-display-mode="5k"] .display-mode-badge {
     --header-h: 92px;
     --header-top: 20px;
     --header-offset: calc(var(--header-top) + var(--header-h) + 12px);
-    --panel-pad-y: var(--header-offset);
+    --panel-pad-y: clamp(28px, 3.5vh, 56px);
     font-size: 20px;
   }
   html:not([data-display-mode]) .hero-title {
@@ -2999,7 +3033,7 @@ html[data-display-mode="5k"] .display-mode-badge {
     --header-h: 108px;
     --header-top: 24px;
     --header-offset: calc(var(--header-top) + var(--header-h) + 12px);
-    --panel-pad-y: var(--header-offset);
+    --panel-pad-y: clamp(32px, 3.5vh, 64px);
     font-size: 23px;
   }
   html:not([data-display-mode]) .hero-title {
