@@ -646,6 +646,33 @@ strong { font-weight: 700; }
   display: flex;
   align-items: center;
 }
+
+/* Small warehouse team clip (UD logo on tees) */
+.team-video {
+  margin-top: 22px;
+  max-width: 420px;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.28);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
+}
+.team-video__el {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  background: #0e1014;
+}
+.team-video__cap {
+  margin: 0;
+  padding: 8px 12px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.72);
+  background: rgba(0, 0, 0, 0.35);
+}
 .snap-bg {
   position: absolute;
   inset: 0;
