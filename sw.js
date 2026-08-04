@@ -1,5 +1,5 @@
 /* Успешное Дело — lightweight static cache for GitHub Pages */
-const CACHE = "ud-site-v4";
+const CACHE = "ud-site-v5";
 const PRECACHE = [
   "./",
   "./index.html",

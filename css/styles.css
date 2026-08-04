@@ -13,6 +13,8 @@
   --accent-soft: #fce7f6;
   --radius: 18px;
   --max: 1120px;
+  /* Same outer width for floating menu and hero glass plaque */
+  --shell-width: min(var(--max), calc(100vw - 24px));
   --header-h: 64px;
   --header-top: 12px;
   /* Floating capsule size (mobile content pad + anchors use this) */
@@ -179,7 +181,7 @@ strong { font-weight: 700; }
   left: 50%;
   transform: translateX(-50%);
   z-index: 60;
-  width: min(var(--max), calc(100% - 24px));
+  width: var(--shell-width);
   height: var(--header-h);
   display: flex;
   align-items: center;
@@ -268,8 +270,8 @@ strong { font-weight: 700; }
 .header-phone:hover { color: var(--accent); }
 /* Mid desktop: compact but still one line (before hamburger at 960) */
 @media (max-width: 1100px) and (min-width: 961px) {
-  .site-header {
-    width: min(var(--max), calc(100% - 16px));
+  :root {
+    --shell-width: min(var(--max), calc(100vw - 16px));
   }
   .site-header.is-scrolled {
     width: min(960px, calc(100% - 16px));
@@ -419,15 +421,16 @@ strong { font-weight: 700; }
   position: relative;
   z-index: 1;
 }
-/* Glass + opacity slider row */
+/* Glass + opacity slider row — glass matches floating menu width */
 .hero-stage {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: clamp(12px, 2vw, 22px);
-  width: 100%;
-  max-width: 1080px; /* was 980 — room for wider glass + slider */
+  width: auto;
+  max-width: min(calc(var(--max) + 64px), calc(100vw - 12px));
   margin: 0 auto;
+  box-sizing: border-box;
 }
 .hero-glass {
   /* --glass-a: fill opacity; --glass-see: 0 solid → 1 fully open (text invert) */
@@ -437,9 +440,9 @@ strong { font-weight: 700; }
   --glass-see: 0;
   --hero-fg: color-mix(in srgb, #1c1f26 calc((1 - var(--glass-see)) * 100%), #ffffff calc(var(--glass-see) * 100%));
   --hero-fg-soft: color-mix(in srgb, #6b7280 calc((1 - var(--glass-see)) * 100%), rgba(255, 255, 255, 0.88) calc(var(--glass-see) * 100%));
-  flex: 1 1 auto;
-  width: 100%;
-  max-width: 968px; /* ~10% wider than 880px */
+  flex: 0 1 auto;
+  width: var(--shell-width);
+  max-width: 100%;
   margin: 0;
   padding: clamp(28px, 4vw, 44px) clamp(20px, 4vw, 40px);
   border-radius: 28px;
@@ -2827,8 +2830,8 @@ body.topic-open { overflow: hidden; }
   #convenience {
     scroll-margin-top: var(--header-offset);
   }
-  .site-header {
-    width: min(var(--max), calc(100% - 20px));
+  :root {
+    --shell-width: min(var(--max), calc(100vw - 20px));
   }
   .site-header.is-scrolled {
     width: min(420px, calc(100% - 16px));
@@ -2950,12 +2953,10 @@ body.topic-open { overflow: hidden; }
     --header-h: 54px;
     --header-top: max(8px, env(safe-area-inset-top, 0px));
     --header-offset: calc(var(--header-top) + var(--header-h) + 10px);
-  }
-  .site-header {
-    width: calc(100% - 16px);
+    --shell-width: calc(100vw - 16px);
   }
   .site-header.is-scrolled {
-    width: calc(100% - 16px);
+    width: var(--shell-width);
   }
   .logo-img {
     height: 42px;
@@ -2993,7 +2994,8 @@ body.topic-open { overflow: hidden; }
   .hero-stage {
     flex-direction: column;
     gap: 14px;
-    max-width: 100%;
+    width: var(--shell-width);
+    max-width: var(--shell-width);
   }
   .hero-opacity {
     --rail-len: min(52vw, 200px);
@@ -3101,13 +3103,11 @@ html[data-display-mode="5k"] {
 /* —— 2K (~2560 CSS px and similar) —— */
 html[data-display-mode="2k"] {
   --max: 1500px;
+  --shell-width: min(var(--max), calc(100vw - 36px));
   --header-h: 78px;
   --header-top: 16px;
   --radius: 22px;
   font-size: 17.5px;
-}
-html[data-display-mode="2k"] .site-header {
-  width: min(var(--max), calc(100% - 36px));
 }
 html[data-display-mode="2k"] .site-header.is-scrolled {
   width: min(980px, calc(100% - 28px));
@@ -3190,13 +3190,11 @@ html[data-display-mode="2k"] .display-mode-badge {
 /* —— 4K (~3840 CSS px) —— */
 html[data-display-mode="4k"] {
   --max: 1860px;
+  --shell-width: min(var(--max), calc(100vw - 48px));
   --header-h: 92px;
   --header-top: 20px;
   --radius: 26px;
   font-size: 20px;
-}
-html[data-display-mode="4k"] .site-header {
-  width: min(var(--max), calc(100% - 48px));
 }
 html[data-display-mode="4k"] .site-header.is-scrolled {
   width: min(1100px, calc(100% - 40px));
@@ -3325,13 +3323,11 @@ html[data-display-mode="4k"] .display-mode-badge {
 /* —— 5K (~5120 CSS px) —— */
 html[data-display-mode="5k"] {
   --max: 2280px;
+  --shell-width: min(var(--max), calc(100vw - 64px));
   --header-h: 108px;
   --header-top: 24px;
   --radius: 30px;
   font-size: 23px;
-}
-html[data-display-mode="5k"] .site-header {
-  width: min(var(--max), calc(100% - 64px));
 }
 html[data-display-mode="5k"] .site-header.is-scrolled {
   width: min(1280px, calc(100% - 48px));
