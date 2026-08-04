@@ -315,6 +315,67 @@
   /* Player always snappy — never slowed as difficulty rises */
   const PLAYER_SPEED = 620;
 
+  /* Office managers peek from windows with pep-talk / mild sarcasm */
+  const MANAGERS = [
+    {
+      name: "Марина",
+      gender: "f",
+      hair: "curly-dark",
+      skin: "#e8b896",
+      phrase: "Давай, у тебя всё получится!",
+    },
+    {
+      name: "Снежана",
+      gender: "f",
+      hair: "blonde",
+      skin: "#f0c9b0",
+      phrase: "Ой, аккуратнее — ящики дороже, чем моя стрижка!",
+    },
+    {
+      name: "Андрей",
+      gender: "m",
+      hair: "short-brown",
+      skin: "#d4a574",
+      phrase: "Ну давай, герой паллет — клиент уже нервничает!",
+    },
+    {
+      name: "Юля",
+      gender: "f",
+      hair: "ponytail-brown",
+      skin: "#e2b48c",
+      phrase: "Я в тебя верю… ну, процентов на сорок. Шучу — давай!",
+    },
+    {
+      name: "Арина",
+      gender: "f",
+      hair: "long-dark",
+      skin: "#c9956e",
+      phrase: "Скидку 70%? Мечтать не вредно. Лови дальше!",
+    },
+    {
+      name: "Надежда",
+      gender: "f",
+      hair: "bob-auburn",
+      skin: "#e8c4a8",
+      phrase: "Надежда умирает последней. Не умирай раньше ящиков!",
+    },
+    {
+      name: "Андриан",
+      gender: "m",
+      hair: "short-dark",
+      skin: "#c48a60",
+      phrase: "Если поймаешь 100 — я сам в коробку залезу.",
+    },
+    {
+      name: "Андрей",
+      gender: "m",
+      hair: "short-blond",
+      skin: "#f2cbb4",
+      id: "andrey2",
+      phrase: "Брат, это не тетрис. Хотя… почти тетрис. Давай!",
+    },
+  ];
+
   const state = {
     running: false,
     score: 0,
@@ -329,6 +390,9 @@
     lastT: 0,
     best: 0,
     errorShown: false,
+    managerQueue: 0,
+    managerNextAt: 3.5,
+    managerPopup: null,
   };
 
   try {
@@ -421,9 +485,259 @@
     state.elapsed = 0;
     state.lastT = 0;
     state.errorShown = false;
+    state.managerQueue = 0;
+    state.managerNextAt = 3.2;
+    state.managerPopup = null;
     state.running = true;
     hideScreens();
     updateHud();
+  }
+
+  function spawnManagerPopup() {
+    const m = MANAGERS[state.managerQueue % MANAGERS.length];
+    state.managerQueue += 1;
+    const side = state.managerQueue % 2 === 0 ? "right" : "left";
+    state.managerPopup = {
+      m,
+      side,
+      t: 0,
+      life: 4.4,
+      y: 72 + Math.random() * 120,
+    };
+    /*
+      All 8 managers must appear before speed ~55–60.
+      First wave: spaced by score/time until queue finishes, then slower loop.
+    */
+    if (state.managerQueue < MANAGERS.length) {
+      /* first round: finish by ~score 48 / speed ~50 */
+      state.managerNextAt = state.elapsed + 4.2 + Math.random() * 1.4;
+    } else {
+      state.managerNextAt = state.elapsed + 7.5 + Math.random() * 3.5;
+    }
+  }
+
+  function updateManagers(dt) {
+    if (!state.running) return;
+    if (state.managerPopup) {
+      state.managerPopup.t += dt;
+      if (state.managerPopup.t >= state.managerPopup.life) {
+        state.managerPopup = null;
+      }
+      return;
+    }
+    /* also unlock by score milestones so a slow player still sees everyone by ~50 boxes */
+    const milestone =
+      state.managerQueue < MANAGERS.length &&
+      state.score >= 4 + state.managerQueue * 6;
+    if (state.elapsed >= state.managerNextAt || milestone) {
+      spawnManagerPopup();
+    }
+  }
+
+  function wrapText(text, maxW) {
+    const words = String(text).split(/\s+/);
+    const lines = [];
+    let line = "";
+    for (const w of words) {
+      const test = line ? line + " " + w : w;
+      if (ctx.measureText(test).width > maxW && line) {
+        lines.push(line);
+        line = w;
+      } else {
+        line = test;
+      }
+    }
+    if (line) lines.push(line);
+    return lines;
+  }
+
+  function drawManagerFace(m, cx, cy, scale) {
+    const s = scale || 1;
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.scale(s, s);
+
+    /* neck */
+    ctx.fillStyle = m.skin;
+    ctx.fillRect(-6, 10, 12, 10);
+
+    /* head */
+    ctx.beginPath();
+    ctx.arc(0, 0, 16, 0, Math.PI * 2);
+    ctx.fill();
+
+    /* hair styles */
+    ctx.fillStyle =
+      m.hair === "blonde" || m.hair === "short-blond"
+        ? "#e8c96a"
+        : m.hair === "bob-auburn"
+          ? "#a85a3a"
+          : m.hair === "short-brown" || m.hair === "ponytail-brown"
+            ? "#5c3a22"
+            : "#2a1a12";
+
+    if (m.hair === "curly-dark") {
+      for (const p of [
+        [-12, -8],
+        [0, -14],
+        [12, -8],
+        [-14, 0],
+        [14, 0],
+        [-10, -14],
+        [10, -14],
+        [-4, -16],
+        [4, -16],
+      ]) {
+        ctx.beginPath();
+        ctx.arc(p[0], p[1], 7.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    } else if (m.hair === "blonde" || m.hair === "long-dark") {
+      ctx.beginPath();
+      ctx.ellipse(0, -4, 17, 12, 0, Math.PI, 0);
+      ctx.fill();
+      ctx.fillRect(-16, -2, 8, 22);
+      ctx.fillRect(8, -2, 8, 22);
+    } else if (m.hair === "ponytail-brown") {
+      ctx.beginPath();
+      ctx.ellipse(0, -4, 16, 11, 0, Math.PI, 0);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(12, 6, 6, 10, 0.4, 0, Math.PI * 2);
+      ctx.fill();
+    } else if (m.hair === "bob-auburn") {
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 17, 14, 0, Math.PI * 1.05, -0.05);
+      ctx.fill();
+    } else {
+      /* short */
+      ctx.beginPath();
+      ctx.ellipse(0, -6, 15, 9, 0, Math.PI, 0);
+      ctx.fill();
+      ctx.fillRect(-14, -6, 28, 8);
+    }
+
+    /* eyes */
+    ctx.fillStyle = "#1c1f26";
+    ctx.beginPath();
+    ctx.arc(-5.5, 1, 1.7, 0, Math.PI * 2);
+    ctx.arc(5.5, 1, 1.7, 0, Math.PI * 2);
+    ctx.fill();
+
+    /* smile */
+    ctx.strokeStyle = "#1c1f26";
+    ctx.lineWidth = 1.3;
+    ctx.beginPath();
+    ctx.arc(0, 5, 5, 0.15, Math.PI - 0.15);
+    ctx.stroke();
+
+    /* collar / blazer peek */
+    ctx.fillStyle = m.gender === "m" ? "#2c3a52" : "#cb11ab";
+    roundRect(-18, 18, 36, 14, 4);
+    ctx.fill();
+    ctx.fillStyle = "#fff";
+    roundRect(-8, 18, 16, 8, 2);
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  function drawManagerPopup() {
+    const p = state.managerPopup;
+    if (!p) return;
+    const m = p.m;
+    const winW = 118;
+    const winH = 108;
+    const edge = 10;
+    /* slide-in */
+    const appear = Math.min(1, p.t / 0.35);
+    const leave =
+      p.t > p.life - 0.4 ? Math.max(0, (p.life - p.t) / 0.4) : 1;
+    const vis = Math.min(appear, leave);
+    const slide = (1 - vis) * 70;
+
+    const x =
+      p.side === "left" ? edge - slide : W - edge - winW + slide;
+    const y = p.y;
+
+    ctx.save();
+    ctx.globalAlpha = 0.15 + vis * 0.85;
+
+    /* window frame */
+    ctx.fillStyle = "rgba(255, 255, 255, 0.92)";
+    roundRect(x, y, winW, winH, 10);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(203, 17, 171, 0.35)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    /* title bar */
+    ctx.fillStyle = "rgba(203, 17, 171, 0.12)";
+    roundRect(x, y, winW, 22, 10);
+    ctx.fill();
+    ctx.fillRect(x, y + 12, winW, 10);
+    ctx.fillStyle = "#a00a88";
+    ctx.font = "700 11px 'Plus Jakarta Sans', system-ui, sans-serif";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    ctx.fillText(m.name, x + 10, y + 12);
+    ctx.fillStyle = "rgba(28,31,38,0.35)";
+    ctx.font = "700 12px system-ui,sans-serif";
+    ctx.textAlign = "right";
+    ctx.fillText("×", x + winW - 10, y + 11);
+
+    /* glass area */
+    ctx.fillStyle = "rgba(240, 244, 250, 0.95)";
+    roundRect(x + 6, y + 26, winW - 12, winH - 34, 6);
+    ctx.fill();
+
+    drawManagerFace(m, x + winW / 2, y + 62, 1.05);
+
+    /* speech bubble above/beside */
+    const bubbleMax = 150;
+    ctx.font = "600 12px 'Plus Jakarta Sans', system-ui, sans-serif";
+    const lines = wrapText(m.phrase, bubbleMax - 16);
+    const lineH = 15;
+    const bh = 12 + lines.length * lineH;
+    const bw = Math.min(
+      bubbleMax,
+      16 +
+        Math.max(...lines.map((l) => ctx.measureText(l).width), 40)
+    );
+    let bx =
+      p.side === "left" ? x + winW + 8 : x - bw - 8;
+    let by = y + 28;
+    if (bx < 6) bx = 6;
+    if (bx + bw > W - 6) bx = W - 6 - bw;
+
+    ctx.fillStyle = "rgba(255, 255, 255, 0.96)";
+    roundRect(bx, by, bw, bh, 10);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(28, 31, 38, 0.12)";
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+    /* tail */
+    ctx.beginPath();
+    if (p.side === "left") {
+      ctx.moveTo(bx, by + 18);
+      ctx.lineTo(x + winW - 4, y + 48);
+      ctx.lineTo(bx, by + 28);
+    } else {
+      ctx.moveTo(bx + bw, by + 18);
+      ctx.lineTo(x + 4, y + 48);
+      ctx.lineTo(bx + bw, by + 28);
+    }
+    ctx.closePath();
+    ctx.fillStyle = "rgba(255, 255, 255, 0.96)";
+    ctx.fill();
+
+    ctx.fillStyle = "#1c1f26";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    lines.forEach((ln, i) => {
+      ctx.fillText(ln, bx + 8, by + 7 + i * lineH);
+    });
+
+    ctx.restore();
   }
 
   function updateHud() {
@@ -543,6 +857,8 @@
       p.vy += 520 * dt;
       if (p.t >= p.life) state.particles.splice(i, 1);
     }
+
+    updateManagers(dt);
   }
 
   function roundRect(x, y, w, h, r) {
@@ -728,6 +1044,7 @@
     for (const b of state.boxes) drawBox(b);
     drawPlayer();
     drawParticles();
+    drawManagerPopup();
 
     if (state.running && speedLevel() > 70) {
       ctx.fillStyle = "rgba(203, 17, 171, " + ((speedLevel() - 70) / 100) * 0.12 + ")";
@@ -756,7 +1073,14 @@
       e.preventDefault();
     }
     if ((e.key === "Enter" || e.key === " ") && !state.running) {
-      if (!screenStart.hidden || !screenOver.hidden || !screenWin.hidden) resetGame();
+      if (
+        !screenStart.hidden ||
+        !screenOver.hidden ||
+        !screenWin.hidden ||
+        (screenError && !screenError.hidden)
+      ) {
+        resetGame();
+      }
     }
   });
   window.addEventListener("keyup", (e) => {
