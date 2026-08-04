@@ -429,6 +429,85 @@
     const lottieBox = root.querySelector("[data-chat-lottie]");
     if (!toggle || !panel) return;
 
+    /*
+      MAX (package ru.oneme.app) — official public deep links (dev.max.ru):
+        • bots:      https://max.ru/<botName>?start=<payload>
+        • mini-apps: https://max.ru/<botName>?startapp=<payload>
+        • share:     https://max.ru/:share?text=<text>
+        • user ref:  max://user/<user_id>  (needs internal id, not phone)
+      There is NO public “chat by phone” like wa.me.
+      1-tap personal chat needs invite/profile URL from Settings → QR
+      (often https://max.ru/join/<token>). Put it in data-max-profile.
+      Fallback: open native app (Android Intent / iOS App Links).
+    */
+    const PREFILL_MAX =
+      "Здравствуйте! Пишу с сайта: интересует фулфилмент в Москве (FBO/FBS, упаковка, отгрузка). Хочу обсудить сотрудничество.";
+
+    const openMax = (el) => {
+      const profile = (el.getAttribute("data-max-profile") || "").trim();
+      const phone = String(el.getAttribute("data-max-phone") || "").replace(/\D/g, "");
+      const ua = navigator.userAgent || "";
+      const isAndroid = /Android/i.test(ua);
+      const isIOS = /iPhone|iPad|iPod/i.test(ua);
+      const web = "https://max.ru/";
+
+      /* Best path: personal invite / profile deep link → opens chat in app */
+      if (profile) {
+        if (isAndroid || isIOS) {
+          window.location.href = profile;
+        } else {
+          window.open(profile, "_blank", "noopener,noreferrer");
+        }
+        return;
+      }
+
+      /* Soft helper: copy number so user can paste into Max search */
+      if (phone && navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText("+" + phone).catch(() => {});
+      }
+
+      if (isAndroid) {
+        /*
+          Android Intent → package ru.oneme.app (App Links host max.ru).
+          If app missing, browser_fallback_url opens max.ru (download).
+        */
+        const intent =
+          "intent://max.ru/#Intent;scheme=https;package=ru.oneme.app;" +
+          "S.browser_fallback_url=" +
+          encodeURIComponent(web) +
+          ";end";
+        window.location.href = intent;
+        return;
+      }
+
+      if (isIOS) {
+        /*
+          Universal Links on https://max.ru/ open the app when installed.
+          Custom scheme max:// is secondary (may show “invalid address” if absent).
+        */
+        const t0 = Date.now();
+        window.location.href = "max://";
+        window.setTimeout(() => {
+          if (!document.hidden && Date.now() - t0 < 1600) {
+            window.location.href = web;
+          }
+        }, 700);
+        return;
+      }
+
+      /* Desktop: web client + share composer with prefilled text */
+      const share =
+        "https://max.ru/:share?text=" + encodeURIComponent(PREFILL_MAX);
+      window.open(share, "_blank", "noopener,noreferrer");
+    };
+
+    root.querySelectorAll("[data-open-max]").forEach((el) => {
+      el.addEventListener("click", (e) => {
+        e.preventDefault();
+        openMax(el);
+      });
+    });
+
     let anim = null;
     let scriptLoading = false;
     const reduced =
