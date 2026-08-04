@@ -920,24 +920,23 @@ strong { font-weight: 700; }
   background: #f3e8f4;
 }
 
-/* Right stack: 70% badge above floating phone (one fixed unit) */
+/* Right stack: 70% sits clearly above the phone (higher, not glued to it) */
 .phone-stack {
   position: fixed;
   right: max(18px, env(safe-area-inset-right, 0px));
-  bottom: max(96px, calc(env(safe-area-inset-bottom, 0px) + 88px));
+  /* higher than FABs / next-peek so 70% is above the phone body, not mid-content */
+  bottom: max(120px, calc(env(safe-area-inset-bottom, 0px) + 108px));
   z-index: 54;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 0;
   width: min(118px, 22vw);
   pointer-events: none;
-  /* animate stack as a unit — transform only (cheap) */
-  animation: phone-reel-float 7s ease-in-out infinite;
-  will-change: transform;
   contain: layout style;
 }
 .phone-stack > * { pointer-events: auto; }
+/* only the phone gently floats — badge stays put higher above */
 .phone-reel {
   position: relative;
   right: auto;
@@ -945,7 +944,8 @@ strong { font-weight: 700; }
   z-index: 1;
   width: 100%;
   pointer-events: none;
-  animation: none;
+  animation: phone-reel-float 7s ease-in-out infinite;
+  will-change: transform;
   filter: none;
 }
 .phone-reel__bezel {
@@ -984,12 +984,19 @@ strong { font-weight: 700; }
   0%, 100% { transform: translate3d(0, 0, 0) rotate(-2deg); }
   50% { transform: translate3d(0, -8px, 0) rotate(1.5deg); }
 }
+/* 70% lifted well above the phone bezel */
+.phone-stack .game-launch {
+  margin-bottom: 28px;
+  z-index: 3;
+}
 @media (max-width: 960px) {
   .phone-stack {
     width: min(92px, 26vw);
     right: max(10px, env(safe-area-inset-right, 0px));
-    bottom: max(130px, calc(env(safe-area-inset-bottom, 0px) + 118px));
-    gap: 8px;
+    bottom: max(148px, calc(env(safe-area-inset-bottom, 0px) + 132px));
+  }
+  .phone-stack .game-launch {
+    margin-bottom: 22px;
   }
   .phone-reel__bezel { border-radius: 18px; padding: 5px; }
   .phone-reel__video { border-radius: 13px; }
@@ -997,11 +1004,14 @@ strong { font-weight: 700; }
 @media (max-width: 640px) {
   .phone-stack {
     width: 78px;
-    bottom: max(140px, calc(env(safe-area-inset-bottom, 0px) + 128px));
+    bottom: max(158px, calc(env(safe-area-inset-bottom, 0px) + 142px));
+  }
+  .phone-stack .game-launch {
+    margin-bottom: 18px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .phone-stack { animation: none; will-change: auto; }
+  .phone-reel { animation: none; will-change: auto; }
 }
 /* Light complex premium backdrop — layered lilac mesh, orbs, soft grain */
 .snap-bg {
