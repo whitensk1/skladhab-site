@@ -15,9 +15,11 @@
   --max: 1120px;
   --header-h: 64px;
   --header-top: 12px;
-  /* Space reserved under floating capsule; equal top+bottom keeps panel content optically centered */
+  /* Content safe field under floating capsule (does NOT offset scroll-snap) */
   --header-offset: calc(var(--header-top) + var(--header-h) + 10px);
   --panel-pad-y: var(--header-offset);
+  /* Room for fixed next-peek at viewport bottom */
+  --panel-next-space: 52px;
   --font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
   --wb: #cb11ab;
@@ -29,7 +31,9 @@
 html {
   scroll-behavior: smooth;
   scroll-snap-type: y mandatory;
-  scroll-padding-top: var(--header-offset);
+  /* No scroll-padding: panels snap to full viewport so bottom stays on screen.
+     Content clears the floating menu via internal --header-offset padding. */
+  scroll-padding-top: 0;
 }
 body {
   margin: 0;
@@ -39,35 +43,58 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
-/* Full-viewport panels: one flick → whole block */
+/* Full-viewport panels: one flick → whole block fits the screen */
 main > section,
 .partners {
   position: relative;
   scroll-snap-align: start;
   scroll-snap-stop: always;
   min-height: 100svh;
+  min-height: 100dvh;
   box-sizing: border-box;
+  /* top: under menu; bottom: room for fixed next-peek */
+  padding-top: var(--header-offset);
+  padding-bottom: max(var(--panel-pad-y), calc(var(--panel-next-space) + 16px));
 }
 
-/* Next-block peek: oval at bottom of panel — blinks with ↓ arrow, clickable */
+/* In-page anchors still clear the floating capsule */
+#contact,
+#services,
+#why,
+#how,
+#about,
+#faq,
+#security,
+#convenience {
+  scroll-margin-top: var(--header-offset);
+}
+
+/* Next-block peek — always fixed to viewport bottom (not to panel bottom) */
 .panel-next {
-  position: absolute;
+  /* legacy class kept for shared styles; in-panel instances are not used */
+  display: none;
+}
+.panel-next-fixed {
+  display: block;
+  position: fixed;
   left: 50%;
-  bottom: max(14px, env(safe-area-inset-bottom, 0px));
+  right: auto;
+  top: auto;
+  bottom: max(18px, env(safe-area-inset-bottom, 0px));
   transform: translateX(-50%);
-  z-index: 8;
+  z-index: 52;
   appearance: none;
   -webkit-appearance: none;
   cursor: pointer;
   max-width: min(92vw, 420px);
   padding: 9px 22px;
   border-radius: 999px;
-  background: rgba(28, 31, 38, 0.28);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  backdrop-filter: blur(12px) saturate(1.1);
-  -webkit-backdrop-filter: blur(12px) saturate(1.1);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  color: rgba(255, 255, 255, 0.78);
+  background: rgba(28, 31, 38, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(14px) saturate(1.15);
+  -webkit-backdrop-filter: blur(14px) saturate(1.15);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.14);
+  color: rgba(255, 255, 255, 0.88);
   font: inherit;
   font-size: 12.5px;
   font-weight: 600;
@@ -77,36 +104,30 @@ main > section,
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.2s ease;
 }
-.panel-next:hover {
+.panel-next-fixed:hover {
   color: #fff;
-  border-color: rgba(255, 255, 255, 0.4);
+  border-color: rgba(255, 255, 255, 0.45);
+  transform: translateX(-50%) translateY(-1px);
 }
-/* Dark panels: lighter frosted glass, same soft white label */
-.hero .panel-next,
-.snap .panel-next {
-  background: rgba(255, 255, 255, 0.14);
-  border-color: rgba(255, 255, 255, 0.28);
-  color: rgba(255, 255, 255, 0.82);
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+.panel-next-fixed.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
-/* Mobile fixed next-label (always in viewport above bottom chrome) */
-.panel-next-fixed {
-  display: none;
-}
-/* Shared blink — next arrow + active next label, same tempo */
+/* Shared blink — next arrow + fixed next label, same tempo */
 @keyframes peek-blink {
   0%, 100% { opacity: 1; filter: brightness(1); }
   50% { opacity: 0.38; filter: brightness(1.25); }
 }
 .panel-nav__btn--next:not(:disabled):not(.is-disabled),
-.panel-next.is-active-peek,
 .panel-next-fixed:not(.is-hidden) {
   animation: peek-blink 1.55s ease-in-out infinite;
 }
 @media (prefers-reduced-motion: reduce) {
   .panel-nav__btn--next,
-  .panel-next {
+  .panel-next-fixed {
     animation: none !important;
   }
 }
@@ -245,10 +266,9 @@ strong { font-weight: 700; }
 .btn-block { width: 100%; }
 
 /* Hero — full viewport warehouse + glass
-   Equal vertical pad so align-items:center sits in true visual middle */
+   Vertical pad comes from main > section (under menu + room for next peek) */
 .hero {
   position: relative;
-  padding: var(--panel-pad-y) 0;
   text-align: center;
   background: #0e1014;
   border-bottom: 0;
@@ -573,10 +593,8 @@ strong { font-weight: 700; }
   opacity: 0.92;
 }
 
-/* Full-viewport panels: equal top/bottom pad under capsule
-   → flex center stays optical midpoint of the screen */
+/* Full-viewport panels: pad under menu is on main > section */
 .section {
-  padding: var(--panel-pad-y) 0;
   background: #fff;
   display: flex;
   flex-direction: column;
@@ -600,7 +618,6 @@ strong { font-weight: 700; }
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: var(--panel-pad-y) 0;
   box-sizing: border-box;
 }
 .section-head {
@@ -641,7 +658,6 @@ strong { font-weight: 700; }
   overflow: hidden;
   background: #0c0c10;
   color: #fff;
-  padding: var(--panel-pad-y) 0;
   border: 0;
   display: flex;
   align-items: center;
@@ -2075,29 +2091,12 @@ body.topic-open { overflow: hidden; }
     padding: var(--header-offset) 0 var(--content-safe-bottom);
     justify-content: center;
   }
-  /* In-section peeks sit below the fold on tall panels — hide on mobile */
-  .panel-next:not(.panel-next-fixed) {
-    display: none !important;
-  }
-  /* Always-visible next label in the viewport safe bottom (between FABs) */
+  /* Next peek stays fixed; lift above phone/messenger FABs on mobile */
   .panel-next-fixed {
-    display: block;
-    position: fixed;
-    left: 50%;
-    right: auto;
-    top: auto;
     bottom: calc(var(--fab-space) + 4px);
-    transform: translateX(-50%);
-    z-index: 52;
     max-width: min(52vw, 220px);
     padding: 8px 14px;
     font-size: 11.5px;
-    transition: opacity 0.25s ease, visibility 0.25s ease;
-  }
-  .panel-next-fixed.is-hidden {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
   }
   .snap-inner,
   .duo,
@@ -2340,7 +2339,7 @@ html[data-display-mode="2k"] .panel-nav__btn {
   width: 56px;
   height: 56px;
 }
-html[data-display-mode="2k"] .panel-next {
+html[data-display-mode="2k"] .panel-next-fixed {
   font-size: 14px;
   padding: 10px 26px;
 }
@@ -2428,7 +2427,7 @@ html[data-display-mode="4k"] .panel-nav__btn svg {
   width: 22px;
   height: 22px;
 }
-html[data-display-mode="4k"] .panel-next {
+html[data-display-mode="4k"] .panel-next-fixed {
   font-size: 16px;
   padding: 12px 30px;
   bottom: max(22px, env(safe-area-inset-bottom, 0px));
@@ -2525,7 +2524,7 @@ html[data-display-mode="5k"] .panel-nav__btn svg {
   width: 26px;
   height: 26px;
 }
-html[data-display-mode="5k"] .panel-next {
+html[data-display-mode="5k"] .panel-next-fixed {
   font-size: 18px;
   padding: 14px 34px;
   bottom: max(28px, env(safe-area-inset-bottom, 0px));

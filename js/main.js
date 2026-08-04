@@ -147,20 +147,7 @@
       el.scrollIntoView({ behavior: "smooth", block: "start" });
     };
 
-    /* In-panel next labels (desktop) */
-    panels.forEach((panel) => {
-      const label = String(panel.getAttribute("data-next") || "").trim();
-      if (!label) return;
-      const el = document.createElement("button");
-      el.type = "button";
-      el.className = "panel-next";
-      el.textContent = label;
-      el.setAttribute("aria-label", "Дальше: " + label);
-      el.addEventListener("click", () => go(1));
-      panel.appendChild(el);
-    });
-
-    /* Mobile fixed peek */
+    /* One fixed peek at viewport bottom — updates with the active panel */
     const fixed = document.createElement("button");
     fixed.type = "button";
     fixed.className = "panel-next panel-next-fixed is-hidden";
@@ -181,9 +168,6 @@
       }
       const panel = panels[i];
       const label = panel ? String(panel.getAttribute("data-next") || "").trim() : "";
-      document.querySelectorAll(".panel-next:not(.panel-next-fixed)").forEach((el) => {
-        el.classList.toggle("is-active-peek", el.parentElement === panel);
-      });
       if (label) {
         fixed.textContent = label;
         fixed.setAttribute("aria-label", "Дальше: " + label);
