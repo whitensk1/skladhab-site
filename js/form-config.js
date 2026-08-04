@@ -17,6 +17,5 @@
 window.UD_LEADS = {
   delivery: "both",
   telegramUser: "anton111289",
-  /* Пример: "ysc1_................................" */
-  smartCaptchaClientKey: "",
+  smartCaptchaClientKey: "ysc1_mhYnFzfFPGYjQ421CVprBQd4v2lDLp7R8bQPSWCe48c82fd0",
 };
