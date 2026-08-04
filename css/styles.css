@@ -579,16 +579,17 @@ strong { font-weight: 700; }
 .snap-intro {
   position: relative;
   z-index: 1;
-  overflow: visible;
+  /* clip watermark to left column so it never covers metrics */
+  overflow: hidden;
   isolation: isolate;
 }
-/* Original UD logo as oversized soft watermark behind left text */
+/* Original UD logo — strictly behind text, can hang off left/top edges */
 .snap-logo-bg {
   position: absolute;
-  left: -28%;
-  top: 42%;
-  transform: translateY(-50%) rotate(-6deg);
-  width: min(220%, 1040px);
+  left: -42%;
+  top: -8%;
+  transform: rotate(-8deg);
+  width: min(260%, 1180px);
   max-width: none;
   height: auto;
   opacity: 0.09;
@@ -600,7 +601,7 @@ strong { font-weight: 700; }
 }
 .snap-intro > *:not(.snap-logo-bg) {
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 .snap-intro .eyebrow {
   color: #f0a0d8;
@@ -1661,8 +1662,9 @@ body.topic-open { overflow: hidden; }
   .stats-premium { grid-template-columns: 1fr; }
   .snap { padding: 56px 0; }
   .snap-logo-bg {
-    left: -18%;
-    width: min(180%, 720px);
+    left: -38%;
+    top: -12%;
+    width: min(200%, 820px);
     opacity: 0.08;
   }
   .steps-detail { grid-template-columns: 1fr; }
