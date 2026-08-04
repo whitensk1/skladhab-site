@@ -582,31 +582,34 @@
     btns.forEach((btn) => btn.addEventListener("click", open));
   })();
 
-  /* Hero glass opacity slider — see background video through the plaque */
+  /* Hero glass opacity slider — delicate control, text invert + tagline reveal */
   (function heroGlassOpacity() {
     const glass = document.querySelector("[data-hero-glass]");
     const range = document.querySelector("[data-hero-opacity]");
-    const valEl = document.querySelector("[data-hero-opacity-val]");
+    const line = document.querySelector("[data-hero-transparency-line]");
     if (!glass || !range) return;
 
     const KEY = "ud-hero-glass-see";
-    /* 0 = dense (default), 100 = very transparent so video shows through */
+    /* 0 = dense, 100 = fully open (slider at top when vertical) */
     const apply = (raw) => {
       const v = Math.max(0, Math.min(100, Number(raw) || 0));
       const t = v / 100;
-      /* fill alpha: ~0.76 → ~0.08 */
       const glassA = 0.76 - t * 0.68;
-      /* blur softens as we open the glass */
       const blur = 20 - t * 16;
-      /* brand tint fades so video isn't covered by color fog */
       const tint = 1 - t * 0.78;
       glass.style.setProperty("--glass-a", glassA.toFixed(3));
       glass.style.setProperty("--glass-blur", blur.toFixed(1) + "px");
       glass.style.setProperty("--glass-tint", tint.toFixed(3));
+      glass.style.setProperty("--glass-see", t.toFixed(3));
       range.value = String(v);
-      if (valEl) valEl.textContent = v + "%";
       range.setAttribute("aria-valuenow", String(v));
-      range.setAttribute("aria-valuetext", v + "% прозрачности");
+      range.setAttribute(
+        "aria-valuetext",
+        t < 0.05 ? "плотный блок" : t > 0.95 ? "полная прозрачность" : "прозрачность " + v
+      );
+      if (line) {
+        line.setAttribute("aria-hidden", t < 0.08 ? "true" : "false");
+      }
     };
 
     try {
