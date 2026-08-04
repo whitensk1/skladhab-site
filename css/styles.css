@@ -458,45 +458,12 @@ strong { font-weight: 700; }
   justify-content: center;
 }
 .section.soft { background: var(--bg); }
-/* Main services band — distinct tint + soft people figures */
+/* Main services band — distinct tint */
 .section-services {
-  position: relative;
-  overflow: hidden;
   background:
     linear-gradient(180deg, #fce7f6 0%, #fdf2f9 48%, #fae8f5 100%);
   border-block: 1px solid rgba(203, 17, 171, 0.08);
   padding: 72px 0;
-}
-.section-services > .container {
-  position: relative;
-  z-index: 2;
-}
-.services-figures {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  overflow: hidden;
-}
-.services-figure {
-  position: absolute;
-  bottom: 0;
-  height: min(88%, 620px);
-  width: auto;
-  max-width: 42vw;
-  object-fit: contain;
-  object-position: bottom center;
-  opacity: 0.22;
-  filter: blur(1.2px) saturate(0.85) brightness(1.05);
-  mix-blend-mode: multiply;
-}
-.services-figure--manager {
-  left: -4%;
-  transform: scaleX(-1);
-}
-.services-figure--worker {
-  right: -2%;
-  opacity: 0.2;
 }
 .section-why {
   background: #eef0f3;
@@ -583,16 +550,16 @@ strong { font-weight: 700; }
   overflow: hidden;
   isolation: isolate;
 }
-/* Original UD logo — strictly behind text, can hang off left/top edges */
+/* UD logo watermark — original balanced placement */
 .snap-logo-bg {
   position: absolute;
-  left: -42%;
-  top: -8%;
-  transform: rotate(-8deg);
-  width: min(260%, 1180px);
+  left: -18%;
+  top: 42%;
+  transform: translateY(-50%) rotate(-6deg);
+  width: min(120%, 520px);
   max-width: none;
   height: auto;
-  opacity: 0.09;
+  opacity: 0.14;
   filter: brightness(1.35) contrast(1.05);
   pointer-events: none;
   user-select: none;
@@ -602,6 +569,22 @@ strong { font-weight: 700; }
 .snap-intro > *:not(.snap-logo-bg) {
   position: relative;
   z-index: 2;
+}
+.snap-intro .pills-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  max-width: 420px;
+}
+.snap-intro .pills-grid .pill {
+  justify-content: center;
+  width: 100%;
+}
+/* last pill centered on second row when odd count */
+.snap-intro .pills-grid .pill:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+  max-width: calc(50% - 5px);
+  justify-self: center;
 }
 .snap-intro .eyebrow {
   color: #f0a0d8;
@@ -1579,11 +1562,6 @@ body.topic-open { overflow: hidden; }
     width: 16px;
     height: 16px;
   }
-  .services-figure {
-    height: min(70%, 380px);
-    max-width: 48vw;
-    opacity: 0.14;
-  }
   .security-shield-bg {
     height: 70%;
     opacity: 0.08;
@@ -1662,10 +1640,13 @@ body.topic-open { overflow: hidden; }
   .stats-premium { grid-template-columns: 1fr; }
   .snap { padding: 56px 0; }
   .snap-logo-bg {
-    left: -38%;
-    top: -12%;
-    width: min(200%, 820px);
-    opacity: 0.08;
+    left: -12%;
+    top: 40%;
+    width: min(100%, 360px);
+    opacity: 0.12;
+  }
+  .snap-intro .pills-grid {
+    max-width: none;
   }
   .steps-detail { grid-template-columns: 1fr; }
   .step-card { grid-template-columns: 1fr; }

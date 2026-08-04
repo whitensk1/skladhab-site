@@ -194,8 +194,8 @@
       html: `
         <p>После упаковки доставляем своим транспортом — на склады маркетплейсов и по запросу в регионы. Не зависим от «свободных машин» сторонних перевозчиков в пиковые дни.</p>
         <div class="topic-fleet">
-          <img src="media/fleet/van-1.jpg" alt="Автопарк DLUCK" loading="lazy" />
-          <img src="media/fleet/fleet.jpg" alt="Транспорт компании" loading="lazy" />
+          <img src="media/fleet/scania-1.jpg" alt="Грузовик Scania" loading="lazy" />
+          <img src="media/fleet/scania-2.jpg" alt="Автопарк Scania" loading="lazy" />
         </div>
       `,
     },
