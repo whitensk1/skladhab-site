@@ -710,12 +710,12 @@ strong { font-weight: 700; }
   color: var(--accent);
 }
 
-/* Snap / about — premium showcase on Moscow skyline */
+/* Snap / about — light premium lilac (WB-adjacent, airy) */
 .snap {
   position: relative;
   overflow: hidden;
-  background: #0c0c10;
-  color: #fff;
+  background: #faf6fb;
+  color: var(--ink);
   border: 0;
   display: flex;
   align-items: center;
@@ -727,16 +727,18 @@ strong { font-weight: 700; }
   max-width: 440px;
   border-radius: 18px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(0, 0, 0, 0.35);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.32);
+  border: 1px solid rgba(203, 17, 171, 0.14);
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 18px 44px rgba(160, 40, 140, 0.12);
 }
 .about-show__el {
   display: block;
   width: 100%;
   aspect-ratio: 16 / 9;
   object-fit: cover;
-  background: #0e1014;
+  background: #f3e8f4;
 }
 
 /* Floating vertical phone reel — independent, visible across the whole site */
@@ -804,22 +806,62 @@ strong { font-weight: 700; }
 @media (prefers-reduced-motion: reduce) {
   .phone-reel { animation: none; }
 }
-/* Avoid clashing with chat FAB on the right — phone sits above it */
+/* Light complex premium backdrop — layered lilac mesh, orbs, soft grain */
 .snap-bg {
   position: absolute;
   inset: 0;
-  background: url("../media/hero/moscow-biz.jpg") center / cover no-repeat;
-  filter: blur(6px) saturate(0.85) brightness(0.55);
-  transform: scale(1.08);
   z-index: 0;
+  transform: none;
+  filter: none;
+  background-color: #faf6fb;
+  background-image:
+    /* soft WB-magenta orbs */
+    radial-gradient(ellipse 55% 48% at 8% 12%, rgba(232, 120, 210, 0.28), transparent 62%),
+    radial-gradient(ellipse 48% 42% at 92% 18%, rgba(203, 17, 171, 0.16), transparent 58%),
+    radial-gradient(ellipse 50% 45% at 78% 88%, rgba(180, 90, 210, 0.18), transparent 60%),
+    radial-gradient(ellipse 42% 38% at 12% 78%, rgba(255, 190, 230, 0.35), transparent 55%),
+    radial-gradient(ellipse 60% 50% at 50% 50%, rgba(255, 255, 255, 0.55), transparent 70%),
+    /* diagonal light sheen */
+    linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(250, 240, 252, 0.4) 40%, rgba(243, 220, 248, 0.55) 100%),
+    /* subtle geometric lattice */
+    repeating-linear-gradient(
+      -18deg,
+      transparent 0,
+      transparent 46px,
+      rgba(203, 17, 171, 0.035) 46px,
+      rgba(203, 17, 171, 0.035) 47px
+    ),
+    repeating-linear-gradient(
+      72deg,
+      transparent 0,
+      transparent 64px,
+      rgba(160, 60, 180, 0.028) 64px,
+      rgba(160, 60, 180, 0.028) 65px
+    );
+}
+.snap-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.45;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
 }
 .snap-veil {
   position: absolute;
   inset: 0;
   z-index: 1;
   background:
-    radial-gradient(ellipse 70% 60% at 15% 20%, rgba(203, 17, 171, 0.22), transparent 55%),
-    linear-gradient(120deg, rgba(10, 10, 14, 0.88) 0%, rgba(10, 10, 14, 0.72) 45%, rgba(10, 10, 14, 0.82) 100%);
+    radial-gradient(ellipse 80% 70% at 20% 0%, rgba(255, 255, 255, 0.55), transparent 55%),
+    radial-gradient(ellipse 55% 50% at 100% 40%, rgba(203, 17, 171, 0.07), transparent 50%),
+    linear-gradient(
+      165deg,
+      rgba(255, 252, 255, 0.42) 0%,
+      rgba(250, 244, 252, 0.18) 48%,
+      rgba(246, 236, 250, 0.35) 100%
+    );
 }
 .snap-inner {
   position: relative;
@@ -836,7 +878,7 @@ strong { font-weight: 700; }
   overflow: hidden;
   isolation: isolate;
 }
-/* UD logo watermark — original balanced placement */
+/* UD logo watermark — soft on light lilac */
 .snap-logo-bg {
   position: absolute;
   left: -18%;
@@ -845,12 +887,12 @@ strong { font-weight: 700; }
   width: min(120%, 520px);
   max-width: none;
   height: auto;
-  opacity: 0.14;
-  filter: brightness(1.35) contrast(1.05);
+  opacity: 0.09;
+  filter: none;
   pointer-events: none;
   user-select: none;
   z-index: 0;
-  mix-blend-mode: screen;
+  mix-blend-mode: multiply;
 }
 .snap-intro > *:not(.snap-logo-bg) {
   position: relative;
@@ -873,7 +915,7 @@ strong { font-weight: 700; }
   justify-self: center;
 }
 .snap-intro .eyebrow {
-  color: #f0a0d8;
+  color: var(--accent);
 }
 .snap-intro h2 {
   margin: 0 0 16px;
@@ -881,23 +923,27 @@ strong { font-weight: 700; }
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 1.05;
-  color: #fff;
+  color: var(--ink);
+  background: linear-gradient(120deg, #1c1f26 0%, #5a1a4e 48%, #cb11ab 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 .lead-text {
   margin: 0 0 14px;
-  color: rgba(255, 255, 255, 0.78);
+  color: rgba(28, 31, 38, 0.78);
   font-size: 1.08rem;
   line-height: 1.65;
   max-width: 44ch;
 }
 .lead-text--second {
   margin-bottom: 14px;
-  color: rgba(255, 255, 255, 0.62);
+  color: rgba(28, 31, 38, 0.62);
   font-size: 1.02rem;
 }
 .lead-text--accent {
   margin: 0 0 22px;
-  color: rgba(255, 255, 255, 0.88);
+  color: rgba(28, 31, 38, 0.86);
   font-size: 1.08rem;
   font-weight: 600;
   line-height: 1.55;
@@ -905,31 +951,33 @@ strong { font-weight: 700; }
 }
 .lead-text--accent u {
   text-decoration: none;
-  border-bottom: 1.5px solid rgba(240, 160, 216, 0.85);
+  border-bottom: 1.5px solid rgba(203, 17, 171, 0.55);
   padding-bottom: 1px;
-  color: #fff;
+  color: var(--accent-hover);
   font-weight: 700;
   text-underline-offset: 3px;
 }
 .lead-text strong {
-  color: #fff;
+  color: var(--ink);
   font-weight: 700;
 }
 .snap-premium .pills .pill {
-  border-color: rgba(255, 255, 255, 0.18);
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
-  backdrop-filter: blur(8px);
+  border-color: rgba(203, 17, 171, 0.16);
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--ink);
+  backdrop-filter: blur(10px) saturate(1.1);
+  -webkit-backdrop-filter: blur(10px) saturate(1.1);
+  box-shadow: 0 6px 18px rgba(160, 40, 140, 0.06);
 }
 .snap-premium .pills .pill:hover,
 .snap-premium .pills .pill-btn:hover {
-  border-color: rgba(240, 160, 216, 0.55);
-  background: rgba(203, 17, 171, 0.28);
-  color: #fff;
+  border-color: rgba(203, 17, 171, 0.42);
+  background: rgba(252, 231, 246, 0.95);
+  color: var(--accent-hover);
 }
 .snap-premium .pill-hint {
-  border-color: rgba(240, 160, 216, 0.55);
-  color: #f0a0d8;
+  border-color: rgba(203, 17, 171, 0.4);
+  color: var(--accent);
 }
 
 .stats-premium {
@@ -937,7 +985,7 @@ strong { font-weight: 700; }
   grid-template-columns: 1fr 1fr;
   gap: 14px;
 }
-/* Photo-backed metric cards: large figure on top of atmospheric bg */
+/* Photo-backed metric cards — light photos, frosted bottom for type */
 .stats-premium .stat {
   position: relative;
   display: flex;
@@ -950,15 +998,19 @@ strong { font-weight: 700; }
   padding: 0;
   border-radius: 22px;
   overflow: hidden;
-  background: #12141a;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.28);
+  background: #f8f0f7;
+  border: 1px solid rgba(203, 17, 171, 0.12);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.85) inset,
+    0 14px 36px rgba(120, 40, 110, 0.1);
   transition: transform 0.3s var(--ease), border-color 0.3s, box-shadow 0.3s;
 }
 .stats-premium .stat:hover {
   transform: translateY(-3px);
-  border-color: rgba(240, 160, 216, 0.4);
-  box-shadow: 0 20px 52px rgba(0, 0, 0, 0.36);
+  border-color: rgba(203, 17, 171, 0.32);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 20px 48px rgba(160, 40, 140, 0.16);
 }
 .stats-premium .stat-bg {
   position: absolute;
@@ -974,7 +1026,7 @@ strong { font-weight: 700; }
 .stats-premium .stat:hover .stat-bg {
   transform: scale(1.08);
 }
-/* Readable overlay over photo */
+/* Soft white/lilac veil — keeps photos bright, type readable */
 .stats-premium .stat--photo::after {
   content: "";
   position: absolute;
@@ -984,11 +1036,12 @@ strong { font-weight: 700; }
   background:
     linear-gradient(
       180deg,
-      rgba(8, 10, 14, 0.18) 0%,
-      rgba(8, 10, 14, 0.35) 38%,
-      rgba(8, 10, 14, 0.82) 72%,
-      rgba(8, 10, 14, 0.94) 100%
-    );
+      rgba(255, 252, 255, 0.08) 0%,
+      rgba(255, 248, 252, 0.12) 32%,
+      rgba(252, 242, 250, 0.72) 68%,
+      rgba(250, 238, 248, 0.94) 100%
+    ),
+    radial-gradient(ellipse 90% 55% at 50% 100%, rgba(203, 17, 171, 0.08), transparent 70%);
 }
 .stats-premium .stat-body {
   position: relative;
@@ -1002,30 +1055,31 @@ strong { font-weight: 700; }
   display: block;
   font-size: clamp(1.85rem, 3.2vw, 2.45rem);
   font-weight: 800;
-  color: #fff;
+  color: #1c1f26;
   letter-spacing: -0.045em;
   line-height: 1.05;
-  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.45);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.65);
 }
-/* Revenue figure — gold */
+/* Revenue figure — WB magenta → deep orchid */
 .stats-premium .stat--revenue .stat-body strong {
-  color: #f0d48a;
-  background: linear-gradient(180deg, #fff4c8 0%, #e8c56a 42%, #c9a24a 100%);
+  color: #cb11ab;
+  background: linear-gradient(135deg, #e85cc8 0%, #cb11ab 45%, #8a0a72 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 12px rgba(232, 197, 106, 0.35));
+  filter: drop-shadow(0 2px 10px rgba(203, 17, 171, 0.22));
+  text-shadow: none;
 }
 .stats-premium .stat--revenue {
-  border-color: rgba(232, 197, 106, 0.28);
+  border-color: rgba(203, 17, 171, 0.22);
 }
 .stats-premium .stat--revenue:hover {
-  border-color: rgba(232, 197, 106, 0.5);
+  border-color: rgba(203, 17, 171, 0.42);
 }
 .stats-premium .stat-body span {
   display: block;
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.88);
+  color: rgba(28, 31, 38, 0.88);
   font-weight: 700;
   margin-top: 8px;
   letter-spacing: -0.01em;
@@ -1036,7 +1090,7 @@ strong { font-weight: 700; }
   font-style: normal;
   font-size: 12.5px;
   line-height: 1.4;
-  color: rgba(255, 255, 255, 0.58);
+  color: rgba(28, 31, 38, 0.55);
   font-weight: 500;
 }
 /* legacy icon layout (other pages if any) */
