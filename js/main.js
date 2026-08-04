@@ -75,7 +75,8 @@
     });
   }
 
-  const reveals = document.querySelectorAll(".reveal");
+  /* Scroll reveal: blocks fade/slide in as they enter the viewport */
+  const reveals = document.querySelectorAll(".reveal, .reveal-stagger");
   if (reveals.length && "IntersectionObserver" in window) {
     const io = new IntersectionObserver(
       (entries) => {
@@ -86,12 +87,38 @@
           }
         });
       },
-      { threshold: 0.1, rootMargin: "0px 0px -30px 0px" }
+      { threshold: 0.12, rootMargin: "0px 0px -8% 0px" }
     );
     reveals.forEach((el) => io.observe(el));
   } else {
     reveals.forEach((el) => el.classList.add("is-in"));
   }
+
+  // Stagger cards inside common grids when parent section is revealed
+  document.querySelectorAll(".services-grid, .steps-row, .feature-grid, .stats-premium").forEach((grid) => {
+    if (!grid.classList.contains("reveal") && !grid.classList.contains("reveal-stagger")) {
+      grid.classList.add("reveal-stagger");
+    }
+  });
+  // re-observe newly tagged stagger grids
+  document.querySelectorAll(".reveal-stagger:not(.is-in)").forEach((el) => {
+    if ("IntersectionObserver" in window) {
+      const io2 = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add("is-in");
+              io2.unobserve(e.target);
+            }
+          });
+        },
+        { threshold: 0.08, rootMargin: "0px 0px -6% 0px" }
+      );
+      io2.observe(el);
+    } else {
+      el.classList.add("is-in");
+    }
+  });
 
   /* Topic pills — explanations */
   const topics = {
