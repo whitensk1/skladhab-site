@@ -787,11 +787,11 @@ strong { font-weight: 700; }
   align-items: start;
 }
 
-/* Convenience + security feature cards */
-.feature-band {
-  margin-top: 48px;
-  padding-top: 40px;
-  border-top: 1px solid var(--line);
+/* Convenience — separate full panel */
+.section-convenience {
+  background:
+    linear-gradient(180deg, #faf7fb 0%, #f3eef5 50%, #f7f4f8 100%);
+  border-block: 1px solid rgba(203, 17, 171, 0.08);
 }
 .feature-grid {
   display: grid;
