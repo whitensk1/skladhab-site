@@ -931,30 +931,9 @@ strong { font-weight: 700; }
 .section-faq {
   position: relative;
   overflow: hidden;
-}
-.faq-logo-bg {
-  display: none;
-}
-@media (min-width: 901px) {
-  .faq-logo-bg {
-    display: block;
-    position: absolute;
-    left: 50%;
-    top: 48%;
-    transform: translate(-50%, -50%) rotate(-5deg);
-    width: min(92%, 980px);
-    max-width: 1100px;
-    height: auto;
-    opacity: 0.07;
-    filter: brightness(0.4);
-    pointer-events: none;
-    z-index: 0;
-    user-select: none;
-  }
-  .section-faq > .container {
-    position: relative;
-    z-index: 1;
-  }
+  background:
+    radial-gradient(ellipse 70% 55% at 12% 88%, rgba(203, 17, 171, 0.05), transparent 55%),
+    #fff;
 }
 
 /* Scroll reveal — fade/slide in as you scroll */
@@ -1450,9 +1429,33 @@ body.topic-open { overflow: hidden; }
 .faq-layout .contact-panel { grid-area: contact; }
 .footer-inline {
   grid-area: foot;
-  padding: 8px 4px 0;
+  position: relative;
+  overflow: hidden;
+  padding: 20px 18px 18px;
   font-size: 13px;
   color: var(--muted);
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: linear-gradient(145deg, #fafafa 0%, #f3f4f6 100%);
+  isolation: isolate;
+}
+/* Soft UD mark behind footer info only — not over FAQ/contact */
+.footer-watermark {
+  position: absolute;
+  right: -12%;
+  bottom: -28%;
+  width: min(88%, 340px);
+  height: auto;
+  opacity: 0.07;
+  filter: grayscale(0.2) brightness(0.55);
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+  transform: rotate(-8deg);
+}
+.footer-inline > *:not(.footer-watermark) {
+  position: relative;
+  z-index: 1;
 }
 .footer-inline .footer-logo {
   height: 88px;
