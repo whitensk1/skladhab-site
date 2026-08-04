@@ -348,8 +348,8 @@
     {
       name: "Арина",
       gender: "f",
-      hair: "long-dark",
-      skin: "#c9956e",
+      hair: "short-blonde",
+      skin: "#f0c9b0",
       phrase: "Скидку 70%? Мечтать не вредно. Лови дальше!",
     },
     {
@@ -373,6 +373,14 @@
       skin: "#f2cbb4",
       id: "andrey2",
       phrase: "Брат, это не тетрис. Хотя… почти тетрис. Давай!",
+    },
+    {
+      name: "Маша",
+      gender: "f",
+      hair: "blonde",
+      skin: "#f3d0b8",
+      figure: "curvy",
+      phrase: "Осторожно с ящиками — у меня тоже хрупкий груз, ха!",
     },
   ];
 
@@ -553,13 +561,48 @@
 
   function drawManagerFace(m, cx, cy, scale) {
     const s = scale || 1;
+    const curvy = m.figure === "curvy";
     ctx.save();
     ctx.translate(cx, cy);
     ctx.scale(s, s);
 
+    /* shoulders / bust (cartoon, peeking from window) */
+    if (m.gender === "f") {
+      const bodyW = curvy ? 46 : 36;
+      const bodyH = curvy ? 22 : 16;
+      ctx.fillStyle = "#cb11ab";
+      roundRect(-bodyW / 2, 16, bodyW, bodyH, 6);
+      ctx.fill();
+      if (curvy) {
+        /* stylized fuller figure — simple shapes under blouse */
+        ctx.fillStyle = m.skin;
+        ctx.beginPath();
+        ctx.ellipse(-11, 22, 10, 9, 0, 0, Math.PI * 2);
+        ctx.ellipse(11, 22, 10, 9, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#e85cc8";
+        roundRect(-bodyW / 2 + 2, 16, bodyW - 4, 12, 5);
+        ctx.fill();
+        ctx.fillStyle = "#fff";
+        roundRect(-9, 16, 18, 9, 3);
+        ctx.fill();
+      } else {
+        ctx.fillStyle = "#fff";
+        roundRect(-8, 18, 16, 8, 2);
+        ctx.fill();
+      }
+    } else {
+      ctx.fillStyle = "#2c3a52";
+      roundRect(-18, 18, 36, 14, 4);
+      ctx.fill();
+      ctx.fillStyle = "#fff";
+      roundRect(-8, 18, 16, 8, 2);
+      ctx.fill();
+    }
+
     /* neck */
     ctx.fillStyle = m.skin;
-    ctx.fillRect(-6, 10, 12, 10);
+    ctx.fillRect(-6, 10, 12, 12);
 
     /* head */
     ctx.beginPath();
@@ -567,14 +610,17 @@
     ctx.fill();
 
     /* hair styles */
-    ctx.fillStyle =
-      m.hair === "blonde" || m.hair === "short-blond"
-        ? "#e8c96a"
-        : m.hair === "bob-auburn"
-          ? "#a85a3a"
-          : m.hair === "short-brown" || m.hair === "ponytail-brown"
-            ? "#5c3a22"
-            : "#2a1a12";
+    const isBlonde =
+      m.hair === "blonde" ||
+      m.hair === "short-blond" ||
+      m.hair === "short-blonde";
+    ctx.fillStyle = isBlonde
+      ? "#e8c96a"
+      : m.hair === "bob-auburn"
+        ? "#a85a3a"
+        : m.hair === "short-brown" || m.hair === "ponytail-brown"
+          ? "#5c3a22"
+          : "#2a1a12";
 
     if (m.hair === "curly-dark") {
       for (const p of [
@@ -592,12 +638,35 @@
         ctx.arc(p[0], p[1], 7.5, 0, Math.PI * 2);
         ctx.fill();
       }
+    } else if (m.hair === "short-blonde") {
+      /* pixie / short blonde cut */
+      ctx.beginPath();
+      ctx.ellipse(0, -5, 16, 11, 0, Math.PI, 0);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(-12, 0, 6, 8, -0.2, 0, Math.PI * 2);
+      ctx.ellipse(12, 0, 6, 8, 0.2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillRect(-15, -8, 30, 10);
+      /* side fringe */
+      ctx.beginPath();
+      ctx.moveTo(-14, -2);
+      ctx.quadraticCurveTo(-8, 6, -4, 2);
+      ctx.lineTo(-12, -4);
+      ctx.fill();
     } else if (m.hair === "blonde" || m.hair === "long-dark") {
       ctx.beginPath();
       ctx.ellipse(0, -4, 17, 12, 0, Math.PI, 0);
       ctx.fill();
       ctx.fillRect(-16, -2, 8, 22);
       ctx.fillRect(8, -2, 8, 22);
+      if (m.hair === "blonde" && curvy) {
+        /* longer blonde waves */
+        ctx.beginPath();
+        ctx.ellipse(-15, 10, 7, 12, -0.15, 0, Math.PI * 2);
+        ctx.ellipse(15, 10, 7, 12, 0.15, 0, Math.PI * 2);
+        ctx.fill();
+      }
     } else if (m.hair === "ponytail-brown") {
       ctx.beginPath();
       ctx.ellipse(0, -4, 16, 11, 0, Math.PI, 0);
@@ -610,7 +679,7 @@
       ctx.ellipse(0, 0, 17, 14, 0, Math.PI * 1.05, -0.05);
       ctx.fill();
     } else {
-      /* short */
+      /* short (men / generic) */
       ctx.beginPath();
       ctx.ellipse(0, -6, 15, 9, 0, Math.PI, 0);
       ctx.fill();
@@ -631,14 +700,6 @@
     ctx.arc(0, 5, 5, 0.15, Math.PI - 0.15);
     ctx.stroke();
 
-    /* collar / blazer peek */
-    ctx.fillStyle = m.gender === "m" ? "#2c3a52" : "#cb11ab";
-    roundRect(-18, 18, 36, 14, 4);
-    ctx.fill();
-    ctx.fillStyle = "#fff";
-    roundRect(-8, 18, 16, 8, 2);
-    ctx.fill();
-
     ctx.restore();
   }
 
@@ -646,8 +707,9 @@
     const p = state.managerPopup;
     if (!p) return;
     const m = p.m;
-    const winW = 118;
-    const winH = 108;
+    const curvy = m.figure === "curvy";
+    const winW = curvy ? 128 : 118;
+    const winH = curvy ? 118 : 108;
     const edge = 10;
     /* slide-in */
     const appear = Math.min(1, p.t / 0.35);
