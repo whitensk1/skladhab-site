@@ -597,14 +597,14 @@
     </span>
   </a>
 
-  <!-- Bottom-right: multi-messenger FAB (Telegram → WhatsApp → Max), like ffspace -->
+  <!-- Bottom-right: YourGood-style Lottie FAB (WA ↔ TG ↔ Max), as on ffspace.ru -->
   <div class="chat-fab" data-chat-fab>
     <div class="chat-fab__panel" data-chat-panel hidden>
       <div class="chat-fab__head">
-        <span>Напишите нам</span>
+        <span>Напишите нам!</span>
         <button type="button" class="chat-fab__close" data-chat-close aria-label="Закрыть">×</button>
       </div>
-      <p class="chat-fab__hint">Выберите удобный мессенджер — ответим в рабочее время и поможем с расчётом.</p>
+      <p class="chat-fab__hint">Рассчитаем вам заказ — выберите удобный мессенджер.</p>
       <a class="chat-fab__link chat-fab__link--tg" href="https://t.me/+74952550131" target="_blank" rel="noopener noreferrer">
         <span class="chat-fab__link-ico" aria-hidden="true">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8-1.55 7.3c-.12.52-.43.65-.87.4l-2.4-1.77-1.16 1.12c-.13.13-.24.24-.49.24l.17-2.43 4.43-4c.19-.17-.04-.27-.3-.1l-5.48 3.45-2.36-.74c-.51-.16-.52-.51.11-.76l9.22-3.56c.43-.16.8.1.68.75z"/></svg>
@@ -637,19 +637,8 @@
       </a>
     </div>
     <button type="button" class="chat-fab__toggle" data-chat-toggle aria-label="Напишите нам" aria-expanded="false">
-      <span class="chat-fab__cycle" aria-hidden="true">
-        <span class="chat-fab__icon is-active" data-chat-icon="telegram">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8-1.55 7.3c-.12.52-.43.65-.87.4l-2.4-1.77-1.16 1.12c-.13.13-.24.24-.49.24l.17-2.43 4.43-4c.19-.17-.04-.27-.3-.1l-5.48 3.45-2.36-.74c-.51-.16-.52-.51.11-.76l9.22-3.56c.43-.16.8.1.68.75z"/></svg>
-        </span>
-        <span class="chat-fab__icon" data-chat-icon="whatsapp">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.77.46 3.43 1.27 4.88L2.1 21.9l5.17-1.35A9.96 9.96 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm5.45 14.2c-.23.65-1.34 1.2-1.86 1.28-.48.07-1.08.1-1.74-.11-.4-.12-.91-.3-1.57-.58-2.76-1.2-4.56-3.98-4.7-4.16-.13-.18-1.1-1.46-1.1-2.79 0-1.32.69-1.97.94-2.24.25-.27.54-.34.72-.34h.52c.16 0 .39-.06.6.46.23.55.77 1.88.84 2.02.07.14.11.3.02.48-.09.18-.13.3-.27.46-.13.16-.28.36-.4.48-.13.13-.27.27-.12.53.16.27.7 1.15 1.5 1.86 1.03.92 1.9 1.2 2.17 1.34.27.13.43.11.59-.07.16-.18.68-.79.86-1.06.18-.27.36-.22.6-.13.25.09 1.57.74 1.84.88.27.13.45.2.52.32.07.11.07.65-.16 1.3z"/></svg>
-        </span>
-        <span class="chat-fab__icon" data-chat-icon="max">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-            <path d="M7.2 15.6V8.4h2.1l2.2 4.2 2.2-4.2h2.1v7.2h-1.8v-4.35l-2 3.75h-1.05l-2-3.75V15.6H7.2z" fill="currentColor"/>
-          </svg>
-        </span>
-      </span>
+      <!-- Lottie from YourGood widget (same asset as ffspace): WA / TG / Max cycle -->
+      <span class="chat-fab__lottie" data-chat-lottie aria-hidden="true"></span>
       <span class="chat-fab__close-ico" aria-hidden="true">×</span>
     </button>
   </div>
@@ -657,6 +646,7 @@
   <div class="sticky-cta">
     <a class="btn btn-primary" href="tel:+74952550131">+7 (495) 255-01-31</a>
   </div>
-  <script src="js/main.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js" defer></script>
+  <script src="js/main.js" defer></script>
 </body>
 </html>

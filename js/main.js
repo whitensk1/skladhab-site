@@ -185,37 +185,68 @@
     sync();
   })();
 
-  /* Messenger FAB: cycle Telegram → WhatsApp → Max; open «Напишите нам» */
+  /* Messenger FAB: YourGood Lottie (same as ffspace) + «Напишите нам!» panel */
   (function chatFab() {
     const root = document.querySelector("[data-chat-fab]");
     if (!root) return;
     const toggle = root.querySelector("[data-chat-toggle]");
     const panel = root.querySelector("[data-chat-panel]");
     const closeBtn = root.querySelector("[data-chat-close]");
-    const icons = Array.from(root.querySelectorAll("[data-chat-icon]"));
-    if (!toggle || !panel || !icons.length) return;
+    const lottieBox = root.querySelector("[data-chat-lottie]");
+    if (!toggle || !panel) return;
 
-    let i = 0;
+    let anim = null;
     const reduced =
       window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    const showIcon = (idx) => {
-      icons.forEach((el, n) => el.classList.toggle("is-active", n === idx));
+    const loadLottie = () => {
+      if (!lottieBox || !window.lottie || anim) return;
+      try {
+        anim = window.lottie.loadAnimation({
+          container: lottieBox,
+          renderer: "svg",
+          loop: !reduced,
+          autoplay: !reduced,
+          path: "media/chat/whatsapp-telegram-max.json",
+          rendererSettings: { progressiveLoad: true, hideOnTransparent: true },
+        });
+        if (reduced) {
+          anim.addEventListener("DOMLoaded", () => {
+            try {
+              anim.goToAndStop(0, true);
+            } catch (_) {}
+          });
+        }
+      } catch (err) {
+        console.warn("[chat-fab] lottie failed", err);
+      }
     };
-    showIcon(0);
 
-    if (!reduced) {
-      setInterval(() => {
-        if (root.classList.contains("is-open")) return;
-        i = (i + 1) % icons.length;
-        showIcon(i);
-      }, 2400);
+    if (window.lottie) loadLottie();
+    else {
+      /* script is deferred; wait a tick / poll briefly */
+      let n = 0;
+      const wait = window.setInterval(() => {
+        n += 1;
+        if (window.lottie) {
+          window.clearInterval(wait);
+          loadLottie();
+        } else if (n > 40) {
+          window.clearInterval(wait);
+        }
+      }, 50);
     }
 
     const setOpen = (open) => {
       root.classList.toggle("is-open", open);
       panel.hidden = !open;
       toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      if (anim) {
+        try {
+          if (open) anim.pause();
+          else if (!reduced) anim.play();
+        } catch (_) {}
+      }
     };
 
     toggle.addEventListener("click", () => setOpen(panel.hidden));
