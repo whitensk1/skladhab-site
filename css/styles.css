@@ -511,17 +511,22 @@ strong { font-weight: 700; }
     radial-gradient(ellipse 55% 50% at 0% 100%, rgba(255, 204, 0, 0.22), transparent 55%);
 }
 
-/* Delicate vertical opacity rail — no labels, thin track */
+/* Delicate vertical opacity rail — narrower shell, longer track, airy ends */
 .hero-opacity {
+  --rail-len: 168px; /* visual height of the track after rotate */
+  --rail-gap: 34px;  /* clear space above/below track inside the pill */
   flex: 0 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 18px 6px;
+  width: 22px;
+  min-height: calc(var(--rail-len) + var(--rail-gap) * 2);
+  padding: var(--rail-gap) 0;
+  box-sizing: border-box;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.11);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px) saturate(1.05);
   -webkit-backdrop-filter: blur(10px) saturate(1.05);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
@@ -531,11 +536,11 @@ strong { font-weight: 700; }
 .hero-opacity__range {
   -webkit-appearance: none;
   appearance: none;
-  width: 112px;
-  height: 3px;
-  margin: 40px -40px;
+  width: var(--rail-len);
+  height: 2.5px;
+  margin: calc(var(--rail-len) / 2 - 1px) calc(var(--rail-len) / -2);
   border-radius: 999px;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.18));
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.16));
   outline: none;
   transform: rotate(-90deg);
   cursor: pointer;
@@ -544,20 +549,20 @@ strong { font-weight: 700; }
 .hero-opacity__range::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 14px;
-  height: 14px;
+  width: 13px;
+  height: 13px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1.5px solid rgba(203, 17, 171, 0.4);
+  background: rgba(255, 255, 255, 0.96);
+  border: 1.5px solid rgba(203, 17, 171, 0.42);
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.18);
   cursor: grab;
 }
 .hero-opacity__range::-moz-range-thumb {
-  width: 14px;
-  height: 14px;
+  width: 13px;
+  height: 13px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1.5px solid rgba(203, 17, 171, 0.4);
+  background: rgba(255, 255, 255, 0.96);
+  border: 1.5px solid rgba(203, 17, 171, 0.42);
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.18);
   cursor: grab;
 }
@@ -800,18 +805,22 @@ strong { font-weight: 700; }
 
 /* Reveal left→right as slider opens; fully readable at top (see=1) */
 .hero-transparency-line {
-  margin: 18px auto 0;
-  max-width: 36ch;
+  margin: 22px auto 0;
+  max-width: 22ch;
   text-align: center;
-  font-size: clamp(0.88rem, 1.6vw, 1.02rem);
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  line-height: 1.35;
+  font-size: clamp(1.2rem, 2.8vw, 1.65rem);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
   color: #fff;
-  text-shadow: 0 1px 14px rgba(0, 0, 0, 0.45);
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.55),
+    0 4px 22px rgba(0, 0, 0, 0.45),
+    0 0 28px rgba(0, 0, 0, 0.25);
   /* clip from the right so text unveils left → right */
   clip-path: inset(0 calc((1 - var(--glass-see)) * 100%) 0 0);
-  opacity: calc(var(--glass-see) * 0.35 + var(--glass-see) * var(--glass-see) * 0.65);
+  /* visible earlier and stronger once fully open */
+  opacity: calc(0.2 + var(--glass-see) * 0.8);
   transition: clip-path 0.08s linear, opacity 0.08s linear;
   pointer-events: none;
   white-space: normal;
@@ -2834,17 +2843,26 @@ body.topic-open { overflow: hidden; }
     max-width: 100%;
   }
   .hero-opacity {
+    --rail-len: min(52vw, 200px);
+    --rail-gap: 18px;
     flex-direction: row;
-    width: min(100%, 220px);
-    padding: 8px 14px;
+    width: auto;
+    min-width: calc(var(--rail-len) + var(--rail-gap) * 2);
+    min-height: 22px;
+    height: 22px;
+    padding: 0 var(--rail-gap);
     border-radius: 999px;
   }
   .hero-opacity__range {
-    width: min(160px, 48vw);
-    height: 3px;
+    width: var(--rail-len);
+    height: 2.5px;
     margin: 0;
     transform: none;
-    flex: 1 1 auto;
+    flex: 0 0 auto;
+  }
+  .hero-transparency-line {
+    font-size: clamp(1.1rem, 4.2vw, 1.4rem);
+    max-width: 18ch;
   }
   /* slightly softer snap on small screens if content overflows */
   main > section {
