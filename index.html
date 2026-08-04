@@ -576,8 +576,13 @@
               <input type="checkbox" name="consent" required />
               <span>Согласен на обработку ПДн и с <a href="privacy.html">политикой</a></span>
             </label>
-            <button type="submit" class="btn btn-primary btn-block">Отправить заявку</button>
+            <div class="field field--captcha" data-captcha-wrap hidden>
+              <div class="g-recaptcha" data-recaptcha-box></div>
+              <p class="field-hint">Подтвердите, что вы не робот</p>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block" data-lead-submit>Отправить заявку</button>
             <div class="form-success" role="status"></div>
+            <div class="form-error" role="alert" hidden></div>
           </form>
         </div>
 
@@ -739,6 +744,7 @@
   <div class="sticky-cta">
     <a class="btn btn-primary" href="#contact" data-tel="a" data-tel-action="call" data-tel-show>Позвонить</a>
   </div>
+  <script src="js/form-config.js"></script>
   <script src="js/main.js" defer></script>
 </body>
 </html>

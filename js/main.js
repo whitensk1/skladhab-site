@@ -1274,71 +1274,229 @@
     if (e.key === "Escape" && modal && !modal.hidden) closeTopic();
   });
 
-  document.querySelectorAll("[data-lead-form]").forEach((form) => {
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const fd = new FormData(form);
-      if (String(fd.get("company") || "").trim()) return;
+  /* Lead form: Formspree + reCAPTCHA (keys in js/form-config.js) */
+  (function leadForms() {
+    const cfg = window.UD_LEADS || {};
+    const endpoint = String(cfg.formspreeEndpoint || "").trim();
+    const siteKey = String(cfg.recaptchaSiteKey || "").trim();
+    const protectedMode = !!(endpoint && siteKey);
 
-      const payload = {
-        legal: String(fd.get("legal") || fd.get("name") || "").trim(),
-        phone: String(fd.get("phone") || "").trim(),
-        email: String(fd.get("email") || "").trim(),
-        category: String(fd.get("category") || "").trim(),
-        message: String(fd.get("message") || "").trim(),
-        page: location.pathname,
-        source: form.getAttribute("data-source") || "site",
-        timestamp: new Date().toISOString(),
-      };
+    let recaptchaReady = null;
+    const ensureRecaptcha = () => {
+      if (!siteKey) return Promise.resolve(false);
+      if (window.grecaptcha && window.grecaptcha.render) {
+        return Promise.resolve(true);
+      }
+      if (recaptchaReady) return recaptchaReady;
+      recaptchaReady = new Promise((resolve) => {
+        const s = document.createElement("script");
+        s.src = "https://www.google.com/recaptcha/api.js?hl=ru&render=explicit";
+        s.async = true;
+        s.onload = () => {
+          const wait = () => {
+            if (window.grecaptcha && window.grecaptcha.render) resolve(true);
+            else window.setTimeout(wait, 40);
+          };
+          wait();
+        };
+        s.onerror = () => resolve(false);
+        document.head.appendChild(s);
+      });
+      return recaptchaReady;
+    };
 
-      if (!payload.legal || !payload.phone) {
-        alert("Укажите юридическое лицо и телефон.");
-        return;
-      }
-      if (form.querySelector('[name="email"]') && !payload.email) {
-        alert("Укажите email.");
-        return;
-      }
-      if (form.querySelector('[name="category"]') && !payload.category) {
-        alert("Укажите категорию товаров.");
-        return;
-      }
-      if (!fd.get("consent")) {
-        alert("Нужно согласие на обработку персональных данных.");
-        return;
-      }
-
-      console.log("[lead]", payload);
-      try {
-        const stored = JSON.parse(localStorage.getItem("ud_leads") || "[]");
-        stored.push(payload);
-        localStorage.setItem("ud_leads", JSON.stringify(stored.slice(-50)));
-      } catch (_) {}
-
+    const showMsg = (form, kind, text) => {
       const success = form.querySelector(".form-success");
+      const err = form.querySelector(".form-error");
       if (success) {
-        success.classList.add("is-visible");
-        const office = contactCloak.pretty(contactCloak.digits("o"));
-        success.textContent =
-          "Заявка принята. Мы свяжемся с вами для индивидуального расчёта." +
-          (office ? " Также можно позвонить: " + office : "");
+        success.classList.toggle("is-visible", kind === "ok");
+        if (kind === "ok") success.textContent = text;
+      }
+      if (err) {
+        if (kind === "err") {
+          err.hidden = false;
+          err.classList.add("is-visible");
+          err.textContent = text;
+        } else {
+          err.hidden = true;
+          err.classList.remove("is-visible");
+          err.textContent = "";
+        }
+      }
+    };
+
+    document.querySelectorAll("[data-lead-form]").forEach((form) => {
+      const captchaWrap = form.querySelector("[data-captcha-wrap]");
+      const captchaBox = form.querySelector("[data-recaptcha-box]");
+      const submitBtn = form.querySelector("[data-lead-submit]") || form.querySelector('[type="submit"]');
+      let widgetId = null;
+
+      if (protectedMode && captchaWrap && captchaBox) {
+        captchaWrap.hidden = false;
+        ensureRecaptcha().then((ok) => {
+          if (!ok || !window.grecaptcha) return;
+          try {
+            widgetId = window.grecaptcha.render(captchaBox, {
+              sitekey: siteKey,
+              theme: "light",
+            });
+          } catch (err) {
+            console.warn("[lead] recaptcha render", err);
+          }
+        });
       }
 
-      const mailto = form.getAttribute("data-mailto");
-      if (mailto) {
-        const subject = encodeURIComponent("Заявка на фулфилмент — Успешное Дело");
-        const body = encodeURIComponent(
-          `Юрлицо / бренд: ${payload.legal}\nТелефон: ${payload.phone}\nEmail: ${payload.email}\nКатегория: ${payload.category}\n\nКомментарий:\n${payload.message}`
-        );
-        // delay so user sees success
-        setTimeout(() => {
-          window.location.href = `mailto:${mailto}?subject=${subject}&body=${body}`;
-        }, 400);
-      }
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const fd = new FormData(form);
+        if (String(fd.get("company") || "").trim()) return;
 
-      form.reset();
+        const payload = {
+          legal: String(fd.get("legal") || fd.get("name") || "").trim(),
+          phone: String(fd.get("phone") || "").trim(),
+          email: String(fd.get("email") || "").trim(),
+          category: String(fd.get("category") || "").trim(),
+          message: String(fd.get("message") || "").trim(),
+          page: location.pathname,
+          source: form.getAttribute("data-source") || "site",
+          timestamp: new Date().toISOString(),
+        };
+
+        if (!payload.legal || !payload.phone) {
+          showMsg(form, "err", "Укажите юридическое лицо и телефон.");
+          return;
+        }
+        if (form.querySelector('[name="email"]') && !payload.email) {
+          showMsg(form, "err", "Укажите email.");
+          return;
+        }
+        if (form.querySelector('[name="category"]') && !payload.category) {
+          showMsg(form, "err", "Укажите категорию товаров.");
+          return;
+        }
+        if (!fd.get("consent")) {
+          showMsg(form, "err", "Нужно согласие на обработку персональных данных.");
+          return;
+        }
+
+        let captchaToken = "";
+        if (protectedMode) {
+          try {
+            captchaToken =
+              (window.grecaptcha &&
+                (widgetId != null
+                  ? window.grecaptcha.getResponse(widgetId)
+                  : window.grecaptcha.getResponse())) ||
+              "";
+          } catch (_) {
+            captchaToken = "";
+          }
+          if (!captchaToken) {
+            showMsg(form, "err", "Пройдите проверку «Я не робот».");
+            return;
+          }
+        }
+
+        showMsg(form, "clear", "");
+        if (submitBtn) {
+          submitBtn.classList.add("is-loading");
+          submitBtn.disabled = true;
+        }
+
+        const finishOk = () => {
+          try {
+            const stored = JSON.parse(localStorage.getItem("ud_leads") || "[]");
+            stored.push(payload);
+            localStorage.setItem("ud_leads", JSON.stringify(stored.slice(-50)));
+          } catch (_) {}
+          const office = contactCloak.pretty(contactCloak.digits("o"));
+          showMsg(
+            form,
+            "ok",
+            "Заявка принята. Мы свяжемся с вами для индивидуального расчёта." +
+              (office ? " Также можно позвонить: " + office : "")
+          );
+          form.reset();
+          if (window.grecaptcha && widgetId != null) {
+            try {
+              window.grecaptcha.reset(widgetId);
+            } catch (_) {}
+          }
+        };
+
+        try {
+          if (protectedMode) {
+            const body = new FormData();
+            body.set("legal", payload.legal);
+            body.set("phone", payload.phone);
+            body.set("email", payload.email);
+            body.set("_replyto", payload.email);
+            body.set("category", payload.category);
+            body.set("message", payload.message);
+            body.set("page", payload.page);
+            body.set("source", payload.source);
+            body.set("timestamp", payload.timestamp);
+            body.set("g-recaptcha-response", captchaToken);
+            body.set("_subject", "Заявка на фулфилмент — Успешное Дело");
+
+            const res = await fetch(endpoint, {
+              method: "POST",
+              body,
+              headers: { Accept: "application/json" },
+            });
+            let data = null;
+            try {
+              data = await res.json();
+            } catch (_) {}
+            if (!res.ok) {
+              const msg =
+                (data && (data.error || data.message)) ||
+                "Не удалось отправить. Попробуйте позже или позвоните нам.";
+              showMsg(form, "err", String(msg));
+              if (window.grecaptcha && widgetId != null) {
+                try {
+                  window.grecaptcha.reset(widgetId);
+                } catch (_) {}
+              }
+              return;
+            }
+            finishOk();
+          } else {
+            /* Fallback until Formspree + reCAPTCHA keys are set in form-config.js */
+            console.log("[lead]", payload);
+            finishOk();
+            const mailto = form.getAttribute("data-mailto");
+            if (mailto) {
+              const subject = encodeURIComponent("Заявка на фулфилмент — Успешное Дело");
+              const body = encodeURIComponent(
+                `Юрлицо / бренд: ${payload.legal}\nТелефон: ${payload.phone}\nEmail: ${payload.email}\nКатегория: ${payload.category}\n\nКомментарий:\n${payload.message}`
+              );
+              window.setTimeout(() => {
+                window.location.href = `mailto:${mailto}?subject=${subject}&body=${body}`;
+              }, 400);
+            }
+          }
+        } catch (err) {
+          console.warn("[lead] submit failed", err);
+          showMsg(
+            form,
+            "err",
+            "Ошибка сети. Проверьте интернет или напишите нам в мессенджер."
+          );
+          if (window.grecaptcha && widgetId != null) {
+            try {
+              window.grecaptcha.reset(widgetId);
+            } catch (_) {}
+          }
+        } finally {
+          if (submitBtn) {
+            submitBtn.classList.remove("is-loading");
+            submitBtn.disabled = false;
+          }
+        }
+      });
     });
-  });
+  })();
 
   /* Service worker: cache static assets for snappier revisits (GitHub Pages) */
   if ("serviceWorker" in navigator) {
