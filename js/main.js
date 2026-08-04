@@ -582,7 +582,7 @@
     btns.forEach((btn) => btn.addEventListener("click", open));
   })();
 
-  /* Hero glass opacity slider — delicate control, text invert + tagline reveal */
+  /* Hero glass opacity — nudge the slider, it auto-glides to open or closed */
   (function heroGlassOpacity() {
     const glass = document.querySelector("[data-hero-glass]");
     const range = document.querySelector("[data-hero-opacity]");
@@ -590,45 +590,161 @@
     if (!glass || !range) return;
 
     const KEY = "ud-hero-glass-see";
-    /* 0 = dense, 100 = fully open (slider at top when vertical) */
-    const apply = (raw) => {
+    const NUDGE = 3; /* start auto-run after a tiny move */
+    const DURATION = 1200; /* ms soft glide */
+
+    let animating = false;
+    let raf = 0;
+    let startVal = 0;
+    let armed = false;
+
+    const easeInOut = (t) =>
+      t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+
+    /* 0 = dense, 100 = fully open (top when vertical) */
+    const apply = (raw, persist) => {
       const v = Math.max(0, Math.min(100, Number(raw) || 0));
       const t = v / 100;
       const glassA = 0.76 - t * 0.68;
-      /* slightly lower max blur for GPU; still soft when closed */
       const blur = 14 - t * 11;
       const tint = 1 - t * 0.78;
       glass.style.setProperty("--glass-a", glassA.toFixed(3));
       glass.style.setProperty("--glass-blur", blur.toFixed(1) + "px");
       glass.style.setProperty("--glass-tint", tint.toFixed(3));
       glass.style.setProperty("--glass-see", t.toFixed(3));
-      range.value = String(v);
-      range.setAttribute("aria-valuenow", String(v));
+      range.value = String(Math.round(v));
+      range.setAttribute("aria-valuenow", String(Math.round(v)));
       range.setAttribute(
         "aria-valuetext",
-        t < 0.05 ? "плотный блок" : t > 0.95 ? "полная прозрачность" : "прозрачность " + v
+        t < 0.05 ? "плотный блок" : t > 0.95 ? "полная прозрачность" : "прозрачность " + Math.round(v)
       );
-      if (line) {
-        line.setAttribute("aria-hidden", t < 0.08 ? "true" : "false");
+      if (line) line.setAttribute("aria-hidden", t < 0.08 ? "true" : "false");
+      if (persist) {
+        try {
+          localStorage.setItem(KEY, String(Math.round(v)));
+        } catch (_) {}
       }
+    };
+
+    const stopAnim = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = 0;
+      animating = false;
+      range.classList.remove("is-gliding");
+    };
+
+    const glideTo = (target) => {
+      if (animating && Math.abs(Number(range.value) - target) < 0.5) return;
+      stopAnim();
+      animating = true;
+      range.classList.add("is-gliding");
+      const from = Number(range.value) || 0;
+      const to = target <= 0 ? 0 : 100;
+      if (Math.abs(from - to) < 0.5) {
+        apply(to, true);
+        stopAnim();
+        return;
+      }
+      const t0 = performance.now();
+      const step = (now) => {
+        const p = Math.min(1, (now - t0) / DURATION);
+        const v = from + (to - from) * easeInOut(p);
+        apply(v, p >= 1);
+        if (p < 1) {
+          raf = requestAnimationFrame(step);
+        } else {
+          apply(to, true);
+          stopAnim();
+        }
+      };
+      raf = requestAnimationFrame(step);
     };
 
     try {
       const saved = localStorage.getItem(KEY);
-      if (saved != null && saved !== "") apply(saved);
-      else apply(0);
+      if (saved != null && saved !== "") {
+        /* snap stored mid-values to ends so state is binary */
+        const n = Number(saved) || 0;
+        apply(n >= 50 ? 100 : 0, true);
+      } else apply(0, false);
     } catch (_) {
-      apply(0);
+      apply(0, false);
     }
 
-    const onInput = () => {
-      apply(range.value);
-      try {
-        localStorage.setItem(KEY, String(range.value));
-      } catch (_) {}
+    const onPointerDown = () => {
+      if (animating) return;
+      armed = true;
+      startVal = Number(range.value) || 0;
     };
+
+    const onInput = () => {
+      if (animating) {
+        /* lock thumb to animation path */
+        return;
+      }
+      if (!armed) {
+        armed = true;
+        startVal = Number(range.value) || 0;
+      }
+      const cur = Number(range.value) || 0;
+      const delta = cur - startVal;
+
+      /* tiny preview while deciding direction */
+      apply(cur, false);
+
+      if (delta >= NUDGE) {
+        armed = false;
+        glideTo(100);
+      } else if (delta <= -NUDGE) {
+        armed = false;
+        glideTo(0);
+      }
+    };
+
+    const onPointerUp = () => {
+      if (animating) {
+        armed = false;
+        return;
+      }
+      const cur = Number(range.value) || 0;
+      const delta = cur - startVal;
+      if (Math.abs(delta) >= 1) {
+        /* even a small release continues in that direction */
+        glideTo(delta > 0 ? 100 : 0);
+      } else if (cur > 8 && cur < 92) {
+        /* click in middle without drag: go toward nearer extreme from rest bias */
+        glideTo(startVal >= 50 ? 0 : 100);
+      } else {
+        apply(startVal >= 50 ? 100 : 0, true);
+      }
+      armed = false;
+    };
+
+    range.addEventListener("pointerdown", onPointerDown);
     range.addEventListener("input", onInput);
-    range.addEventListener("change", onInput);
+    range.addEventListener("pointerup", onPointerUp);
+    range.addEventListener("pointercancel", onPointerUp);
+    range.addEventListener("change", onPointerUp);
+    /* keyboard: arrows still nudge then auto-complete */
+    range.addEventListener("keydown", (e) => {
+      if (animating) {
+        e.preventDefault();
+        return;
+      }
+      if (e.key === "ArrowUp" || e.key === "ArrowRight" || e.key === "PageUp") {
+        e.preventDefault();
+        glideTo(100);
+      } else if (e.key === "ArrowDown" || e.key === "ArrowLeft" || e.key === "PageDown") {
+        e.preventDefault();
+        glideTo(0);
+      } else if (e.key === "Home") {
+        e.preventDefault();
+        glideTo(0);
+      } else if (e.key === "End") {
+        e.preventDefault();
+        glideTo(100);
+      }
+    });
   })();
 
   // Optional: fill Anton's phone from query ?anton=+79...

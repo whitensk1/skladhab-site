@@ -574,6 +574,19 @@ strong { font-weight: 700; }
   outline: 2px solid rgba(203, 17, 171, 0.45);
   outline-offset: 3px;
 }
+/* while auto-gliding, thumb feels "running away" */
+.hero-opacity__range.is-gliding {
+  pointer-events: none;
+  cursor: default;
+}
+.hero-opacity__range.is-gliding::-webkit-slider-thumb {
+  cursor: default;
+  box-shadow: 0 0 0 4px rgba(203, 17, 171, 0.22), 0 1px 6px rgba(0, 0, 0, 0.18);
+}
+.hero-opacity__range.is-gliding::-moz-range-thumb {
+  cursor: default;
+  box-shadow: 0 0 0 4px rgba(203, 17, 171, 0.22), 0 1px 6px rgba(0, 0, 0, 0.18);
+}
 .hero-glass > * {
   position: relative;
   z-index: 1;
