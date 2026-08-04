@@ -148,8 +148,75 @@
       box-shadow: 0 10px 28px rgba(203, 17, 171, 0.4);
       transition: transform 0.15s ease, filter 0.15s;
     }
+    .btn.btn-lg {
+      font-size: 1.12rem;
+      padding: 18px 36px;
+      min-width: min(100%, 280px);
+      box-shadow: 0 14px 36px rgba(203, 17, 171, 0.48);
+    }
     .btn:hover { filter: brightness(1.06); transform: translateY(-1px); }
     .btn:active { transform: scale(0.97); }
+    .overlay--error {
+      background:
+        radial-gradient(ellipse 70% 50% at 50% 30%, rgba(180, 40, 40, 0.35), transparent 55%),
+        rgba(8, 6, 10, 0.9);
+    }
+    .sys-error {
+      width: min(100%, 340px);
+      text-align: left;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 120, 120, 0.45);
+      background: linear-gradient(180deg, #2a1218 0%, #160e12 100%);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+      padding: 0 0 20px;
+      overflow: hidden;
+    }
+    .sys-error__bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: rgba(255, 220, 220, 0.85);
+      background: linear-gradient(90deg, #8b1e2d, #c43b4e);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    .sys-error__code { opacity: 0.75; font-weight: 600; }
+    .sys-error h1 {
+      margin: 16px 16px 10px;
+      font-size: 1.25rem;
+      color: #ffb4b4;
+      text-align: left;
+    }
+    .sys-error__msg {
+      margin: 0 16px 10px !important;
+      color: rgba(255, 255, 255, 0.9) !important;
+      font-size: 0.98rem !important;
+      font-weight: 600;
+      max-width: none !important;
+      text-align: left;
+    }
+    .sys-error__sub {
+      margin: 0 16px 14px !important;
+      color: rgba(255, 220, 180, 0.92) !important;
+      font-size: 0.95rem !important;
+      max-width: none !important;
+      text-align: left;
+    }
+    .sys-error .stat-line {
+      margin: 0 16px 14px;
+      text-align: left;
+    }
+    .sys-error .btn {
+      display: block;
+      margin: 0 16px;
+      width: calc(100% - 32px);
+      text-align: center;
+    }
     .hint {
       margin-top: 14px;
       font-size: 0.75rem;
@@ -185,30 +252,39 @@
 
       <div class="overlay" id="screen-start">
         <h1>Получи скидку 70%</h1>
-        <p>на первый заказ — поймайте <strong>100 ящиков</strong> кладовщиком «УД». Скорость растёт, выиграть почти нереально… но попытка — не пытка.</p>
-        <div class="deal">
-          Получить скидку <strong>70%</strong> на первый заказ
-          <span>Соберите 100 ящиков · 3 жизни · скорость до 100</span>
-        </div>
-        <button type="button" class="btn" id="btn-start">Хочу скидку 70%</button>
-        <div class="hint">← → / A D / мышь / палец<br />3 жизни · пропустил ящик — минус жизнь</div>
+        <p>на&nbsp;первый заказ. Поймайте <strong>100&nbsp;ящиков</strong> кладовщиком «УД»: 3&nbsp;жизни, управление ← → / мышь / палец.</p>
+        <button type="button" class="btn btn-lg" id="btn-start">Хочу скидку 70%</button>
+        <div class="hint">Пропустил ящик — минус жизнь</div>
       </div>
 
       <div class="overlay" id="screen-over" hidden>
         <h1>Смена окончена</h1>
         <p>Ты проиграл — не отчаивайся. На складе всегда есть вторая попытка.</p>
         <p class="stat-line">Поймано: <strong id="final-score">0</strong> · рекорд: <strong id="best-score">0</strong></p>
-        <div class="deal" id="almost-deal" hidden>
-          Ещё чуть-чуть до скидки… но 100 ящиков — это уже легенда склада.
-        </div>
         <button type="button" class="btn" id="btn-retry">Начать заново</button>
-        <div class="hint">Скорость на максимуме ловит только теория 😉</div>
+      </div>
+
+      <div class="overlay overlay--error" id="screen-error" hidden>
+        <div class="sys-error" role="alertdialog" aria-labelledby="err-title">
+          <div class="sys-error__bar">
+            <span>System Error</span>
+            <span class="sys-error__code">0xUD_70OFF</span>
+          </div>
+          <h1 id="err-title">Системная ошибка</h1>
+          <p class="sys-error__msg">
+            Ты&nbsp;реально поверил, что можно выиграть, что тебе даст кто-то&nbsp;70% скидку?
+          </p>
+          <p class="sys-error__sub">
+            Не&nbsp;прикалывайся: вот тебе <strong>5%</strong> и&nbsp;иди дальше.
+          </p>
+          <p class="stat-line">Поймано: <strong id="error-score">0</strong></p>
+          <button type="button" class="btn" id="btn-error">Ок, беру 5%</button>
+        </div>
       </div>
 
       <div class="overlay" id="screen-win" hidden>
-        <h1>Невероятно!</h1>
-        <p>100 ящиков? Вы либо читер, либо легенда «Успешного Дела».</p>
-        <p class="stat-line">Скидка <strong>70% на первый заказ</strong> — напишите нам в мессенджер или на расчёт.</p>
+        <h1>Как?</h1>
+        <p>Это не должно было случиться. Напишите нам — разберёмся вручную.</p>
         <button type="button" class="btn" id="btn-win">Ещё раз</button>
       </div>
     </div>
@@ -225,15 +301,19 @@
   const screenStart = document.getElementById("screen-start");
   const screenOver = document.getElementById("screen-over");
   const screenWin = document.getElementById("screen-win");
+  const screenError = document.getElementById("screen-error");
   const finalScoreEl = document.getElementById("final-score");
   const bestScoreEl = document.getElementById("best-score");
-  const almostDeal = document.getElementById("almost-deal");
+  const errorScoreEl = document.getElementById("error-score");
 
   const W = canvas.width;
   const H = canvas.height;
   const TARGET = 100;
+  const ERROR_AT = 95;
   const MAX_SPEED_LVL = 100;
   const FLOOR_Y = H - 52;
+  /* Player always snappy — never slowed as difficulty rises */
+  const PLAYER_SPEED = 620;
 
   const state = {
     running: false,
@@ -248,6 +328,7 @@
     elapsed: 0,
     lastT: 0,
     best: 0,
+    errorShown: false,
   };
 
   try {
@@ -255,21 +336,21 @@
   } catch (_) {}
 
   function speedLevel() {
-    /* grows with score + time; soft cap approach to 100 */
-    const byScore = state.score * 1.15;
-    const byTime = state.elapsed * 2.4;
+    /* boxes only: ramps hard so 100 is unreachable in normal play */
+    const byScore = state.score * 1.35;
+    const byTime = state.elapsed * 3.1;
     return Math.min(MAX_SPEED_LVL, 1 + byScore + byTime);
   }
 
   function fallSpeed() {
     const lvl = speedLevel();
-    /* px/sec: ~120 at start → ~900+ at max (nearly uncatchable) */
-    return 120 + (lvl / MAX_SPEED_LVL) * 820;
+    /* px/sec: ~140 start → ~1100 at max — impossible to clear late game */
+    return 140 + (lvl / MAX_SPEED_LVL) * 960;
   }
 
   function spawnInterval() {
     const lvl = speedLevel();
-    return Math.max(0.28, 1.15 - (lvl / MAX_SPEED_LVL) * 0.95);
+    return Math.max(0.18, 1.05 - (lvl / MAX_SPEED_LVL) * 0.92);
   }
 
   function playerW() {
@@ -306,6 +387,13 @@
     }
   }
 
+  function hideScreens() {
+    screenStart.hidden = true;
+    screenOver.hidden = true;
+    screenWin.hidden = true;
+    if (screenError) screenError.hidden = true;
+  }
+
   function resetGame() {
     state.score = 0;
     state.lives = 3;
@@ -316,10 +404,9 @@
     state.spawnTimer = 0.4;
     state.elapsed = 0;
     state.lastT = 0;
+    state.errorShown = false;
     state.running = true;
-    screenStart.hidden = true;
-    screenOver.hidden = true;
-    screenWin.hidden = true;
+    hideScreens();
     updateHud();
   }
 
@@ -333,28 +420,34 @@
     speedFill.style.width = Math.min(100, (speedLevel() / MAX_SPEED_LVL) * 100) + "%";
   }
 
-  function gameOver() {
-    state.running = false;
+  function rememberBest() {
     if (state.score > state.best) {
       state.best = state.score;
       try {
         localStorage.setItem("ud-catch-best", String(state.best));
       } catch (_) {}
     }
+  }
+
+  function gameOver() {
+    state.running = false;
+    rememberBest();
     finalScoreEl.textContent = String(state.score);
     bestScoreEl.textContent = String(state.best);
-    almostDeal.hidden = state.score < 30;
     screenOver.hidden = false;
+  }
+
+  function systemError() {
+    state.running = false;
+    state.errorShown = true;
+    rememberBest();
+    if (errorScoreEl) errorScoreEl.textContent = String(state.score);
+    if (screenError) screenError.hidden = false;
   }
 
   function win() {
     state.running = false;
-    if (state.score > state.best) {
-      state.best = state.score;
-      try {
-        localStorage.setItem("ud-catch-best", String(state.best));
-      } catch (_) {}
-    }
+    rememberBest();
     screenWin.hidden = false;
   }
 
@@ -362,16 +455,19 @@
     if (!state.running) return;
     state.elapsed += dt;
 
-    const move = 380 + speedLevel() * 1.2;
-    if (state.keys.left) state.playerTarget -= move * dt;
-    if (state.keys.right) state.playerTarget += move * dt;
+    /* constant high player speed — never throttled by difficulty */
+    if (state.keys.left) state.playerTarget -= PLAYER_SPEED * dt;
+    if (state.keys.right) state.playerTarget += PLAYER_SPEED * dt;
     state.playerTarget = Math.max(playerW() / 2 + 8, Math.min(W - playerW() / 2 - 8, state.playerTarget));
-    state.playerX += (state.playerTarget - state.playerX) * Math.min(1, 14 * dt);
+    state.playerX += (state.playerTarget - state.playerX) * Math.min(1, 18 * dt);
 
     state.spawnTimer -= dt;
     if (state.spawnTimer <= 0) {
       spawnBox();
-      state.spawnTimer = spawnInterval() * (0.75 + Math.random() * 0.5);
+      /* late game: multi-spawn chaos so 100 is unreachable */
+      if (speedLevel() > 55 && Math.random() < 0.45) spawnBox();
+      if (speedLevel() > 80 && Math.random() < 0.55) spawnBox();
+      state.spawnTimer = spawnInterval() * (0.7 + Math.random() * 0.45);
     }
 
     const py = FLOOR_Y - playerH();
@@ -399,6 +495,10 @@
         burst(b.x, b.y, true);
         state.boxes.splice(i, 1);
         updateHud();
+        if (state.score >= ERROR_AT && !state.errorShown) {
+          systemError();
+          return;
+        }
         if (state.score >= TARGET) {
           win();
           return;
@@ -663,6 +763,19 @@
   document.getElementById("btn-start").addEventListener("click", resetGame);
   document.getElementById("btn-retry").addEventListener("click", resetGame);
   document.getElementById("btn-win").addEventListener("click", resetGame);
+  const btnError = document.getElementById("btn-error");
+  if (btnError) {
+    btnError.addEventListener("click", () => {
+      /* 5% consolation — back to site contact, or replay */
+      try {
+        if (window.opener && !window.opener.closed) {
+          window.opener.location.hash = "contact";
+          window.opener.focus();
+        }
+      } catch (_) {}
+      resetGame();
+    });
+  }
 
   updateHud();
   draw();
