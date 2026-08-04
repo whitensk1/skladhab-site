@@ -84,6 +84,10 @@ main > section,
   color: rgba(255, 255, 255, 0.82);
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
 }
+/* Mobile fixed next-label (always in viewport above sticky CTA) */
+.panel-next-fixed {
+  display: none;
+}
 img { max-width: 100%; display: block; }
 a { color: inherit; text-decoration: none; }
 button, input, textarea, select { font: inherit; color: inherit; }
@@ -1656,11 +1660,6 @@ body.topic-open { overflow: hidden; }
 }
 
 @media (max-width: 900px) {
-  .panel-next {
-    bottom: max(76px, calc(env(safe-area-inset-bottom) + 68px));
-    font-size: 11.5px;
-    padding: 8px 16px;
-  }
   .panel-nav {
     right: 12px;
     bottom: max(76px, calc(env(safe-area-inset-bottom) + 68px));
@@ -1707,13 +1706,76 @@ body.topic-open { overflow: hidden; }
   :root {
     --header-h: 58px;
     --header-top: max(10px, env(safe-area-inset-top, 0px));
+    /* Safe field: content starts under floating capsule (not the block itself) */
     --header-offset: calc(var(--header-top) + var(--header-h) + 12px);
+    --panel-pad-y: var(--header-offset);
+    /* Bottom chrome: sticky phone bar + next-peek pill */
+    --sticky-cta-space: max(64px, calc(env(safe-area-inset-bottom, 0px) + 56px));
+    --panel-next-space: 44px;
+    --content-safe-bottom: calc(var(--sticky-cta-space) + var(--panel-next-space) + 8px);
   }
   .site-header {
     width: min(var(--max), calc(100% - 20px));
   }
   .site-header.is-scrolled {
     width: min(420px, calc(100% - 16px));
+  }
+  /*
+   Mobile panels: full-bleed background to screen edges,
+   but text/content lives in a safe box under the menu and above bottom chrome.
+   */
+  main > section,
+  .partners {
+    min-height: 100svh;
+    min-height: 100dvh;
+    padding-top: var(--header-offset);
+    padding-bottom: var(--content-safe-bottom);
+    justify-content: flex-start;
+    box-sizing: border-box;
+  }
+  .section {
+    padding-top: var(--header-offset);
+    padding-bottom: var(--content-safe-bottom);
+    justify-content: flex-start;
+  }
+  .hero {
+    padding: var(--header-offset) 0 var(--content-safe-bottom);
+    min-height: 100svh;
+    min-height: 100dvh;
+    height: auto;
+    /* keep glass roughly in the middle of the safe content band */
+    align-items: center;
+  }
+  .snap {
+    padding: var(--header-offset) 0 var(--content-safe-bottom);
+    align-items: flex-start;
+  }
+  .partners {
+    padding: var(--header-offset) 0 var(--content-safe-bottom);
+    justify-content: center;
+  }
+  /* In-section peeks sit below the fold on tall panels — hide on mobile */
+  .panel-next:not(.panel-next-fixed) {
+    display: none !important;
+  }
+  /* Always-visible next label in the viewport safe bottom */
+  .panel-next-fixed {
+    display: block;
+    position: fixed;
+    left: 50%;
+    right: auto;
+    top: auto;
+    bottom: calc(var(--sticky-cta-space) + 6px);
+    transform: translateX(-50%);
+    z-index: 52;
+    max-width: min(88vw, 360px);
+    padding: 8px 16px;
+    font-size: 11.5px;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+  }
+  .panel-next-fixed.is-hidden {
+    opacity: 0;
+    visibility: hidden;
   }
   .snap-inner,
   .duo,
@@ -1762,11 +1824,9 @@ body.topic-open { overflow: hidden; }
     font-size: 13px;
   }
   .sticky-cta { display: block; }
-  /* Extra bottom room for sticky CTA without killing visual center too hard:
-     keep top pad = header; bottom ≥ sticky bar */
   .section-faq {
-    padding-top: var(--panel-pad-y);
-    padding-bottom: max(var(--panel-pad-y), 110px);
+    padding-top: var(--header-offset);
+    padding-bottom: max(var(--content-safe-bottom), 120px);
   }
   .faq-layout {
     grid-template-columns: 1fr;
@@ -1821,14 +1881,12 @@ body.topic-open { overflow: hidden; }
   .step-card { grid-template-columns: 1fr; }
   .step-card .step-photo { aspect-ratio: 16 / 10; min-height: 0; }
   .step-card .step-photo img { min-height: 0; }
-  .hero {
-    padding: var(--panel-pad-y) 0;
-    min-height: 100svh;
-    height: 100svh;
-  }
   .hero-glass { padding: 24px 16px; border-radius: 22px; }
   /* slightly softer snap on small screens if content overflows */
-  main > section { min-height: 100svh; }
+  main > section {
+    min-height: 100svh;
+    min-height: 100dvh;
+  }
   .hero-for {
     grid-template-columns: 1fr;
   }

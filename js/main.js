@@ -112,9 +112,13 @@
     else tryPlay();
   })();
 
-  /* Next-panel peeks: oval label at bottom naming the block below (not clickable) */
+  /* Next-panel peeks: desktop = in-panel; mobile = fixed in viewport safe bottom */
   (function panelNextLabels() {
-    document.querySelectorAll("[data-panel][data-next]").forEach((panel) => {
+    const panels = Array.from(document.querySelectorAll("[data-panel]"));
+    if (!panels.length) return;
+
+    /* Desktop / tablet landscape: label lives at the bottom of each panel */
+    panels.forEach((panel) => {
       const label = String(panel.getAttribute("data-next") || "").trim();
       if (!label) return;
       const el = document.createElement("div");
@@ -123,6 +127,48 @@
       el.textContent = label;
       panel.appendChild(el);
     });
+
+    /* Mobile: one fixed pill so it’s never below the fold */
+    const fixed = document.createElement("div");
+    fixed.className = "panel-next panel-next-fixed is-hidden";
+    fixed.setAttribute("aria-hidden", "true");
+    document.body.appendChild(fixed);
+
+    const activePanel = () => {
+      const mid = window.innerHeight * 0.38;
+      let best = panels[0];
+      let bestDist = Infinity;
+      panels.forEach((el) => {
+        const r = el.getBoundingClientRect();
+        const dist = Math.abs(r.top);
+        if (r.top <= mid && r.bottom > mid * 0.45) {
+          if (dist < bestDist) {
+            bestDist = dist;
+            best = el;
+          }
+        } else if (dist < bestDist) {
+          bestDist = dist;
+          best = el;
+        }
+      });
+      return best;
+    };
+
+    const syncFixed = () => {
+      const panel = activePanel();
+      const label = panel ? String(panel.getAttribute("data-next") || "").trim() : "";
+      if (label) {
+        fixed.textContent = label;
+        fixed.classList.remove("is-hidden");
+      } else {
+        fixed.textContent = "";
+        fixed.classList.add("is-hidden");
+      }
+    };
+
+    window.addEventListener("scroll", syncFixed, { passive: true });
+    window.addEventListener("resize", syncFixed);
+    syncFixed();
   })();
 
   /* Floating capsule header: solid at top → semi-transparent independent bar on scroll */
