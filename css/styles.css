@@ -1215,8 +1215,22 @@ strong { font-weight: 700; }
   grid-template-columns: repeat(2, 1fr);
   gap: 14px;
 }
+/* Convenience with 5 cards: 2+2+1 centered-ish on last row via grid */
+.section-convenience .feature-grid {
+  grid-template-columns: repeat(6, 1fr);
+}
+.section-convenience .feature-card {
+  grid-column: span 3;
+}
+.section-convenience .feature-card:last-child:nth-child(5) {
+  grid-column: 2 / span 4;
+}
 .feature-grid--5 {
   grid-template-columns: repeat(5, 1fr);
+}
+.feature-card--retail {
+  background: linear-gradient(145deg, #fff 0%, #fdf2f9 100%);
+  border-color: rgba(203, 17, 171, 0.14);
 }
 .feature-card {
   padding: 22px 20px;
@@ -2313,6 +2327,13 @@ body.topic-open { overflow: hidden; }
   .duo,
   .services-grid,
   .feature-grid { grid-template-columns: 1fr 1fr; }
+  .section-convenience .feature-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .section-convenience .feature-card,
+  .section-convenience .feature-card:last-child:nth-child(5) {
+    grid-column: span 1;
+  }
   .feature-grid--5 { grid-template-columns: 1fr 1fr; }
   .snap-inner { gap: 28px; }
   .steps-detail { grid-template-columns: 1fr; }
@@ -2390,6 +2411,7 @@ body.topic-open { overflow: hidden; }
   .faq-layout,
   .services-grid,
   .feature-grid,
+  .section-convenience .feature-grid,
   .feature-grid--5,
   .field-row { grid-template-columns: 1fr; }
   .faq-layout {
