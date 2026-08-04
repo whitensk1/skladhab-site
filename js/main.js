@@ -8,16 +8,18 @@
     el.textContent = String(new Date().getFullYear());
   });
 
-  /* Hero: static «для селлеров» pill color cycle + logo highlight */
+  /* Hero: pill + logos + glass plaque tint follow active marketplace */
   (function sellerBarCycle() {
     const bar = document.querySelector("[data-seller-bar]");
     if (!bar) return;
+    const glass = document.querySelector(".hero-glass");
     const icons = Array.from(bar.querySelectorAll("[data-mp-icon]"));
     const cycle = ["wb", "ozon", "ym"];
     let i = 0;
     const apply = () => {
       const key = cycle[i];
       bar.setAttribute("data-mp", key);
+      if (glass) glass.setAttribute("data-mp", key);
       icons.forEach((el) => {
         el.classList.toggle("is-active", el.getAttribute("data-mp-icon") === key);
       });
