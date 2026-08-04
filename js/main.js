@@ -595,7 +595,8 @@
       const v = Math.max(0, Math.min(100, Number(raw) || 0));
       const t = v / 100;
       const glassA = 0.76 - t * 0.68;
-      const blur = 20 - t * 16;
+      /* slightly lower max blur for GPU; still soft when closed */
+      const blur = 14 - t * 11;
       const tint = 1 - t * 0.78;
       glass.style.setProperty("--glass-a", glassA.toFixed(3));
       glass.style.setProperty("--glass-blur", blur.toFixed(1) + "px");
@@ -852,5 +853,18 @@
 
       form.reset();
     });
+  });
+
+  /* Service worker: cache static assets for snappier revisits (GitHub Pages) */
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      const swUrl = "sw.js";
+      navigator.serviceWorker.register(swUrl).catch(() => {});
+    });
+  }
+
+  /* Prefer decoding async for below-fold images */
+  document.querySelectorAll("img[loading='lazy']").forEach((img) => {
+    if (!img.hasAttribute("decoding")) img.setAttribute("decoding", "async");
   });
 })();

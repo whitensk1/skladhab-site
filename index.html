@@ -9,8 +9,10 @@
   <link rel="icon" type="image/png" href="media/brand/logo-ud.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" /></noscript>
   <link rel="stylesheet" href="css/styles.css" />
+  <link rel="preload" href="media/brand/logo-ud-mark.png" as="image" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -615,33 +617,34 @@
     </button>
   </div>
 
-  <button type="button" class="game-launch" data-open-game aria-label="Получи скидку 70% — мини-игра">
-    <span class="game-launch__badge" aria-hidden="true">
-      <span class="game-launch__pct">70%</span>
-    </span>
-    <span class="game-launch__label">
-      <span class="game-launch__text">Получи скидку</span>
-    </span>
-  </button>
-
-  <!-- Floating vertical warehouse phone reel (site-wide) -->
-  <aside class="phone-reel" data-phone-reel aria-label="Видео со склада">
-    <div class="phone-reel__bezel">
-      <div class="phone-reel__notch" aria-hidden="true"></div>
-      <video
-        class="phone-reel__video"
-        muted
-        loop
-        playsinline
-        preload="none"
-        poster="media/hero/phone-still-01.jpg?v=v3"
-        data-lazy-video
-        data-lazy-delay="1200"
-      >
-        <source src="media/hero/phone-warehouse.mp4?v=v3" type="video/mp4" />
-      </video>
-    </div>
-  </aside>
+  <!-- Right stack: 70% game CTA above phone reel -->
+  <div class="phone-stack" data-phone-stack>
+    <button type="button" class="game-launch" data-open-game aria-label="Получи скидку 70% — мини-игра">
+      <span class="game-launch__badge" aria-hidden="true">
+        <span class="game-launch__pct">70%</span>
+      </span>
+      <span class="game-launch__label">
+        <span class="game-launch__text">Получи скидку</span>
+      </span>
+    </button>
+    <aside class="phone-reel" data-phone-reel aria-label="Видео со склада">
+      <div class="phone-reel__bezel">
+        <div class="phone-reel__notch" aria-hidden="true"></div>
+        <video
+          class="phone-reel__video"
+          muted
+          loop
+          playsinline
+          preload="none"
+          poster="media/hero/phone-still-01.jpg?v=v3b"
+          data-lazy-video
+          data-lazy-delay="1600"
+        >
+          <source src="media/hero/phone-warehouse.mp4?v=v3b" type="video/mp4" />
+        </video>
+      </div>
+    </aside>
+  </div>
 
   <!-- Bottom-left: call FAB -->
   <a class="float-phone" href="tel:+74952550131" aria-label="Позвонить: +7 (495) 255-01-31">

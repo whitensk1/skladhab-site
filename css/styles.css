@@ -178,8 +178,9 @@ strong { font-weight: 700; }
   background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(255, 255, 255, 0.8);
   box-shadow: 0 10px 32px rgba(28, 31, 38, 0.1);
-  backdrop-filter: blur(14px) saturate(1.15);
-  -webkit-backdrop-filter: blur(14px) saturate(1.15);
+  /* lighter blur = fewer GPU fill costs while scrolling */
+  backdrop-filter: blur(10px) saturate(1.08);
+  -webkit-backdrop-filter: blur(10px) saturate(1.08);
   overflow: visible;
   transition:
     background 0.35s var(--ease),
@@ -193,11 +194,11 @@ strong { font-weight: 700; }
   top: max(8px, env(safe-area-inset-top, 0px));
   /* Keep wide enough so logo + nav + actions stay one row */
   width: min(920px, calc(100% - 20px));
-  background: rgba(255, 255, 255, 0.48);
-  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.72);
+  border-color: rgba(255, 255, 255, 0.5);
   box-shadow: 0 14px 44px rgba(28, 31, 38, 0.14);
-  backdrop-filter: blur(20px) saturate(1.25);
-  -webkit-backdrop-filter: blur(20px) saturate(1.25);
+  backdrop-filter: blur(12px) saturate(1.1);
+  -webkit-backdrop-filter: blur(12px) saturate(1.1);
 }
 .site-header .inner {
   position: relative;
@@ -368,10 +369,12 @@ strong { font-weight: 700; }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: grayscale(0.2) blur(0.6px) brightness(0.9) contrast(1.03);
+  /* filters on <video> are expensive — keep cheap brightness only */
+  filter: brightness(0.9);
   opacity: 0;
   transition: opacity 0.55s ease;
-  animation: hero-drift 80s ease-in-out infinite alternate;
+  animation: hero-drift 120s linear infinite alternate;
+  will-change: transform;
 }
 /* Video is ready / playing — show only video, hide still */
 .hero-bg.is-video .hero-bg-video {
@@ -420,7 +423,7 @@ strong { font-weight: 700; }
 .hero-glass {
   /* --glass-a: fill opacity; --glass-see: 0 solid → 1 fully open (text invert) */
   --glass-a: 0.76;
-  --glass-blur: 20px;
+  --glass-blur: 14px;
   --glass-tint: 1;
   --glass-see: 0;
   --hero-fg: color-mix(in srgb, #1c1f26 calc((1 - var(--glass-see)) * 100%), #ffffff calc(var(--glass-see) * 100%));
@@ -439,9 +442,10 @@ strong { font-weight: 700; }
   box-shadow:
     0 1px 0 rgba(255, 255, 255, calc(0.4 + var(--glass-a) * 0.55)) inset,
     0 24px 64px rgba(28, 31, 38, calc(0.04 + var(--glass-a) * 0.06));
-  backdrop-filter: blur(var(--glass-blur)) saturate(1.15);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.15);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.08);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.08);
   color: var(--hero-fg);
+  contain: layout style;
   transition:
     box-shadow 0.65s var(--ease),
     border-color 0.65s var(--ease),
@@ -916,16 +920,33 @@ strong { font-weight: 700; }
   background: #f3e8f4;
 }
 
-/* Floating vertical phone reel — independent, visible across the whole site */
-.phone-reel {
+/* Right stack: 70% badge above floating phone (one fixed unit) */
+.phone-stack {
   position: fixed;
   right: max(18px, env(safe-area-inset-right, 0px));
   bottom: max(96px, calc(env(safe-area-inset-bottom, 0px) + 88px));
   z-index: 54;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
   width: min(118px, 22vw);
   pointer-events: none;
-  animation: phone-reel-float 5.5s ease-in-out infinite;
-  filter: drop-shadow(0 16px 28px rgba(0, 0, 0, 0.28));
+  /* animate stack as a unit — transform only (cheap) */
+  animation: phone-reel-float 7s ease-in-out infinite;
+  will-change: transform;
+  contain: layout style;
+}
+.phone-stack > * { pointer-events: auto; }
+.phone-reel {
+  position: relative;
+  right: auto;
+  bottom: auto;
+  z-index: 1;
+  width: 100%;
+  pointer-events: none;
+  animation: none;
+  filter: none;
 }
 .phone-reel__bezel {
   position: relative;
@@ -935,7 +956,7 @@ strong { font-weight: 700; }
   border: 1px solid rgba(255, 255, 255, 0.16);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.12) inset,
-    0 12px 32px rgba(0, 0, 0, 0.28);
+    0 14px 32px rgba(0, 0, 0, 0.3);
   overflow: hidden;
 }
 .phone-reel__notch {
@@ -957,29 +978,30 @@ strong { font-weight: 700; }
   object-fit: cover;
   border-radius: 16px;
   background: #0e1014;
+  /* no live CSS filters on video — big GPU win */
 }
 @keyframes phone-reel-float {
-  0%, 100% { transform: translateY(0) rotate(-2.5deg); }
-  50% { transform: translateY(-10px) rotate(2deg); }
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(-2deg); }
+  50% { transform: translate3d(0, -8px, 0) rotate(1.5deg); }
 }
 @media (max-width: 960px) {
-  .phone-reel {
+  .phone-stack {
     width: min(92px, 26vw);
     right: max(10px, env(safe-area-inset-right, 0px));
-    /* above messenger FAB + next peek */
     bottom: max(130px, calc(env(safe-area-inset-bottom, 0px) + 118px));
+    gap: 8px;
   }
   .phone-reel__bezel { border-radius: 18px; padding: 5px; }
   .phone-reel__video { border-radius: 13px; }
 }
 @media (max-width: 640px) {
-  .phone-reel {
+  .phone-stack {
     width: 78px;
     bottom: max(140px, calc(env(safe-area-inset-bottom, 0px) + 128px));
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .phone-reel { animation: none; }
+  .phone-stack { animation: none; will-change: auto; }
 }
 /* Light complex premium backdrop — layered lilac mesh, orbs, soft grain */
 .snap-bg {
@@ -1014,15 +1036,18 @@ strong { font-weight: 700; }
       rgba(160, 60, 180, 0.028) 65px
     );
 }
+/* Grain overlay — cheap static PNG-like noise, skip heavy SVG feTurbulence on small screens */
 .snap-bg::after {
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.45;
-  mix-blend-mode: soft-light;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
-  background-size: 180px 180px;
+  opacity: 0.22;
+  background-image: radial-gradient(rgba(120, 40, 110, 0.04) 0.6px, transparent 0.7px);
+  background-size: 3px 3px;
+}
+@media (max-width: 960px) {
+  .snap-bg::after { display: none; }
 }
 .snap-veil {
   position: absolute;
@@ -2138,16 +2163,17 @@ body.topic-open { overflow: hidden; }
 }
 .sticky-cta .btn { width: 100%; }
 
-/* Left floating deal CTA — round «70%», text slides out on hover */
+/* Round «70%» above phone — text slides out to the left on hover */
 .game-launch {
-  --gl-size: 56px;
-  position: fixed;
-  left: max(18px, env(safe-area-inset-left, 0px));
-  bottom: max(96px, calc(env(safe-area-inset-bottom, 0px) + 88px));
-  z-index: 54;
+  --gl-size: 52px;
+  position: relative;
+  left: auto;
+  bottom: auto;
+  z-index: 2;
   appearance: none;
   -webkit-appearance: none;
   display: inline-flex;
+  flex-direction: row-reverse;
   align-items: center;
   gap: 0;
   height: var(--gl-size);
@@ -2205,7 +2231,7 @@ body.topic-open { overflow: hidden; }
   opacity: 0;
   overflow: hidden;
   white-space: nowrap;
-  transform: translateX(-10px);
+  transform: translateX(10px);
   transition:
     max-width 0.42s var(--ease),
     opacity 0.28s ease 0.05s,
@@ -2214,18 +2240,18 @@ body.topic-open { overflow: hidden; }
   padding: 0;
 }
 .game-launch__text {
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 800;
   letter-spacing: -0.01em;
   line-height: 1;
-  padding-right: 4px;
+  padding-left: 2px;
   white-space: nowrap;
 }
-/* expand + slide text out to the right */
+/* expand left (away from screen edge) + slide label */
 .game-launch:hover,
 .game-launch:focus-visible {
-  max-width: 220px;
-  padding-right: 16px;
+  max-width: 210px;
+  padding-left: 14px;
   filter: brightness(1.05);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.45) inset,
@@ -2233,11 +2259,11 @@ body.topic-open { overflow: hidden; }
 }
 .game-launch:hover .game-launch__label,
 .game-launch:focus-visible .game-launch__label {
-  max-width: 160px;
+  max-width: 150px;
   opacity: 1;
   transform: translateX(0);
-  padding-left: 2px;
-  padding-right: 4px;
+  padding-right: 2px;
+  padding-left: 4px;
 }
 .game-launch:hover .game-launch__pct,
 .game-launch:focus-visible .game-launch__pct {
@@ -2249,25 +2275,22 @@ body.topic-open { overflow: hidden; }
 }
 @media (max-width: 960px) {
   .game-launch {
-    --gl-size: 50px;
-    left: max(10px, env(safe-area-inset-left, 0px));
-    bottom: max(150px, calc(env(safe-area-inset-bottom, 0px) + 138px));
+    --gl-size: 46px;
   }
-  .game-launch__pct { font-size: 13.5px; }
-  .game-launch__text { font-size: 12px; }
+  .game-launch__pct { font-size: 13px; }
+  .game-launch__text { font-size: 11.5px; }
   .game-launch:hover,
   .game-launch:focus-visible {
-    max-width: 200px;
+    max-width: 190px;
   }
 }
 @media (hover: none) {
-  /* touch: short pulse then keep compact; first tap expands via :focus-visible if needed */
   .game-launch:focus-visible {
-    max-width: 200px;
-    padding-right: 14px;
+    max-width: 190px;
+    padding-left: 12px;
   }
   .game-launch:focus-visible .game-launch__label {
-    max-width: 150px;
+    max-width: 140px;
     opacity: 1;
     transform: translateX(0);
   }
