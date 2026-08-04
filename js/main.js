@@ -67,6 +67,51 @@
     );
   })();
 
+  /* Hero background: video only while playing; still photo only as fallback */
+  (function heroBgMedia() {
+    const wrap = document.querySelector(".hero-bg");
+    const video = document.querySelector(".hero-bg-video");
+    if (!wrap || !video) return;
+
+    const showVideo = () => {
+      wrap.classList.add("is-video");
+      wrap.classList.remove("is-still");
+    };
+    const showStill = () => {
+      wrap.classList.add("is-still");
+      wrap.classList.remove("is-video");
+    };
+
+    /* While loading: still visible underneath (default CSS) */
+    showStill();
+
+    const tryPlay = () => {
+      const p = video.play();
+      if (p && typeof p.then === "function") {
+        p.then(showVideo).catch(showStill);
+      } else if (!video.paused) {
+        showVideo();
+      }
+    };
+
+    video.addEventListener("loadeddata", () => {
+      if (video.readyState >= 2) tryPlay();
+    });
+    video.addEventListener("canplay", tryPlay);
+    video.addEventListener("playing", showVideo);
+    video.addEventListener("error", showStill);
+    video.querySelectorAll("source").forEach((s) => {
+      s.addEventListener("error", () => {
+        /* only fall back if the video element itself can't play */
+        if (video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) showStill();
+      });
+    });
+
+    /* If already buffered (bfcache / cache) */
+    if (video.readyState >= 2) tryPlay();
+    else tryPlay();
+  })();
+
   /* Next-panel peeks: oval label at bottom naming the block below (not clickable) */
   (function panelNextLabels() {
     document.querySelectorAll("[data-panel][data-next]").forEach((panel) => {

@@ -239,26 +239,55 @@ strong { font-weight: 700; }
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
+  background: #0e1014;
+}
+/* Soft vignette over media (video or still) — not a second photo layer */
+.hero-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background:
+    linear-gradient(180deg, rgba(12, 12, 16, 0.28) 0%, rgba(12, 12, 16, 0.52) 100%);
+  pointer-events: none;
 }
 .hero-bg-video {
   position: absolute;
   inset: 0;
+  z-index: 1;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: grayscale(0.25) blur(0.8px) brightness(0.92) contrast(1.02);
-  opacity: 0.55;
+  filter: grayscale(0.2) blur(0.6px) brightness(0.9) contrast(1.03);
+  opacity: 0;
+  transition: opacity 0.55s ease;
   animation: hero-drift 80s ease-in-out infinite alternate;
 }
+/* Video is ready / playing — show only video, hide still */
+.hero-bg.is-video .hero-bg-video {
+  opacity: 0.88;
+}
+.hero-bg.is-video .hero-bg-still {
+  opacity: 0;
+  visibility: hidden;
+}
+/* No video (error / blocked / missing) — still photo only */
 .hero-bg-still {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(180deg, rgba(12, 12, 16, 0.35) 0%, rgba(12, 12, 16, 0.55) 100%),
-    url("../media/hero/warehouse-still.jpg") center / cover no-repeat;
-  filter: grayscale(0.2);
-  opacity: 0.7;
-  z-index: -1;
+  z-index: 0;
+  background: url("../media/hero/warehouse-still.jpg") center / cover no-repeat;
+  filter: grayscale(0.2) brightness(0.92);
+  opacity: 0.78;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+.hero-bg.is-still .hero-bg-video {
+  opacity: 0;
+  visibility: hidden;
+}
+.hero-bg.is-still .hero-bg-still {
+  opacity: 0.78;
+  visibility: visible;
 }
 @keyframes hero-drift {
   from { transform: scale(1.04) translate3d(-1%, 0, 0); }

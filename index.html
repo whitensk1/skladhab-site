@@ -56,11 +56,12 @@
     <!-- HERO: glass panel + warehouse atmosphere -->
     <section class="hero" data-panel data-next="О компании">
       <div class="hero-bg" aria-hidden="true">
-        <video class="hero-bg-video" autoplay muted loop playsinline poster="media/hero/warehouse-still.jpg">
+        <!-- Still is fallback only; hidden once video plays (see main.js) -->
+        <div class="hero-bg-still"></div>
+        <video class="hero-bg-video" autoplay muted loop playsinline preload="auto">
           <source src="media/hero/warehouse-ai.mp4" type="video/mp4" />
           <source src="media/hero/warehouse-loop.mp4" type="video/mp4" />
         </video>
-        <div class="hero-bg-still"></div>
       </div>
       <div class="container">
         <div class="hero-glass" data-mp="wb">
