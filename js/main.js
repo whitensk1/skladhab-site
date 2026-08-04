@@ -9,19 +9,25 @@
   });
 
   /*
-    Contact cloak — phones are NOT in HTML as tel:+7… / wa.me/…
-    Stored as XOR’d digit bytes; assembled only in the browser on paint/click.
+    Contact cloak — phones/emails are NOT in HTML as tel:+7… / mailto:… / plain text.
+    Stored as XOR’d bytes; assembled only in the browser on paint/click.
     Stops dumb scrapers & grepping the HTML. Does NOT stop a full headless
     browser that runs our JS (true crypto needs a server secret).
   */
   const contactCloak = (function () {
     const K = [0x13, 0x37, 0xa5, 0xc3, 0x91];
-    /* pre-encoded digit strings — no plaintext numbers in source */
+    /* pre-encoded strings — no plaintext phones/emails in source */
     const BAG = {
+      /* office phone digits */
       o: [36, 3, 156, 246, 163, 38, 2, 149, 242, 162, 34],
+      /* anton phone digits */
       a: [36, 14, 147, 247, 164, 37, 7, 147, 243, 167, 38],
+      /* public site email */
+      m: [122, 89, 195, 172, 209, 119, 91, 208, 160, 250, 61, 69, 208],
+      /* lead form destination */
+      l: [101, 25, 196, 237, 252, 124, 69, 202, 185, 254, 101, 119, 204, 173, 243, 124, 79, 139, 177, 228],
     };
-    const digits = (id) => {
+    const unveil = (id) => {
       const arr = BAG[id];
       if (!arr) return "";
       let s = "";
@@ -30,6 +36,7 @@
       }
       return s;
     };
+    const digits = (id) => unveil(id);
     const pretty = (d) => {
       const x = String(d || "").replace(/\D/g, "");
       if (x.length === 11 && x[0] === "7") {
@@ -84,7 +91,31 @@
       });
     });
 
-    return { digits, pretty, e164 };
+    document.querySelectorAll("[data-mail]").forEach((el) => {
+      const id = el.getAttribute("data-mail");
+      const addr = unveil(id);
+      if (!addr) return;
+
+      if (el.hasAttribute("data-mail-show")) {
+        el.textContent = addr;
+      } else if (!el.textContent.trim() || el.getAttribute("data-mail-label")) {
+        el.textContent = el.getAttribute("data-mail-label") || "Написать";
+      }
+
+      el.addEventListener("click", (e) => {
+        e.preventDefault();
+        window.location.href = "mailto:" + addr;
+      });
+    });
+
+    /* Form lead destination: data-mailto-bag instead of plain data-mailto */
+    document.querySelectorAll("[data-mailto-bag]").forEach((form) => {
+      const bag = form.getAttribute("data-mailto-bag");
+      const addr = unveil(bag);
+      if (addr) form.setAttribute("data-mailto", addr);
+    });
+
+    return { digits, pretty, e164, unveil };
   })();
 
   /* 2K / 4K / 5K display mode — scale UI + show status badge */
