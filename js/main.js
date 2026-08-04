@@ -8,6 +8,117 @@
     el.textContent = String(new Date().getFullYear());
   });
 
+  /* Floating capsule header: solid at top → semi-transparent independent bar on scroll */
+  (function headerScroll() {
+    const header = document.querySelector(".site-header");
+    if (!header) return;
+    const threshold = 24;
+    const sync = () => {
+      header.classList.toggle("is-scrolled", window.scrollY > threshold);
+    };
+    window.addEventListener("scroll", sync, { passive: true });
+    sync();
+  })();
+
+  /* Partners marquee: finger/mouse drag + continuous auto-scroll left */
+  (function partnersMarquee() {
+    const marquee = document.querySelector(".marquee");
+    const track = document.querySelector(".marquee-track");
+    if (!marquee || !track) return;
+
+    let offset = 0;
+    let half = 0;
+    let dragging = false;
+    let pointerId = null;
+    let lastX = 0;
+    let vel = 0;
+    let raf = 0;
+    const autoSpeed = 0.55; /* px per frame ≈ leftward */
+    const reduced =
+      window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const measure = () => {
+      half = track.scrollWidth / 2;
+    };
+
+    const wrap = () => {
+      if (half <= 0) return;
+      while (offset <= -half) offset += half;
+      while (offset > 0) offset -= half;
+    };
+
+    const apply = () => {
+      wrap();
+      track.style.transform = "translate3d(" + offset + "px,0,0)";
+    };
+
+    const tick = () => {
+      if (!dragging) {
+        if (!reduced) offset -= autoSpeed;
+        if (Math.abs(vel) > 0.15) {
+          offset += vel;
+          vel *= 0.92;
+        } else {
+          vel = 0;
+        }
+        apply();
+      }
+      raf = requestAnimationFrame(tick);
+    };
+
+    measure();
+    window.addEventListener("resize", () => {
+      measure();
+      apply();
+    });
+    track.querySelectorAll("img").forEach((img) => {
+      if (!img.complete) img.addEventListener("load", measure, { once: true });
+    });
+
+    const onPointerDown = (e) => {
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+      dragging = true;
+      pointerId = e.pointerId;
+      lastX = e.clientX;
+      vel = 0;
+      marquee.classList.add("is-dragging");
+      try {
+        marquee.setPointerCapture(e.pointerId);
+      } catch (_) {}
+    };
+
+    const onPointerMove = (e) => {
+      if (!dragging || e.pointerId !== pointerId) return;
+      const dx = e.clientX - lastX;
+      lastX = e.clientX;
+      offset += dx;
+      vel = dx;
+      apply();
+    };
+
+    const onPointerUp = (e) => {
+      if (!dragging || (pointerId != null && e.pointerId !== pointerId)) return;
+      dragging = false;
+      pointerId = null;
+      marquee.classList.remove("is-dragging");
+    };
+
+    marquee.addEventListener("pointerdown", onPointerDown);
+    marquee.addEventListener("pointermove", onPointerMove);
+    marquee.addEventListener("pointerup", onPointerUp);
+    marquee.addEventListener("pointercancel", onPointerUp);
+    marquee.addEventListener("lostpointercapture", onPointerUp);
+
+    /* Prevent image drag-ghost / text selection interfering with swipe */
+    marquee.addEventListener("dragstart", (e) => e.preventDefault());
+
+    apply();
+    raf = requestAnimationFrame(tick);
+
+    /* cleanup not required on static page unload */
+    void raf;
+  })();
+
   /* Floating up/down — jump between full page panels */
   (function panelNav() {
     const panels = Array.from(document.querySelectorAll("[data-panel]"));
