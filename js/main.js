@@ -112,53 +112,81 @@
     else tryPlay();
   })();
 
-  /* Next-panel peeks: desktop = in-panel; mobile = fixed in viewport safe bottom */
-  (function panelNextLabels() {
+  /* Next-panel peeks + panel arrows + blink/click-to-next */
+  (function panelNavAndPeeks() {
     const panels = Array.from(document.querySelectorAll("[data-panel]"));
+    const prevBtn = document.querySelector("[data-panel-prev]");
+    const nextBtn = document.querySelector("[data-panel-next]");
     if (!panels.length) return;
 
-    /* Desktop / tablet landscape: label lives at the bottom of each panel */
-    panels.forEach((panel) => {
-      const label = String(panel.getAttribute("data-next") || "").trim();
-      if (!label) return;
-      const el = document.createElement("div");
-      el.className = "panel-next";
-      el.setAttribute("aria-hidden", "true");
-      el.textContent = label;
-      panel.appendChild(el);
-    });
-
-    /* Mobile: one fixed pill so it’s never below the fold */
-    const fixed = document.createElement("div");
-    fixed.className = "panel-next panel-next-fixed is-hidden";
-    fixed.setAttribute("aria-hidden", "true");
-    document.body.appendChild(fixed);
-
-    const activePanel = () => {
-      const mid = window.innerHeight * 0.38;
-      let best = panels[0];
+    const getIndex = () => {
+      const mid = window.innerHeight * 0.35;
+      let best = 0;
       let bestDist = Infinity;
-      panels.forEach((el) => {
+      panels.forEach((el, i) => {
         const r = el.getBoundingClientRect();
-        const dist = Math.abs(r.top);
-        if (r.top <= mid && r.bottom > mid * 0.45) {
-          if (dist < bestDist) {
-            bestDist = dist;
-            best = el;
+        const score = Math.abs(r.top);
+        if (r.top <= mid && r.bottom > mid * 0.5) {
+          if (score < bestDist) {
+            bestDist = score;
+            best = i;
           }
-        } else if (dist < bestDist) {
-          bestDist = dist;
-          best = el;
+        } else if (score < bestDist) {
+          bestDist = score;
+          best = i;
         }
       });
       return best;
     };
 
-    const syncFixed = () => {
-      const panel = activePanel();
+    const go = (dir) => {
+      const i = getIndex();
+      const next = Math.max(0, Math.min(panels.length - 1, i + dir));
+      const el = panels[next];
+      if (!el) return;
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+
+    /* In-panel next labels (desktop) */
+    panels.forEach((panel) => {
+      const label = String(panel.getAttribute("data-next") || "").trim();
+      if (!label) return;
+      const el = document.createElement("button");
+      el.type = "button";
+      el.className = "panel-next";
+      el.textContent = label;
+      el.setAttribute("aria-label", "Дальше: " + label);
+      el.addEventListener("click", () => go(1));
+      panel.appendChild(el);
+    });
+
+    /* Mobile fixed peek */
+    const fixed = document.createElement("button");
+    fixed.type = "button";
+    fixed.className = "panel-next panel-next-fixed is-hidden";
+    fixed.setAttribute("aria-label", "Следующий блок");
+    fixed.addEventListener("click", () => go(1));
+    document.body.appendChild(fixed);
+
+    const sync = () => {
+      const i = getIndex();
+      if (prevBtn) {
+        prevBtn.disabled = i <= 0;
+        prevBtn.classList.toggle("is-disabled", i <= 0);
+      }
+      if (nextBtn) {
+        const atEnd = i >= panels.length - 1;
+        nextBtn.disabled = atEnd;
+        nextBtn.classList.toggle("is-disabled", atEnd);
+      }
+      const panel = panels[i];
       const label = panel ? String(panel.getAttribute("data-next") || "").trim() : "";
+      document.querySelectorAll(".panel-next:not(.panel-next-fixed)").forEach((el) => {
+        el.classList.toggle("is-active-peek", el.parentElement === panel);
+      });
       if (label) {
         fixed.textContent = label;
+        fixed.setAttribute("aria-label", "Дальше: " + label);
         fixed.classList.remove("is-hidden");
       } else {
         fixed.textContent = "";
@@ -166,9 +194,54 @@
       }
     };
 
-    window.addEventListener("scroll", syncFixed, { passive: true });
-    window.addEventListener("resize", syncFixed);
-    syncFixed();
+    if (prevBtn) prevBtn.addEventListener("click", () => go(-1));
+    if (nextBtn) nextBtn.addEventListener("click", () => go(1));
+    window.addEventListener("scroll", sync, { passive: true });
+    window.addEventListener("resize", sync);
+    sync();
+  })();
+
+  /* Messenger FAB: cycle Telegram → WhatsApp → Max; open «Напишите нам» */
+  (function chatFab() {
+    const root = document.querySelector("[data-chat-fab]");
+    if (!root) return;
+    const toggle = root.querySelector("[data-chat-toggle]");
+    const panel = root.querySelector("[data-chat-panel]");
+    const closeBtn = root.querySelector("[data-chat-close]");
+    const icons = Array.from(root.querySelectorAll("[data-chat-icon]"));
+    if (!toggle || !panel || !icons.length) return;
+
+    let i = 0;
+    const reduced =
+      window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const showIcon = (idx) => {
+      icons.forEach((el, n) => el.classList.toggle("is-active", n === idx));
+    };
+    showIcon(0);
+
+    if (!reduced) {
+      setInterval(() => {
+        if (root.classList.contains("is-open")) return;
+        i = (i + 1) % icons.length;
+        showIcon(i);
+      }, 2400);
+    }
+
+    const setOpen = (open) => {
+      root.classList.toggle("is-open", open);
+      panel.hidden = !open;
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    };
+
+    toggle.addEventListener("click", () => setOpen(panel.hidden));
+    if (closeBtn) closeBtn.addEventListener("click", () => setOpen(false));
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !panel.hidden) setOpen(false);
+    });
+    document.addEventListener("click", (e) => {
+      if (!panel.hidden && !root.contains(e.target)) setOpen(false);
+    });
   })();
 
   /* Floating capsule header: solid at top → semi-transparent independent bar on scroll */
@@ -280,58 +353,6 @@
 
     /* cleanup not required on static page unload */
     void raf;
-  })();
-
-  /* Floating up/down — jump between full page panels */
-  (function panelNav() {
-    const panels = Array.from(document.querySelectorAll("[data-panel]"));
-    const prevBtn = document.querySelector("[data-panel-prev]");
-    const nextBtn = document.querySelector("[data-panel-next]");
-    if (!panels.length || !prevBtn || !nextBtn) return;
-
-    const getIndex = () => {
-      const mid = window.innerHeight * 0.35;
-      let best = 0;
-      let bestDist = Infinity;
-      panels.forEach((el, i) => {
-        const r = el.getBoundingClientRect();
-        const dist = Math.abs(r.top - mid * 0.15);
-        // prefer section whose top is near/above viewport top
-        const score = Math.abs(r.top);
-        if (r.top <= mid && r.bottom > mid * 0.5) {
-          if (score < bestDist) {
-            bestDist = score;
-            best = i;
-          }
-        } else if (score < bestDist) {
-          bestDist = score;
-          best = i;
-        }
-      });
-      return best;
-    };
-
-    const go = (dir) => {
-      const i = getIndex();
-      const next = Math.max(0, Math.min(panels.length - 1, i + dir));
-      const el = panels[next];
-      if (!el) return;
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
-    };
-
-    const sync = () => {
-      const i = getIndex();
-      prevBtn.disabled = i <= 0;
-      nextBtn.disabled = i >= panels.length - 1;
-      prevBtn.classList.toggle("is-disabled", i <= 0);
-      nextBtn.classList.toggle("is-disabled", i >= panels.length - 1);
-    };
-
-    prevBtn.addEventListener("click", () => go(-1));
-    nextBtn.addEventListener("click", () => go(1));
-    window.addEventListener("scroll", sync, { passive: true });
-    window.addEventListener("resize", sync);
-    sync();
   })();
 
   /* Hero: pill + logos + glass plaque tint follow active marketplace */
