@@ -8,6 +8,65 @@
     el.textContent = String(new Date().getFullYear());
   });
 
+  /* 2K / 4K / 5K display mode — scale UI + show status badge */
+  (function displayMode() {
+    const root = document.documentElement;
+    const badge = document.createElement("div");
+    badge.className = "display-mode-badge";
+    badge.setAttribute("role", "status");
+    badge.setAttribute("aria-live", "polite");
+
+    const resolve = () => {
+      const w = window.innerWidth || root.clientWidth || 0;
+      const dpr = window.devicePixelRatio || 1;
+      const screenW = window.screen && screen.width ? screen.width : 0;
+      /* Physical-ish width: helps Retina 4K/5K with OS scaling */
+      const phys = Math.max(w * dpr, screenW * dpr);
+
+      let mode = null;
+      let label = null;
+
+      if (w >= 4800 || (w >= 3000 && phys >= 5000)) {
+        mode = "5k";
+        label = "5K";
+      } else if (w >= 3200 || (w >= 2300 && phys >= 3500)) {
+        mode = "4k";
+        label = "4K";
+      } else if (w >= 2400 || (w >= 2000 && phys >= 2500)) {
+        mode = "2k";
+        label = "2K";
+      }
+
+      if (mode) {
+        root.dataset.displayMode = mode;
+        badge.textContent = "Вы смотрите сайт в режиме " + label;
+        badge.classList.add("is-visible");
+      } else {
+        delete root.dataset.displayMode;
+        badge.classList.remove("is-visible");
+        badge.textContent = "";
+      }
+    };
+
+    const mount = () => {
+      if (!badge.isConnected) document.body.appendChild(badge);
+      resolve();
+    };
+
+    if (document.body) mount();
+    else document.addEventListener("DOMContentLoaded", mount);
+
+    let t = 0;
+    window.addEventListener(
+      "resize",
+      () => {
+        window.clearTimeout(t);
+        t = window.setTimeout(resolve, 120);
+      },
+      { passive: true }
+    );
+  })();
+
   /* Next-panel peeks: oval label at bottom naming the block below (not clickable) */
   (function panelNextLabels() {
     document.querySelectorAll("[data-panel][data-next]").forEach((panel) => {

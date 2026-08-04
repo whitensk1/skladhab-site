@@ -1813,3 +1813,389 @@ body.topic-open { overflow: hidden; }
   .marquee-track img { height: 200px; max-width: 420px; }
   .partners-note { margin-top: 20px; font-size: 13.5px; padding: 0 8px; }
 }
+
+/* --------------------------------------------------------------------------
+   Large displays: 2K / 4K / 5K
+   Content scales up so fullscreen on big monitors doesn’t look tiny.
+   Mode class is set by JS (data-display-mode); media queries are a fallback.
+   -------------------------------------------------------------------------- */
+
+.display-mode-badge {
+  position: fixed;
+  top: max(14px, env(safe-area-inset-top, 0px));
+  right: max(16px, env(safe-area-inset-right, 0px));
+  z-index: 70;
+  pointer-events: none;
+  user-select: none;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(28, 31, 38, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(14px) saturate(1.15);
+  -webkit-backdrop-filter: blur(14px) saturate(1.15);
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1.25;
+  white-space: nowrap;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.14);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s var(--ease), visibility 0.4s;
+}
+.display-mode-badge.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+/* On large modes header is taller — nudge badge slightly down if needed */
+html[data-display-mode="2k"] .display-mode-badge,
+html[data-display-mode="4k"] .display-mode-badge,
+html[data-display-mode="5k"] .display-mode-badge {
+  top: max(18px, env(safe-area-inset-top, 0px));
+}
+@media (max-width: 960px) {
+  .display-mode-badge {
+    display: none !important;
+  }
+}
+
+/* Shared scale helpers for large modes */
+html[data-display-mode="2k"],
+html[data-display-mode="4k"],
+html[data-display-mode="5k"] {
+  /* header offset recompute when --header-h changes */
+  --header-offset: calc(var(--header-top) + var(--header-h) + 12px);
+  --panel-pad-y: var(--header-offset);
+}
+
+/* —— 2K (~2560 CSS px and similar) —— */
+html[data-display-mode="2k"] {
+  --max: 1500px;
+  --header-h: 78px;
+  --header-top: 16px;
+  --radius: 22px;
+  font-size: 17.5px;
+}
+html[data-display-mode="2k"] .site-header {
+  width: min(var(--max), calc(100% - 36px));
+}
+html[data-display-mode="2k"] .site-header.is-scrolled {
+  width: min(860px, calc(100% - 28px));
+}
+html[data-display-mode="2k"] .logo-img { height: 48px; max-width: 200px; }
+html[data-display-mode="2k"] .nav { font-size: 15px; gap: 22px; }
+html[data-display-mode="2k"] .header-phone { font-size: 15px; }
+html[data-display-mode="2k"] .btn {
+  min-height: 52px;
+  padding: 0 26px;
+  font-size: 15px;
+}
+html[data-display-mode="2k"] .btn-lg {
+  min-height: 58px;
+  padding: 0 32px;
+  font-size: 16px;
+}
+html[data-display-mode="2k"] .hero-title {
+  font-size: clamp(3.1rem, 4.8vw, 5.2rem);
+}
+html[data-display-mode="2k"] .hero-sub {
+  font-size: clamp(1.1rem, 1.5vw, 1.35rem);
+}
+html[data-display-mode="2k"] .hero-glass {
+  padding: clamp(36px, 3.2vw, 56px) clamp(28px, 3vw, 52px);
+  border-radius: 28px;
+}
+html[data-display-mode="2k"] .section-head h2,
+html[data-display-mode="2k"] .snap-intro h2 {
+  font-size: clamp(2.7rem, 3.4vw, 4.1rem);
+}
+html[data-display-mode="2k"] .section-head p,
+html[data-display-mode="2k"] .lead-text {
+  font-size: 1.12rem;
+}
+html[data-display-mode="2k"] .container {
+  width: min(var(--max), calc(100% - 56px));
+}
+html[data-display-mode="2k"] .marquee-track { gap: 56px; }
+html[data-display-mode="2k"] .marquee-track img {
+  height: 420px;
+  max-width: 860px;
+}
+html[data-display-mode="2k"] .panel-nav__btn {
+  width: 56px;
+  height: 56px;
+}
+html[data-display-mode="2k"] .panel-next {
+  font-size: 14px;
+  padding: 10px 26px;
+}
+html[data-display-mode="2k"] .svc,
+html[data-display-mode="2k"] .feature-card,
+html[data-display-mode="2k"] .card {
+  font-size: 1.02rem;
+}
+html[data-display-mode="2k"] .stat-body strong {
+  font-size: clamp(1.7rem, 2vw, 2.15rem);
+}
+html[data-display-mode="2k"] .display-mode-badge {
+  font-size: 13px;
+  padding: 9px 18px;
+}
+
+/* —— 4K (~3840 CSS px) —— */
+html[data-display-mode="4k"] {
+  --max: 1860px;
+  --header-h: 92px;
+  --header-top: 20px;
+  --radius: 26px;
+  font-size: 20px;
+}
+html[data-display-mode="4k"] .site-header {
+  width: min(var(--max), calc(100% - 48px));
+}
+html[data-display-mode="4k"] .site-header.is-scrolled {
+  width: min(980px, calc(100% - 40px));
+}
+html[data-display-mode="4k"] .logo-img { height: 58px; max-width: 240px; }
+html[data-display-mode="4k"] .nav { font-size: 17px; gap: 28px; }
+html[data-display-mode="4k"] .header-phone { font-size: 17px; }
+html[data-display-mode="4k"] .btn {
+  min-height: 58px;
+  padding: 0 30px;
+  font-size: 17px;
+  border-radius: 999px;
+}
+html[data-display-mode="4k"] .btn-lg {
+  min-height: 66px;
+  padding: 0 38px;
+  font-size: 18px;
+}
+html[data-display-mode="4k"] .hero-title {
+  font-size: clamp(3.8rem, 4.2vw, 6.2rem);
+}
+html[data-display-mode="4k"] .hero-sub {
+  font-size: clamp(1.25rem, 1.35vw, 1.55rem);
+  max-width: 48ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+html[data-display-mode="4k"] .hero-glass {
+  padding: clamp(44px, 3vw, 72px) clamp(36px, 2.8vw, 64px);
+  border-radius: 34px;
+}
+html[data-display-mode="4k"] .hero-mp { min-height: 80px; }
+html[data-display-mode="4k"] .hero-mp img { height: 48px; }
+html[data-display-mode="4k"] .section-head h2,
+html[data-display-mode="4k"] .snap-intro h2 {
+  font-size: clamp(3.2rem, 3vw, 5rem);
+}
+html[data-display-mode="4k"] .section-head p,
+html[data-display-mode="4k"] .lead-text {
+  font-size: 1.2rem;
+  max-width: 46ch;
+}
+html[data-display-mode="4k"] .container {
+  width: min(var(--max), calc(100% - 72px));
+}
+html[data-display-mode="4k"] .marquee-track { gap: 72px; }
+html[data-display-mode="4k"] .marquee-track img {
+  height: 520px;
+  max-width: 1040px;
+}
+html[data-display-mode="4k"] .panel-nav {
+  right: 32px;
+}
+html[data-display-mode="4k"] .panel-nav__btn {
+  width: 64px;
+  height: 64px;
+}
+html[data-display-mode="4k"] .panel-nav__btn svg {
+  width: 22px;
+  height: 22px;
+}
+html[data-display-mode="4k"] .panel-next {
+  font-size: 16px;
+  padding: 12px 30px;
+  bottom: max(22px, env(safe-area-inset-bottom, 0px));
+}
+html[data-display-mode="4k"] .svc h3,
+html[data-display-mode="4k"] .feature-card h3,
+html[data-display-mode="4k"] .card h3 {
+  font-size: 1.25rem;
+}
+html[data-display-mode="4k"] .svc p,
+html[data-display-mode="4k"] .feature-card p,
+html[data-display-mode="4k"] .card p {
+  font-size: 1.05rem;
+}
+html[data-display-mode="4k"] .stat-body strong {
+  font-size: clamp(2rem, 1.8vw, 2.6rem);
+}
+html[data-display-mode="4k"] .stat-icon {
+  width: 96px;
+  height: 96px;
+}
+html[data-display-mode="4k"] .display-mode-badge {
+  font-size: 14px;
+  padding: 10px 20px;
+}
+
+/* —— 5K (~5120 CSS px) —— */
+html[data-display-mode="5k"] {
+  --max: 2280px;
+  --header-h: 108px;
+  --header-top: 24px;
+  --radius: 30px;
+  font-size: 23px;
+}
+html[data-display-mode="5k"] .site-header {
+  width: min(var(--max), calc(100% - 64px));
+}
+html[data-display-mode="5k"] .site-header.is-scrolled {
+  width: min(1120px, calc(100% - 48px));
+}
+html[data-display-mode="5k"] .logo-img { height: 68px; max-width: 280px; }
+html[data-display-mode="5k"] .nav { font-size: 19px; gap: 32px; }
+html[data-display-mode="5k"] .header-phone { font-size: 19px; }
+html[data-display-mode="5k"] .btn {
+  min-height: 66px;
+  padding: 0 36px;
+  font-size: 19px;
+}
+html[data-display-mode="5k"] .btn-lg {
+  min-height: 76px;
+  padding: 0 44px;
+  font-size: 21px;
+}
+html[data-display-mode="5k"] .hero-title {
+  font-size: clamp(4.6rem, 4vw, 7.2rem);
+}
+html[data-display-mode="5k"] .hero-sub {
+  font-size: clamp(1.4rem, 1.2vw, 1.75rem);
+  max-width: 48ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+html[data-display-mode="5k"] .hero-glass {
+  padding: clamp(56px, 2.8vw, 88px) clamp(44px, 2.5vw, 80px);
+  border-radius: 40px;
+}
+html[data-display-mode="5k"] .hero-mp { min-height: 96px; }
+html[data-display-mode="5k"] .hero-mp img { height: 56px; }
+html[data-display-mode="5k"] .section-head h2,
+html[data-display-mode="5k"] .snap-intro h2 {
+  font-size: clamp(3.8rem, 2.8vw, 5.8rem);
+}
+html[data-display-mode="5k"] .section-head p,
+html[data-display-mode="5k"] .lead-text {
+  font-size: 1.28rem;
+  max-width: 48ch;
+}
+html[data-display-mode="5k"] .container {
+  width: min(var(--max), calc(100% - 96px));
+}
+html[data-display-mode="5k"] .marquee-track { gap: 88px; }
+html[data-display-mode="5k"] .marquee-track img {
+  height: 640px;
+  max-width: 1280px;
+}
+html[data-display-mode="5k"] .panel-nav {
+  right: 40px;
+}
+html[data-display-mode="5k"] .panel-nav__btn {
+  width: 72px;
+  height: 72px;
+}
+html[data-display-mode="5k"] .panel-nav__btn svg {
+  width: 26px;
+  height: 26px;
+}
+html[data-display-mode="5k"] .panel-next {
+  font-size: 18px;
+  padding: 14px 34px;
+  bottom: max(28px, env(safe-area-inset-bottom, 0px));
+}
+html[data-display-mode="5k"] .svc h3,
+html[data-display-mode="5k"] .feature-card h3,
+html[data-display-mode="5k"] .card h3 {
+  font-size: 1.35rem;
+}
+html[data-display-mode="5k"] .svc p,
+html[data-display-mode="5k"] .feature-card p,
+html[data-display-mode="5k"] .card p {
+  font-size: 1.1rem;
+}
+html[data-display-mode="5k"] .stat-body strong {
+  font-size: clamp(2.3rem, 1.6vw, 3rem);
+}
+html[data-display-mode="5k"] .stat-icon {
+  width: 112px;
+  height: 112px;
+}
+html[data-display-mode="5k"] .display-mode-badge {
+  font-size: 15px;
+  padding: 12px 24px;
+}
+
+/* No-JS / early paint fallbacks by viewport width */
+@media (min-width: 2400px) {
+  html:not([data-display-mode]) {
+    --max: 1500px;
+    --header-h: 78px;
+    --header-top: 16px;
+    --header-offset: calc(var(--header-top) + var(--header-h) + 12px);
+    --panel-pad-y: var(--header-offset);
+    font-size: 17.5px;
+  }
+  html:not([data-display-mode]) .hero-title {
+    font-size: clamp(3.1rem, 4.8vw, 5.2rem);
+  }
+  html:not([data-display-mode]) .section-head h2 {
+    font-size: clamp(2.7rem, 3.4vw, 4.1rem);
+  }
+  html:not([data-display-mode]) .marquee-track img {
+    height: 420px;
+    max-width: 860px;
+  }
+}
+@media (min-width: 3200px) {
+  html:not([data-display-mode]) {
+    --max: 1860px;
+    --header-h: 92px;
+    --header-top: 20px;
+    --header-offset: calc(var(--header-top) + var(--header-h) + 12px);
+    --panel-pad-y: var(--header-offset);
+    font-size: 20px;
+  }
+  html:not([data-display-mode]) .hero-title {
+    font-size: clamp(3.8rem, 4.2vw, 6.2rem);
+  }
+  html:not([data-display-mode]) .section-head h2 {
+    font-size: clamp(3.2rem, 3vw, 5rem);
+  }
+  html:not([data-display-mode]) .marquee-track img {
+    height: 520px;
+    max-width: 1040px;
+  }
+}
+@media (min-width: 4800px) {
+  html:not([data-display-mode]) {
+    --max: 2280px;
+    --header-h: 108px;
+    --header-top: 24px;
+    --header-offset: calc(var(--header-top) + var(--header-h) + 12px);
+    --panel-pad-y: var(--header-offset);
+    font-size: 23px;
+  }
+  html:not([data-display-mode]) .hero-title {
+    font-size: clamp(4.6rem, 4vw, 7.2rem);
+  }
+  html:not([data-display-mode]) .section-head h2 {
+    font-size: clamp(3.8rem, 2.8vw, 5.8rem);
+  }
+  html:not([data-display-mode]) .marquee-track img {
+    height: 640px;
+    max-width: 1280px;
+  }
+}
