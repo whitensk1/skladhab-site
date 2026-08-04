@@ -190,12 +190,26 @@
     }
   })();
 
-  /* Next-panel peeks + panel arrows + blink/click-to-next */
+  /* Soft panel transitions + resistance to accidental flicks */
   (function panelNavAndPeeks() {
     const panels = Array.from(document.querySelectorAll("[data-panel]"));
     const prevBtn = document.querySelector("[data-panel-prev]");
     const nextBtn = document.querySelector("[data-panel-next]");
     if (!panels.length) return;
+
+    const root = document.documentElement;
+    const reduced =
+      window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    let gliding = false;
+    let glideRaf = 0;
+    let wheelAcc = 0;
+    let wheelTimer = 0;
+    let touchY0 = 0;
+    let touchActive = false;
+
+    const easeInOutCubic = (t) =>
+      t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
     const getIndex = () => {
       const mid = window.innerHeight * 0.35;
@@ -217,14 +231,54 @@
       return best;
     };
 
+    const panelScrollTarget = (el) => {
+      const top = el.getBoundingClientRect().top + window.pageYOffset;
+      return Math.max(0, top);
+    };
+
+    /* Long soft glide between full-screen panels */
+    const softScrollTo = (el, duration) => {
+      if (!el) return;
+      if (glideRaf) cancelAnimationFrame(glideRaf);
+      const from = window.pageYOffset;
+      const to = panelScrollTarget(el);
+      const dist = to - from;
+      if (Math.abs(dist) < 2) {
+        window.scrollTo(0, to);
+        return;
+      }
+      const dur = reduced ? 0 : duration || Math.min(1100, Math.max(720, Math.abs(dist) * 0.55));
+      if (dur < 16) {
+        window.scrollTo(0, to);
+        return;
+      }
+      gliding = true;
+      root.classList.add("is-panel-gliding");
+      const t0 = performance.now();
+      const step = (now) => {
+        const p = Math.min(1, (now - t0) / dur);
+        const y = from + dist * easeInOutCubic(p);
+        window.scrollTo(0, y);
+        if (p < 1) {
+          glideRaf = requestAnimationFrame(step);
+        } else {
+          window.scrollTo(0, to);
+          gliding = false;
+          glideRaf = 0;
+          root.classList.remove("is-panel-gliding");
+          wheelAcc = 0;
+          sync();
+        }
+      };
+      glideRaf = requestAnimationFrame(step);
+    };
+
     const go = (dir) => {
+      if (gliding) return;
       const i = getIndex();
       const next = Math.max(0, Math.min(panels.length - 1, i + dir));
-      const el = panels[next];
-      if (!el) return;
-      /* Desktop: flush to viewport top (scroll-margin is 0).
-         Mobile keeps scroll-margin under the menu via CSS. */
-      el.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+      if (next === i) return;
+      softScrollTo(panels[next]);
     };
 
     /* One fixed peek at viewport bottom — updates with the active panel */
@@ -236,6 +290,7 @@
     document.body.appendChild(fixed);
 
     const sync = () => {
+      if (gliding) return;
       const i = getIndex();
       if (prevBtn) {
         prevBtn.disabled = i <= 0;
@@ -263,6 +318,105 @@
     onScroll(sync);
     window.addEventListener("resize", sync);
     sync();
+
+    /* Inner panel scroll? don't steal the gesture */
+    const panelAtScrollEdge = (panel, dir) => {
+      if (!panel) return true;
+      const max = panel.scrollHeight - panel.clientHeight;
+      if (max <= 2) return true;
+      if (dir > 0) return panel.scrollTop >= max - 2;
+      return panel.scrollTop <= 2;
+    };
+
+    /* Wheel: need a deliberate flick — small deltas die out */
+    const WHEEL_THRESHOLD = 140;
+    const WHEEL_DECAY_MS = 280;
+    window.addEventListener(
+      "wheel",
+      (e) => {
+        if (gliding) {
+          e.preventDefault();
+          return;
+        }
+        /* ignore while interacting with form controls */
+        const tag = (e.target && e.target.tagName) || "";
+        if (/^(INPUT|TEXTAREA|SELECT|OPTION)$/.test(tag)) return;
+        if (e.target && e.target.closest && e.target.closest(".topic-modal, .hero-opacity, [data-chat-fab]"))
+          return;
+
+        const i = getIndex();
+        const panel = panels[i];
+        const dir = e.deltaY > 0 ? 1 : -1;
+        if (!panelAtScrollEdge(panel, dir)) return;
+
+        e.preventDefault();
+        wheelAcc += e.deltaY;
+        window.clearTimeout(wheelTimer);
+        wheelTimer = window.setTimeout(() => {
+          wheelAcc = 0;
+        }, WHEEL_DECAY_MS);
+
+        if (Math.abs(wheelAcc) >= WHEEL_THRESHOLD) {
+          const goDir = wheelAcc > 0 ? 1 : -1;
+          wheelAcc = 0;
+          go(goDir);
+        }
+      },
+      { passive: false }
+    );
+
+    /* Touch: require a clear swipe, else settle back softly to current panel */
+    const TOUCH_THRESHOLD = 72;
+    window.addEventListener(
+      "touchstart",
+      (e) => {
+        if (gliding || !e.touches || !e.touches.length) return;
+        if (e.target && e.target.closest && e.target.closest("input, textarea, select, button, a, .hero-opacity"))
+          return;
+        touchActive = true;
+        touchY0 = e.touches[0].clientY;
+      },
+      { passive: true }
+    );
+    window.addEventListener(
+      "touchend",
+      (e) => {
+        if (!touchActive || gliding) {
+          touchActive = false;
+          return;
+        }
+        touchActive = false;
+        const y1 = (e.changedTouches && e.changedTouches[0] && e.changedTouches[0].clientY) || touchY0;
+        const dy = touchY0 - y1; /* swipe up → next */
+        const i = getIndex();
+        const panel = panels[i];
+        if (Math.abs(dy) < TOUCH_THRESHOLD) {
+          /* accidental tap/flick — gently re-align current block */
+          softScrollTo(panel, 520);
+          return;
+        }
+        const dir = dy > 0 ? 1 : -1;
+        if (!panelAtScrollEdge(panel, dir)) return;
+        go(dir);
+      },
+      { passive: true }
+    );
+
+    /* Keyboard PageUp/Down / Space — same soft glide */
+    window.addEventListener("keydown", (e) => {
+      if (gliding) return;
+      const tag = (e.target && e.target.tagName) || "";
+      if (/^(INPUT|TEXTAREA|SELECT)$/.test(tag)) return;
+      if (e.key === "PageDown" || (e.key === " " && !e.shiftKey) || e.key === "ArrowDown") {
+        if (e.key === "ArrowDown" && e.target !== document.body && e.target !== root) return;
+        e.preventDefault();
+        go(1);
+      } else if (e.key === "PageUp" || (e.key === " " && e.shiftKey) || e.key === "ArrowUp") {
+        if (e.key === "ArrowUp" && e.target !== document.body && e.target !== root) return;
+        e.preventDefault();
+        go(-1);
+      }
+    });
   })();
 
   /* Messenger FAB: load Lottie only when idle / after short delay */

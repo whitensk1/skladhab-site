@@ -30,11 +30,19 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 html {
-  scroll-behavior: smooth;
-  scroll-snap-type: y mandatory;
-  /* Desktop: panels snap flush to viewport edges (no gap under menu) */
+  /* Native smooth is short/harsh — panel moves use JS easing instead */
+  scroll-behavior: auto;
+  /*
+    proximity: small flicks don't force the next block (less “убегает”).
+    Soft panel jumps are handled in JS with a longer ease.
+  */
+  scroll-snap-type: y proximity;
   scroll-padding-top: 0;
   scroll-padding-bottom: 0;
+}
+html.is-panel-gliding {
+  /* while custom soft-scroll runs, freeze native snap fighting the animation */
+  scroll-snap-type: none;
 }
 body {
   margin: 0;
@@ -53,7 +61,8 @@ main > section,
 .partners {
   position: relative;
   scroll-snap-align: start;
-  scroll-snap-stop: always;
+  /* normal: don't force-stop on every tiny gesture */
+  scroll-snap-stop: normal;
   box-sizing: border-box;
   min-height: 100svh;
   min-height: 100dvh;
