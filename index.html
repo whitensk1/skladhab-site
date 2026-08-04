@@ -64,48 +64,65 @@
         </video>
       </div>
       <div class="container">
-        <div class="hero-glass" data-mp="wb">
-          <p class="hero-brand">Успешное Дело</p>
-          <h1 class="hero-title">Фулфилмент в&nbsp;Москве</h1>
+        <div class="hero-stage">
+          <div class="hero-glass" data-mp="wb" data-hero-glass>
+            <p class="hero-brand">Успешное Дело</p>
+            <h1 class="hero-title">Фулфилмент в&nbsp;Москве</h1>
 
-          <div class="hero-for" data-seller-bar data-mp="wb">
-            <div class="hero-for__pill">для селлеров</div>
-            <div class="hero-for__logos" aria-label="Маркетплейсы">
-              <span class="hero-mp is-active" data-mp-icon="wb" title="Wildberries">
-                <img src="media/marketplaces/circle-wb.jpg" alt="Wildberries" width="160" height="160" />
-              </span>
-              <span class="hero-mp" data-mp-icon="ozon" title="Ozon">
-                <img src="media/marketplaces/circle-ozon.jpg" alt="Ozon" width="160" height="160" />
-              </span>
-              <span class="hero-mp" data-mp-icon="ym" title="Яндекс Маркет">
-                <img src="media/marketplaces/circle-ym.jpg" alt="Яндекс Маркет" width="160" height="160" />
-              </span>
+            <div class="hero-for" data-seller-bar data-mp="wb">
+              <div class="hero-for__pill">для селлеров</div>
+              <div class="hero-for__logos" aria-label="Маркетплейсы">
+                <span class="hero-mp is-active" data-mp-icon="wb" title="Wildberries">
+                  <img src="media/marketplaces/circle-wb.jpg" alt="Wildberries" width="160" height="160" />
+                </span>
+                <span class="hero-mp" data-mp-icon="ozon" title="Ozon">
+                  <img src="media/marketplaces/circle-ozon.jpg" alt="Ozon" width="160" height="160" />
+                </span>
+                <span class="hero-mp" data-mp-icon="ym" title="Яндекс Маркет">
+                  <img src="media/marketplaces/circle-ym.jpg" alt="Яндекс Маркет" width="160" height="160" />
+                </span>
+              </div>
+            </div>
+
+            <p class="hero-sub">
+              Избавим от&nbsp;рутинных забот по&nbsp;подготовке и&nbsp;доставке товара на&nbsp;маркетплейсы и&nbsp;федеральные сети.
+            </p>
+
+            <div class="hero-features">
+              <div class="hero-feature">
+                <span class="hero-feature__icon"><img src="media/hero-ui/rocket.svg" alt="" width="22" height="22" /></span>
+                <span class="hero-feature__text">Быстро</span>
+              </div>
+              <div class="hero-feature">
+                <span class="hero-feature__icon"><img src="media/hero-ui/shield.svg" alt="" width="22" height="22" /></span>
+                <span class="hero-feature__text">Надёжно</span>
+              </div>
+              <div class="hero-feature">
+                <span class="hero-feature__icon"><img src="media/hero-ui/cube.svg" alt="" width="22" height="22" /></span>
+                <span class="hero-feature__text">Прозрачно</span>
+              </div>
+            </div>
+
+            <div class="hero-cta">
+              <a class="btn btn-primary btn-lg" href="#contact">Получить индивидуальный расчёт</a>
+              <a class="btn btn-ghost" href="tel:+74952550131">Позвонить</a>
             </div>
           </div>
 
-          <p class="hero-sub">
-            Избавим от&nbsp;рутинных забот по&nbsp;подготовке и&nbsp;доставке товара на&nbsp;маркетплейсы и&nbsp;федеральные сети.
-          </p>
-
-          <div class="hero-features">
-            <div class="hero-feature">
-              <span class="hero-feature__icon"><img src="media/hero-ui/rocket.svg" alt="" width="22" height="22" /></span>
-              <span class="hero-feature__text">Быстро</span>
-            </div>
-            <div class="hero-feature">
-              <span class="hero-feature__icon"><img src="media/hero-ui/shield.svg" alt="" width="22" height="22" /></span>
-              <span class="hero-feature__text">Надёжно</span>
-            </div>
-            <div class="hero-feature">
-              <span class="hero-feature__icon"><img src="media/hero-ui/cube.svg" alt="" width="22" height="22" /></span>
-              <span class="hero-feature__text">Прозрачно</span>
-            </div>
-          </div>
-
-          <div class="hero-cta">
-            <a class="btn btn-primary btn-lg" href="#contact">Получить индивидуальный расчёт</a>
-            <a class="btn btn-ghost" href="tel:+74952550131">Позвонить</a>
-          </div>
+          <label class="hero-opacity" title="Прозрачность блока — видно фоновое видео">
+            <span class="hero-opacity__top">видео</span>
+            <input
+              class="hero-opacity__range"
+              type="range"
+              min="0"
+              max="100"
+              value="0"
+              step="1"
+              data-hero-opacity
+              aria-label="Прозрачность стеклянного блока"
+            />
+            <span class="hero-opacity__bottom" data-hero-opacity-val>0%</span>
+          </label>
         </div>
       </div>
     </section>
