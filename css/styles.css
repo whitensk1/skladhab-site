@@ -1143,6 +1143,43 @@ strong { font-weight: 700; }
 }
 .svc.accent .btn { margin-top: 16px; }
 
+/* Quote CTA under services — full width, calmer than a sixth card */
+.services-quote {
+  margin-top: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px 28px;
+  flex-wrap: wrap;
+  padding: 22px 26px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #fff 0%, var(--accent-soft) 100%);
+  border: 1px solid rgba(203, 17, 171, 0.18);
+  box-shadow: 0 12px 32px rgba(203, 17, 171, 0.07);
+}
+.services-quote__text {
+  flex: 1 1 240px;
+  min-width: 0;
+}
+.services-quote h3 {
+  margin: 0 0 6px;
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.services-quote p {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: var(--muted);
+  font-weight: 500;
+  max-width: 48ch;
+}
+.services-quote .btn {
+  flex-shrink: 0;
+}
+
 /* Duo columns */
 .duo {
   display: grid;
