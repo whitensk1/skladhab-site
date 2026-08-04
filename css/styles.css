@@ -789,66 +789,111 @@ strong { font-weight: 700; }
   grid-template-columns: 1fr 1fr;
   gap: 14px;
 }
+/* Photo-backed metric cards: large figure on top of atmospheric bg */
 .stats-premium .stat {
+  position: relative;
+  display: flex;
   flex-direction: column;
+  justify-content: flex-end;
   align-items: stretch;
   gap: 0;
+  min-height: 200px;
+  aspect-ratio: 1 / 1.05;
   padding: 0;
   border-radius: 22px;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.08);
+  background: #12141a;
   border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  transition: transform 0.3s var(--ease), border-color 0.3s, background 0.3s;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.28);
+  transition: transform 0.3s var(--ease), border-color 0.3s, box-shadow 0.3s;
 }
 .stats-premium .stat:hover {
   transform: translateY(-3px);
-  border-color: rgba(240, 160, 216, 0.35);
-  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(240, 160, 216, 0.4);
+  box-shadow: 0 20px 52px rgba(0, 0, 0, 0.36);
 }
-/* full-bleed image, no padding / white field */
-.stats-premium .stat-icon {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 1.05;
-  max-height: none;
-  border-radius: 0;
-  background: transparent;
-  padding: 0;
-  overflow: hidden;
-}
-.stats-premium .stat-icon img {
+.stats-premium .stat-bg {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center;
-  display: block;
-  transform: scale(1.02);
+  transform: scale(1.04);
+  transition: transform 0.55s var(--ease);
+  z-index: 0;
+}
+.stats-premium .stat:hover .stat-bg {
+  transform: scale(1.08);
+}
+/* Readable overlay over photo */
+.stats-premium .stat--photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(8, 10, 14, 0.18) 0%,
+      rgba(8, 10, 14, 0.35) 38%,
+      rgba(8, 10, 14, 0.82) 72%,
+      rgba(8, 10, 14, 0.94) 100%
+    );
 }
 .stats-premium .stat-body {
-  padding: 16px 18px 18px;
+  position: relative;
+  z-index: 2;
+  padding: 18px 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 .stats-premium .stat-body strong {
-  font-size: clamp(1.45rem, 2.4vw, 1.85rem);
+  display: block;
+  font-size: clamp(1.85rem, 3.2vw, 2.45rem);
+  font-weight: 800;
   color: #fff;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.045em;
+  line-height: 1.05;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.45);
+}
+/* Revenue figure — gold */
+.stats-premium .stat--revenue .stat-body strong {
+  color: #f0d48a;
+  background: linear-gradient(180deg, #fff4c8 0%, #e8c56a 42%, #c9a24a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 12px rgba(232, 197, 106, 0.35));
+}
+.stats-premium .stat--revenue {
+  border-color: rgba(232, 197, 106, 0.28);
+}
+.stats-premium .stat--revenue:hover {
+  border-color: rgba(232, 197, 106, 0.5);
 }
 .stats-premium .stat-body span {
-  font-size: 13.5px;
-  color: rgba(255, 255, 255, 0.72);
+  display: block;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.88);
   font-weight: 700;
-  margin-top: 4px;
+  margin-top: 8px;
+  letter-spacing: -0.01em;
 }
 .stats-premium .stat-body em {
   display: block;
-  margin-top: 8px;
+  margin-top: 6px;
   font-style: normal;
   font-size: 12.5px;
   line-height: 1.4;
-  color: rgba(255, 255, 255, 0.48);
+  color: rgba(255, 255, 255, 0.58);
   font-weight: 500;
+}
+/* legacy icon layout (other pages if any) */
+.stats-premium .stat-icon {
+  display: none;
 }
 
 .pills {
