@@ -8,6 +8,58 @@
     el.textContent = String(new Date().getFullYear());
   });
 
+  /* Floating up/down — jump between full page panels */
+  (function panelNav() {
+    const panels = Array.from(document.querySelectorAll("[data-panel]"));
+    const prevBtn = document.querySelector("[data-panel-prev]");
+    const nextBtn = document.querySelector("[data-panel-next]");
+    if (!panels.length || !prevBtn || !nextBtn) return;
+
+    const getIndex = () => {
+      const mid = window.innerHeight * 0.35;
+      let best = 0;
+      let bestDist = Infinity;
+      panels.forEach((el, i) => {
+        const r = el.getBoundingClientRect();
+        const dist = Math.abs(r.top - mid * 0.15);
+        // prefer section whose top is near/above viewport top
+        const score = Math.abs(r.top);
+        if (r.top <= mid && r.bottom > mid * 0.5) {
+          if (score < bestDist) {
+            bestDist = score;
+            best = i;
+          }
+        } else if (score < bestDist) {
+          bestDist = score;
+          best = i;
+        }
+      });
+      return best;
+    };
+
+    const go = (dir) => {
+      const i = getIndex();
+      const next = Math.max(0, Math.min(panels.length - 1, i + dir));
+      const el = panels[next];
+      if (!el) return;
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+
+    const sync = () => {
+      const i = getIndex();
+      prevBtn.disabled = i <= 0;
+      nextBtn.disabled = i >= panels.length - 1;
+      prevBtn.classList.toggle("is-disabled", i <= 0);
+      nextBtn.classList.toggle("is-disabled", i >= panels.length - 1);
+    };
+
+    prevBtn.addEventListener("click", () => go(-1));
+    nextBtn.addEventListener("click", () => go(1));
+    window.addEventListener("scroll", sync, { passive: true });
+    window.addEventListener("resize", sync);
+    sync();
+  })();
+
   /* Hero: pill + logos + glass plaque tint follow active marketplace */
   (function sellerBarCycle() {
     const bar = document.querySelector("[data-seller-bar]");
