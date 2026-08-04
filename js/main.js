@@ -67,49 +67,127 @@
     );
   })();
 
-  /* Hero background: video only while playing; still photo only as fallback */
-  (function heroBgMedia() {
-    const wrap = document.querySelector(".hero-bg");
-    const video = document.querySelector(".hero-bg-video");
-    if (!wrap || !video) return;
-
-    const showVideo = () => {
-      wrap.classList.add("is-video");
-      wrap.classList.remove("is-still");
+  /* Shared rAF throttle for scroll listeners */
+  function onScroll(fn) {
+    let ticking = false;
+    const run = () => {
+      ticking = false;
+      fn();
     };
-    const showStill = () => {
-      wrap.classList.add("is-still");
-      wrap.classList.remove("is-video");
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(run);
+      },
+      { passive: true }
+    );
+  }
+
+  /* Lazy videos: load/play only when visible; pause off-screen & in hidden tab */
+  (function lazyVideos() {
+    const reduced =
+      window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const videos = Array.from(document.querySelectorAll("video[data-lazy-video]"));
+    if (!videos.length) return;
+
+    const heroWrap = document.querySelector(".hero-bg");
+    const heroVideo = document.querySelector(".hero-bg-video");
+
+    const setHeroMode = (playing) => {
+      if (!heroWrap) return;
+      if (playing) {
+        heroWrap.classList.add("is-video");
+        heroWrap.classList.remove("is-still");
+      } else {
+        heroWrap.classList.add("is-still");
+        heroWrap.classList.remove("is-video");
+      }
+    };
+    if (heroWrap) setHeroMode(false);
+
+    const ensureSources = (video) => {
+      /* kick network after we decide to play (preload=none) */
+      if (video.preload === "none") video.preload = "metadata";
+      try {
+        video.load();
+      } catch (_) {}
     };
 
-    /* While loading: still visible underneath (default CSS) */
-    showStill();
-
-    const tryPlay = () => {
+    const playVideo = (video) => {
+      if (reduced) return;
+      ensureSources(video);
       const p = video.play();
       if (p && typeof p.then === "function") {
-        p.then(showVideo).catch(showStill);
-      } else if (!video.paused) {
-        showVideo();
+        p.then(() => {
+          if (video === heroVideo) setHeroMode(true);
+        }).catch(() => {
+          if (video === heroVideo) setHeroMode(false);
+        });
+      } else if (!video.paused && video === heroVideo) {
+        setHeroMode(true);
       }
     };
 
-    video.addEventListener("loadeddata", () => {
-      if (video.readyState >= 2) tryPlay();
-    });
-    video.addEventListener("canplay", tryPlay);
-    video.addEventListener("playing", showVideo);
-    video.addEventListener("error", showStill);
-    video.querySelectorAll("source").forEach((s) => {
-      s.addEventListener("error", () => {
-        /* only fall back if the video element itself can't play */
-        if (video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) showStill();
-      });
-    });
+    const pauseVideo = (video) => {
+      try {
+        video.pause();
+      } catch (_) {}
+      if (video === heroVideo) setHeroMode(false);
+    };
 
-    /* If already buffered (bfcache / cache) */
-    if (video.readyState >= 2) tryPlay();
-    else tryPlay();
+    const inView = new Map();
+
+    const sync = () => {
+      if (document.hidden) {
+        videos.forEach(pauseVideo);
+        return;
+      }
+      videos.forEach((video) => {
+        if (inView.get(video)) playVideo(video);
+        else pauseVideo(video);
+      });
+    };
+
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            const video = e.target;
+            const delay = Number(video.getAttribute("data-lazy-delay") || 0);
+            const visible = e.isIntersecting && e.intersectionRatio > 0.12;
+            if (visible) {
+              if (delay > 0 && !video.dataset.lazyArmed) {
+                video.dataset.lazyArmed = "1";
+                window.setTimeout(() => {
+                  inView.set(video, true);
+                  sync();
+                }, delay);
+              } else {
+                inView.set(video, true);
+              }
+            } else {
+              inView.set(video, false);
+            }
+          });
+          sync();
+        },
+        { threshold: [0, 0.12, 0.35], rootMargin: "80px 0px" }
+      );
+      videos.forEach((v) => {
+        inView.set(v, false);
+        io.observe(v);
+      });
+    } else {
+      videos.forEach((v) => playVideo(v));
+    }
+
+    document.addEventListener("visibilitychange", sync);
+    if (heroVideo) {
+      heroVideo.addEventListener("error", () => setHeroMode(false));
+      heroVideo.addEventListener("playing", () => setHeroMode(true));
+    }
   })();
 
   /* Next-panel peeks + panel arrows + blink/click-to-next */
@@ -180,12 +258,12 @@
 
     if (prevBtn) prevBtn.addEventListener("click", () => go(-1));
     if (nextBtn) nextBtn.addEventListener("click", () => go(1));
-    window.addEventListener("scroll", sync, { passive: true });
+    onScroll(sync);
     window.addEventListener("resize", sync);
     sync();
   })();
 
-  /* Messenger FAB: YourGood Lottie (same as ffspace) + «Напишите нам!» panel */
+  /* Messenger FAB: load Lottie only when idle / after short delay */
   (function chatFab() {
     const root = document.querySelector("[data-chat-fab]");
     if (!root) return;
@@ -196,46 +274,75 @@
     if (!toggle || !panel) return;
 
     let anim = null;
+    let scriptLoading = false;
     const reduced =
       window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    const loadLottie = () => {
-      if (!lottieBox || !window.lottie || anim) return;
-      try {
-        anim = window.lottie.loadAnimation({
-          container: lottieBox,
-          renderer: "svg",
-          loop: !reduced,
-          autoplay: !reduced,
-          path: "media/chat/whatsapp-telegram-max.json",
-          rendererSettings: { progressiveLoad: true, hideOnTransparent: true },
-        });
-        if (reduced) {
-          anim.addEventListener("DOMLoaded", () => {
-            try {
-              anim.goToAndStop(0, true);
-            } catch (_) {}
-          });
-        }
-      } catch (err) {
-        console.warn("[chat-fab] lottie failed", err);
+    const loadLottieLib = (cb) => {
+      if (window.lottie) {
+        cb();
+        return;
       }
+      if (scriptLoading) return;
+      scriptLoading = true;
+      const s = document.createElement("script");
+      s.src = "https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js";
+      s.async = true;
+      s.onload = () => cb();
+      s.onerror = () => {
+        scriptLoading = false;
+      };
+      document.head.appendChild(s);
     };
 
-    if (window.lottie) loadLottie();
-    else {
-      /* script is deferred; wait a tick / poll briefly */
-      let n = 0;
-      const wait = window.setInterval(() => {
-        n += 1;
-        if (window.lottie) {
-          window.clearInterval(wait);
-          loadLottie();
-        } else if (n > 40) {
-          window.clearInterval(wait);
+    const loadLottie = () => {
+      if (!lottieBox || anim) return;
+      loadLottieLib(() => {
+        if (!window.lottie || anim) return;
+        try {
+          anim = window.lottie.loadAnimation({
+            container: lottieBox,
+            renderer: "svg",
+            loop: !reduced,
+            autoplay: !reduced && !document.hidden,
+            path: "media/chat/whatsapp-telegram-max.json",
+            rendererSettings: {
+              progressiveLoad: true,
+              hideOnTransparent: true,
+              // cheaper than full quality SVG effects
+              preserveAspectRatio: "xMidYMid meet",
+            },
+          });
+          if (reduced) {
+            anim.addEventListener("DOMLoaded", () => {
+              try {
+                anim.goToAndStop(0, true);
+              } catch (_) {}
+            });
+          }
+        } catch (err) {
+          console.warn("[chat-fab] lottie failed", err);
         }
-      }, 50);
-    }
+      });
+    };
+
+    /* Defer Lottie until the browser is idle (or after 1.8s) */
+    const scheduleLottie = () => {
+      if (window.requestIdleCallback) {
+        window.requestIdleCallback(loadLottie, { timeout: 2200 });
+      } else {
+        window.setTimeout(loadLottie, 1800);
+      }
+    };
+    scheduleLottie();
+
+    document.addEventListener("visibilitychange", () => {
+      if (!anim) return;
+      try {
+        if (document.hidden || root.classList.contains("is-open")) anim.pause();
+        else if (!reduced) anim.play();
+      } catch (_) {}
+    });
 
     const setOpen = (open) => {
       root.classList.toggle("is-open", open);
@@ -243,7 +350,7 @@
       toggle.setAttribute("aria-expanded", open ? "true" : "false");
       if (anim) {
         try {
-          if (open) anim.pause();
+          if (open || document.hidden) anim.pause();
           else if (!reduced) anim.play();
         } catch (_) {}
       }
@@ -267,14 +374,15 @@
     const sync = () => {
       header.classList.toggle("is-scrolled", window.scrollY > threshold);
     };
-    window.addEventListener("scroll", sync, { passive: true });
+    onScroll(sync);
     sync();
   })();
 
-  /* Partners marquee: finger/mouse drag + continuous auto-scroll left */
+  /* Partners marquee: only animate when section is on screen */
   (function partnersMarquee() {
     const marquee = document.querySelector(".marquee");
     const track = document.querySelector(".marquee-track");
+    const section = document.querySelector(".partners") || marquee;
     if (!marquee || !track) return;
 
     let offset = 0;
@@ -284,7 +392,8 @@
     let lastX = 0;
     let vel = 0;
     let raf = 0;
-    const autoSpeed = 0.55; /* px per frame ≈ leftward */
+    let active = false;
+    const autoSpeed = 0.45; /* slightly calmer than before */
     const reduced =
       window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -304,26 +413,66 @@
     };
 
     const tick = () => {
+      raf = 0;
+      if (!active && !dragging) return;
       if (!dragging) {
-        if (!reduced) offset -= autoSpeed;
+        if (!reduced && active) offset -= autoSpeed;
         if (Math.abs(vel) > 0.15) {
           offset += vel;
-          vel *= 0.92;
+          vel *= 0.9;
         } else {
           vel = 0;
         }
         apply();
       }
-      raf = requestAnimationFrame(tick);
+      if (active || dragging || Math.abs(vel) > 0.15) {
+        raf = requestAnimationFrame(tick);
+      }
+    };
+
+    const kick = () => {
+      if (!raf) raf = requestAnimationFrame(tick);
     };
 
     measure();
-    window.addEventListener("resize", () => {
-      measure();
-      apply();
-    });
+    window.addEventListener(
+      "resize",
+      () => {
+        measure();
+        apply();
+      },
+      { passive: true }
+    );
     track.querySelectorAll("img").forEach((img) => {
       if (!img.complete) img.addEventListener("load", measure, { once: true });
+      /* decode off the main path when possible */
+      if (img.decode) img.decode().catch(() => {});
+    });
+
+    if ("IntersectionObserver" in window && section) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            active = e.isIntersecting && !document.hidden;
+            marquee.classList.toggle("is-active", active);
+            if (active) kick();
+          });
+        },
+        { rootMargin: "100px 0px", threshold: 0.05 }
+      );
+      io.observe(section);
+    } else {
+      active = true;
+      marquee.classList.add("is-active");
+      kick();
+    }
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        active = false;
+        marquee.classList.remove("is-active");
+      }
+      /* IO will re-enable when tab is visible and section intersects */
     });
 
     const onPointerDown = (e) => {
@@ -333,6 +482,7 @@
       lastX = e.clientX;
       vel = 0;
       marquee.classList.add("is-dragging");
+      kick();
       try {
         marquee.setPointerCapture(e.pointerId);
       } catch (_) {}
@@ -352,6 +502,7 @@
       dragging = false;
       pointerId = null;
       marquee.classList.remove("is-dragging");
+      kick();
     };
 
     marquee.addEventListener("pointerdown", onPointerDown);
@@ -359,15 +510,9 @@
     marquee.addEventListener("pointerup", onPointerUp);
     marquee.addEventListener("pointercancel", onPointerUp);
     marquee.addEventListener("lostpointercapture", onPointerUp);
-
-    /* Prevent image drag-ghost / text selection interfering with swipe */
     marquee.addEventListener("dragstart", (e) => e.preventDefault());
 
     apply();
-    raf = requestAnimationFrame(tick);
-
-    /* cleanup not required on static page unload */
-    void raf;
   })();
 
   /* Hero: pill + logos + glass plaque tint follow active marketplace */

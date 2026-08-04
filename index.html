@@ -58,7 +58,7 @@
       <div class="hero-bg" aria-hidden="true">
         <!-- Still is fallback only; hidden once video plays (see main.js) -->
         <div class="hero-bg-still"></div>
-        <video class="hero-bg-video" autoplay muted loop playsinline preload="auto">
+        <video class="hero-bg-video" muted loop playsinline preload="metadata" data-lazy-video>
           <source src="media/hero/warehouse-ai.mp4" type="video/mp4" />
           <source src="media/hero/warehouse-loop.mp4" type="video/mp4" />
         </video>
@@ -152,11 +152,12 @@
           <div class="about-show">
             <video
               class="about-show__el"
-              autoplay
               muted
               loop
               playsinline
+              preload="none"
               poster="media/hero/about-still-logo.jpg"
+              data-lazy-video
             >
               <source src="media/hero/about-show.mp4" type="video/mp4" />
             </video>
@@ -600,11 +601,13 @@
       <div class="phone-reel__notch" aria-hidden="true"></div>
       <video
         class="phone-reel__video"
-        autoplay
         muted
         loop
         playsinline
+        preload="none"
         poster="media/hero/phone-still-01.jpg"
+        data-lazy-video
+        data-lazy-delay="1200"
       >
         <source src="media/hero/phone-warehouse.mp4" type="video/mp4" />
       </video>
@@ -670,7 +673,6 @@
   <div class="sticky-cta">
     <a class="btn btn-primary" href="tel:+74952550131">+7 (495) 255-01-31</a>
   </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js" defer></script>
   <script src="js/main.js" defer></script>
 </body>
 </html>

@@ -56,6 +56,12 @@ main > section,
   padding-top: var(--header-offset);
   padding-bottom: max(var(--panel-pad-y), calc(var(--panel-next-space) + 16px));
 }
+/* Skip layout/paint work for off-screen panels (big perf win) */
+main > section:not(.hero),
+.partners {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 100svh;
+}
 
 /* In-page anchors still clear the floating capsule */
 #contact,
@@ -1551,8 +1557,11 @@ strong { font-weight: 700; }
   /* animation driven by JS (drag + continuous left scroll) */
   animation: none;
   padding: 8px 0;
-  will-change: transform;
   transform: translate3d(0, 0, 0);
+  /* will-change only while visible — set via JS class */
+}
+.marquee.is-active .marquee-track {
+  will-change: transform;
 }
 /* ~⅓ smaller than previous 352px logos */
 .marquee-track img {
