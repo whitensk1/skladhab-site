@@ -15,7 +15,9 @@
   --max: 1120px;
   --header-h: 64px;
   --header-top: 12px;
+  /* Space reserved under floating capsule; equal top+bottom keeps panel content optically centered */
   --header-offset: calc(var(--header-top) + var(--header-h) + 10px);
+  --panel-pad-y: var(--header-offset);
   --font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
   --wb: #cb11ab;
@@ -179,10 +181,11 @@ strong { font-weight: 700; }
 .btn-lg { min-height: 52px; padding: 0 28px; font-size: 15px; }
 .btn-block { width: 100%; }
 
-/* Hero — full viewport warehouse + glass */
+/* Hero — full viewport warehouse + glass
+   Equal vertical pad so align-items:center sits in true visual middle */
 .hero {
   position: relative;
-  padding: var(--header-offset) 0 40px;
+  padding: var(--panel-pad-y) 0;
   text-align: center;
   background: #0e1014;
   border-bottom: 0;
@@ -478,10 +481,10 @@ strong { font-weight: 700; }
   opacity: 0.92;
 }
 
-/* Sections denser + alternating bands + full-screen panels
-   Top padding clears the floating capsule so titles aren’t under the bar */
+/* Full-viewport panels: equal top/bottom pad under capsule
+   → flex center stays optical midpoint of the screen */
 .section {
-  padding: calc(var(--header-offset) + 20px) 0 48px;
+  padding: var(--panel-pad-y) 0;
   background: #fff;
   display: flex;
   flex-direction: column;
@@ -494,7 +497,6 @@ strong { font-weight: 700; }
   background:
     linear-gradient(180deg, #fce7f6 0%, #fdf2f9 48%, #fae8f5 100%);
   border-block: 1px solid rgba(203, 17, 171, 0.08);
-  padding: calc(var(--header-offset) + 28px) 0 56px;
 }
 .section-why {
   background: #eef0f3;
@@ -506,7 +508,7 @@ strong { font-weight: 700; }
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: calc(var(--header-offset) + 12px) 0 36px;
+  padding: var(--panel-pad-y) 0;
   box-sizing: border-box;
 }
 .section-head {
@@ -547,7 +549,7 @@ strong { font-weight: 700; }
   overflow: hidden;
   background: #0c0c10;
   color: #fff;
-  padding: calc(var(--header-offset) + 28px) 0 56px;
+  padding: var(--panel-pad-y) 0;
   border: 0;
   display: flex;
   align-items: center;
@@ -1689,7 +1691,12 @@ body.topic-open { overflow: hidden; }
     font-size: 13px;
   }
   .sticky-cta { display: block; }
-  .section-faq { padding-bottom: 110px; }
+  /* Extra bottom room for sticky CTA without killing visual center too hard:
+     keep top pad = header; bottom ≥ sticky bar */
+  .section-faq {
+    padding-top: var(--panel-pad-y);
+    padding-bottom: max(var(--panel-pad-y), 110px);
+  }
   .faq-layout {
     grid-template-columns: 1fr;
     grid-template-areas:
@@ -1730,7 +1737,6 @@ body.topic-open { overflow: hidden; }
       "foot";
   }
   .stats-premium { grid-template-columns: 1fr; }
-  .snap { padding: calc(var(--header-offset) + 12px) 0 48px; }
   .snap-logo-bg {
     left: -12%;
     top: 40%;
@@ -1745,7 +1751,7 @@ body.topic-open { overflow: hidden; }
   .step-card .step-photo { aspect-ratio: 16 / 10; min-height: 0; }
   .step-card .step-photo img { min-height: 0; }
   .hero {
-    padding: var(--header-offset) 0 28px;
+    padding: var(--panel-pad-y) 0;
     min-height: 100svh;
     height: 100svh;
   }
@@ -1759,15 +1765,6 @@ body.topic-open { overflow: hidden; }
   .hero-mp { min-height: 56px; padding: 10px 8px; }
   .hero-mp img { height: 32px; }
   .hero-feature__icon img { width: 32px; height: 32px; }
-  .section {
-    padding: calc(var(--header-offset) + 12px) 0 40px;
-  }
-  .section-services {
-    padding: calc(var(--header-offset) + 16px) 0 40px;
-  }
-  .partners {
-    padding: calc(var(--header-offset) + 8px) 0 28px;
-  }
   .marquee-track {
     gap: 28px;
   }
