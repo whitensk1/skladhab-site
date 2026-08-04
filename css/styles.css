@@ -878,9 +878,25 @@ strong { font-weight: 700; }
   max-width: 44ch;
 }
 .lead-text--second {
-  margin-bottom: 22px;
+  margin-bottom: 14px;
   color: rgba(255, 255, 255, 0.62);
   font-size: 1.02rem;
+}
+.lead-text--accent {
+  margin: 0 0 22px;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 1.08rem;
+  font-weight: 600;
+  line-height: 1.55;
+  max-width: 44ch;
+}
+.lead-text--accent u {
+  text-decoration: none;
+  border-bottom: 1.5px solid rgba(240, 160, 216, 0.85);
+  padding-bottom: 1px;
+  color: #fff;
+  font-weight: 700;
+  text-underline-offset: 3px;
 }
 .lead-text strong {
   color: #fff;
