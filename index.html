@@ -576,9 +576,19 @@
               <input type="checkbox" name="consent" required />
               <span>Согласен на обработку ПДн и с <a href="privacy.html">политикой</a></span>
             </label>
-            <div class="field field--captcha" data-captcha-wrap hidden>
-              <div class="g-recaptcha" data-recaptcha-box></div>
-              <p class="field-hint">Подтвердите, что вы не робот</p>
+            <div class="field field--captcha" data-captcha-wrap>
+              <label for="human-check">Проверка: <span data-captcha-q>…</span> = ? *</label>
+              <input
+                id="human-check"
+                name="human_check"
+                type="text"
+                inputmode="numeric"
+                autocomplete="off"
+                required
+                placeholder="Ответ числом"
+                data-captcha-input
+              />
+              <p class="field-hint">Простая проверка, что заявку отправляет человек (без Google / США).</p>
             </div>
             <button type="submit" class="btn btn-primary btn-block" data-lead-submit>Отправить заявку</button>
             <div class="form-success" role="status"></div>

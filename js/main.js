@@ -1274,36 +1274,15 @@
     if (e.key === "Escape" && modal && !modal.hidden) closeTopic();
   });
 
-  /* Lead form: Formspree + reCAPTCHA (keys in js/form-config.js) */
+  /*
+    Lead form — no US form backends (no Formspree / reCAPTCHA).
+    Delivery: Telegram deep-link and/or mailto on the user's device.
+    Human check: local math captcha + honeypot.
+  */
   (function leadForms() {
     const cfg = window.UD_LEADS || {};
-    const endpoint = String(cfg.formspreeEndpoint || "").trim();
-    const siteKey = String(cfg.recaptchaSiteKey || "").trim();
-    const protectedMode = !!(endpoint && siteKey);
-
-    let recaptchaReady = null;
-    const ensureRecaptcha = () => {
-      if (!siteKey) return Promise.resolve(false);
-      if (window.grecaptcha && window.grecaptcha.render) {
-        return Promise.resolve(true);
-      }
-      if (recaptchaReady) return recaptchaReady;
-      recaptchaReady = new Promise((resolve) => {
-        const s = document.createElement("script");
-        s.src = "https://www.google.com/recaptcha/api.js?hl=ru&render=explicit";
-        s.async = true;
-        s.onload = () => {
-          const wait = () => {
-            if (window.grecaptcha && window.grecaptcha.render) resolve(true);
-            else window.setTimeout(wait, 40);
-          };
-          wait();
-        };
-        s.onerror = () => resolve(false);
-        document.head.appendChild(s);
-      });
-      return recaptchaReady;
-    };
+    const delivery = String(cfg.delivery || "both").toLowerCase();
+    const tgUser = String(cfg.telegramUser || "anton111289").replace(/^@/, "");
 
     const showMsg = (form, kind, text) => {
       const success = form.querySelector(".form-success");
@@ -1325,28 +1304,36 @@
       }
     };
 
+    const buildBody = (payload) =>
+      [
+        "Заявка с сайта «Успешное Дело»",
+        "",
+        "Юрлицо / бренд: " + payload.legal,
+        "Телефон: " + payload.phone,
+        "Email: " + payload.email,
+        "Категория: " + payload.category,
+        "",
+        "Комментарий:",
+        payload.message || "—",
+      ].join("\n");
+
     document.querySelectorAll("[data-lead-form]").forEach((form) => {
-      const captchaWrap = form.querySelector("[data-captcha-wrap]");
-      const captchaBox = form.querySelector("[data-recaptcha-box]");
-      const submitBtn = form.querySelector("[data-lead-submit]") || form.querySelector('[type="submit"]');
-      let widgetId = null;
+      const submitBtn =
+        form.querySelector("[data-lead-submit]") || form.querySelector('[type="submit"]');
+      const qEl = form.querySelector("[data-captcha-q]");
+      const captchaInput = form.querySelector("[data-captcha-input]");
+      let captchaAnswer = 0;
 
-      if (protectedMode && captchaWrap && captchaBox) {
-        captchaWrap.hidden = false;
-        ensureRecaptcha().then((ok) => {
-          if (!ok || !window.grecaptcha) return;
-          try {
-            widgetId = window.grecaptcha.render(captchaBox, {
-              sitekey: siteKey,
-              theme: "light",
-            });
-          } catch (err) {
-            console.warn("[lead] recaptcha render", err);
-          }
-        });
-      }
+      const rollCaptcha = () => {
+        const a = 2 + Math.floor(Math.random() * 8);
+        const b = 1 + Math.floor(Math.random() * 9);
+        captchaAnswer = a + b;
+        if (qEl) qEl.textContent = a + " + " + b;
+        if (captchaInput) captchaInput.value = "";
+      };
+      rollCaptcha();
 
-      form.addEventListener("submit", async (e) => {
+      form.addEventListener("submit", (e) => {
         e.preventDefault();
         const fd = new FormData(form);
         if (String(fd.get("company") || "").trim()) return;
@@ -1379,22 +1366,14 @@
           return;
         }
 
-        let captchaToken = "";
-        if (protectedMode) {
-          try {
-            captchaToken =
-              (window.grecaptcha &&
-                (widgetId != null
-                  ? window.grecaptcha.getResponse(widgetId)
-                  : window.grecaptcha.getResponse())) ||
-              "";
-          } catch (_) {
-            captchaToken = "";
-          }
-          if (!captchaToken) {
-            showMsg(form, "err", "Пройдите проверку «Я не робот».");
-            return;
-          }
+        const human = String(fd.get("human_check") || captchaInput?.value || "")
+          .replace(/\s/g, "")
+          .replace(/[^\d-]/g, "");
+        if (String(captchaAnswer) !== human) {
+          showMsg(form, "err", "Неверный ответ в проверке. Попробуйте ещё раз.");
+          rollCaptcha();
+          if (captchaInput) captchaInput.focus();
+          return;
         }
 
         showMsg(form, "clear", "");
@@ -1403,91 +1382,54 @@
           submitBtn.disabled = true;
         }
 
-        const finishOk = () => {
+        try {
+          const text = buildBody(payload);
+          const useTg = delivery === "telegram" || delivery === "both";
+          const useMail = delivery === "mailto" || delivery === "both";
+
+          if (useTg && tgUser) {
+            const tgUrl =
+              "https://t.me/" +
+              encodeURIComponent(tgUser) +
+              "?text=" +
+              encodeURIComponent(text);
+            window.open(tgUrl, "_blank", "noopener,noreferrer");
+          }
+
+          if (useMail) {
+            const mailto = form.getAttribute("data-mailto");
+            if (mailto) {
+              const subject = encodeURIComponent("Заявка на фулфилмент — Успешное Дело");
+              const body = encodeURIComponent(text);
+              /* slight delay so Telegram can open first when both */
+              window.setTimeout(() => {
+                window.location.href = "mailto:" + mailto + "?subject=" + subject + "&body=" + body;
+              }, useTg ? 500 : 0);
+            }
+          }
+
           try {
             const stored = JSON.parse(localStorage.getItem("ud_leads") || "[]");
             stored.push(payload);
             localStorage.setItem("ud_leads", JSON.stringify(stored.slice(-50)));
           } catch (_) {}
+
           const office = contactCloak.pretty(contactCloak.digits("o"));
           showMsg(
             form,
             "ok",
-            "Заявка принята. Мы свяжемся с вами для индивидуального расчёта." +
+            (useTg
+              ? "Откроется Telegram с текстом заявки — нажмите «Отправить» в чате. "
+              : "Откроется почта с текстом заявки. ") +
+              "Мы свяжемся с вами для расчёта." +
               (office ? " Также можно позвонить: " + office : "")
           );
           form.reset();
-          if (window.grecaptcha && widgetId != null) {
-            try {
-              window.grecaptcha.reset(widgetId);
-            } catch (_) {}
-          }
-        };
-
-        try {
-          if (protectedMode) {
-            const body = new FormData();
-            body.set("legal", payload.legal);
-            body.set("phone", payload.phone);
-            body.set("email", payload.email);
-            body.set("_replyto", payload.email);
-            body.set("category", payload.category);
-            body.set("message", payload.message);
-            body.set("page", payload.page);
-            body.set("source", payload.source);
-            body.set("timestamp", payload.timestamp);
-            body.set("g-recaptcha-response", captchaToken);
-            body.set("_subject", "Заявка на фулфилмент — Успешное Дело");
-
-            const res = await fetch(endpoint, {
-              method: "POST",
-              body,
-              headers: { Accept: "application/json" },
-            });
-            let data = null;
-            try {
-              data = await res.json();
-            } catch (_) {}
-            if (!res.ok) {
-              const msg =
-                (data && (data.error || data.message)) ||
-                "Не удалось отправить. Попробуйте позже или позвоните нам.";
-              showMsg(form, "err", String(msg));
-              if (window.grecaptcha && widgetId != null) {
-                try {
-                  window.grecaptcha.reset(widgetId);
-                } catch (_) {}
-              }
-              return;
-            }
-            finishOk();
-          } else {
-            /* Fallback until Formspree + reCAPTCHA keys are set in form-config.js */
-            console.log("[lead]", payload);
-            finishOk();
-            const mailto = form.getAttribute("data-mailto");
-            if (mailto) {
-              const subject = encodeURIComponent("Заявка на фулфилмент — Успешное Дело");
-              const body = encodeURIComponent(
-                `Юрлицо / бренд: ${payload.legal}\nТелефон: ${payload.phone}\nEmail: ${payload.email}\nКатегория: ${payload.category}\n\nКомментарий:\n${payload.message}`
-              );
-              window.setTimeout(() => {
-                window.location.href = `mailto:${mailto}?subject=${subject}&body=${body}`;
-              }, 400);
-            }
-          }
+          rollCaptcha();
         } catch (err) {
           console.warn("[lead] submit failed", err);
-          showMsg(
-            form,
-            "err",
-            "Ошибка сети. Проверьте интернет или напишите нам в мессенджер."
-          );
-          if (window.grecaptcha && widgetId != null) {
-            try {
-              window.grecaptcha.reset(widgetId);
-            } catch (_) {}
-          }
+          showMsg(form, "err", "Не удалось открыть мессенджер или почту. Напишите нам в Telegram.");
+          rollCaptcha();
         } finally {
           if (submitBtn) {
             submitBtn.classList.remove("is-loading");
