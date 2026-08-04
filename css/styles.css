@@ -172,7 +172,8 @@ strong { font-weight: 700; }
 }
 .site-header.is-scrolled {
   top: max(8px, env(safe-area-inset-top, 0px));
-  width: min(680px, calc(100% - 20px));
+  /* Keep wide enough so logo + nav + actions stay one row */
+  width: min(920px, calc(100% - 20px));
   background: rgba(255, 255, 255, 0.48);
   border-color: rgba(255, 255, 255, 0.4);
   box-shadow: 0 14px 44px rgba(28, 31, 38, 0.14);
@@ -188,6 +189,8 @@ strong { font-weight: 700; }
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  flex-wrap: nowrap;
+  min-width: 0;
 }
 .logo {
   display: inline-flex;
@@ -203,19 +206,53 @@ strong { font-weight: 700; }
 }
 .nav {
   display: flex;
+  flex-wrap: nowrap;
+  white-space: nowrap;
   gap: 18px;
   font-size: 13.5px;
   font-weight: 600;
   color: var(--muted);
+  flex: 1 1 auto;
+  justify-content: center;
+  min-width: 0;
+}
+.nav a {
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .nav a:hover { color: var(--accent); }
 .header-actions {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-shrink: 0;
+  flex-wrap: nowrap;
+  white-space: nowrap;
 }
-.header-phone { font-size: 13.5px; font-weight: 700; }
+.header-phone {
+  font-size: 13.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
 .header-phone:hover { color: var(--accent); }
+/* Mid desktop: compact but still one line (before hamburger at 960) */
+@media (max-width: 1100px) and (min-width: 961px) {
+  .site-header {
+    width: min(var(--max), calc(100% - 16px));
+  }
+  .site-header.is-scrolled {
+    width: min(960px, calc(100% - 16px));
+  }
+  .nav { gap: 12px; font-size: 12.5px; }
+  .header-phone { font-size: 12.5px; }
+  .header-actions .btn {
+    min-height: 40px;
+    padding: 0 14px;
+    font-size: 13px;
+  }
+  .logo-img { height: 36px; max-width: 132px; }
+  .site-header .inner { gap: 8px; padding: 0 12px 0 14px; }
+}
 .nav-toggle {
   display: none;
   width: 40px;
@@ -663,32 +700,90 @@ strong { font-weight: 700; }
   align-items: center;
 }
 
-/* Small warehouse team clip (UD logo on tees) */
-.team-video {
+/* About presentation reel (logo → warehouse → trucks → pallets → office) */
+.about-show {
   margin-top: 22px;
-  max-width: 420px;
+  max-width: 440px;
   border-radius: 18px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(0, 0, 0, 0.28);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
+  background: rgba(0, 0, 0, 0.35);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.32);
 }
-.team-video__el {
+.about-show__el {
   display: block;
   width: 100%;
   aspect-ratio: 16 / 9;
   object-fit: cover;
   background: #0e1014;
 }
-.team-video__cap {
-  margin: 0;
-  padding: 8px 12px 10px;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: rgba(255, 255, 255, 0.72);
-  background: rgba(0, 0, 0, 0.35);
+
+/* Floating vertical phone reel — independent, visible across the whole site */
+.phone-reel {
+  position: fixed;
+  right: max(18px, env(safe-area-inset-right, 0px));
+  bottom: max(96px, calc(env(safe-area-inset-bottom, 0px) + 88px));
+  z-index: 54;
+  width: min(118px, 22vw);
+  pointer-events: none;
+  animation: phone-reel-float 5.5s ease-in-out infinite;
+  filter: drop-shadow(0 16px 28px rgba(0, 0, 0, 0.28));
 }
+.phone-reel__bezel {
+  position: relative;
+  border-radius: 22px;
+  padding: 7px;
+  background: linear-gradient(160deg, #2a2d34 0%, #12141a 55%, #0a0b0e 100%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.12) inset,
+    0 12px 32px rgba(0, 0, 0, 0.28);
+  overflow: hidden;
+}
+.phone-reel__notch {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36%;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 2;
+  pointer-events: none;
+}
+.phone-reel__video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  object-fit: cover;
+  border-radius: 16px;
+  background: #0e1014;
+}
+@keyframes phone-reel-float {
+  0%, 100% { transform: translateY(0) rotate(-2.5deg); }
+  50% { transform: translateY(-10px) rotate(2deg); }
+}
+@media (max-width: 960px) {
+  .phone-reel {
+    width: min(92px, 26vw);
+    right: max(10px, env(safe-area-inset-right, 0px));
+    /* above messenger FAB + next peek */
+    bottom: max(130px, calc(env(safe-area-inset-bottom, 0px) + 118px));
+  }
+  .phone-reel__bezel { border-radius: 18px; padding: 5px; }
+  .phone-reel__video { border-radius: 13px; }
+}
+@media (max-width: 640px) {
+  .phone-reel {
+    width: 78px;
+    bottom: max(140px, calc(env(safe-area-inset-bottom, 0px) + 128px));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .phone-reel { animation: none; }
+}
+/* Avoid clashing with chat FAB on the right — phone sits above it */
 .snap-bg {
   position: absolute;
   inset: 0;
@@ -1791,7 +1886,7 @@ body.topic-open { overflow: hidden; }
   box-shadow:
     0 10px 28px rgba(203, 17, 171, 0.38),
     0 2px 0 rgba(255, 255, 255, 0.25) inset;
-  transition: transform 0.2s var(--ease), box-shadow 0.2s;
+  transition: transform 0.35s var(--ease), box-shadow 0.35s, width 0.35s, height 0.35s;
 }
 .float-phone:hover {
   transform: scale(1.06);
@@ -1812,8 +1907,37 @@ body.topic-open { overflow: hidden; }
   place-items: center;
   animation: phone-sway 2.6s ease-in-out infinite;
   transform-origin: 50% 55%;
+  transition: transform 0.45s var(--ease), opacity 0.45s ease;
 }
 .float-phone__icon svg { display: block; }
+
+/* Morph cycle: phone → soft pulse toward chat colors (pairs with right FAB) */
+@keyframes phone-morph-glow {
+  0%, 100% {
+    filter: hue-rotate(0deg) saturate(1);
+    box-shadow:
+      0 10px 28px rgba(203, 17, 171, 0.38),
+      0 2px 0 rgba(255, 255, 255, 0.25) inset;
+  }
+  33% {
+    filter: hue-rotate(-25deg) saturate(1.15);
+    box-shadow:
+      0 10px 28px rgba(42, 171, 238, 0.35),
+      0 2px 0 rgba(255, 255, 255, 0.25) inset;
+  }
+  66% {
+    filter: hue-rotate(55deg) saturate(1.1);
+    box-shadow:
+      0 10px 28px rgba(37, 211, 102, 0.32),
+      0 2px 0 rgba(255, 255, 255, 0.25) inset;
+  }
+}
+.float-phone {
+  animation: phone-morph-glow 7.2s ease-in-out infinite;
+}
+.float-phone:hover {
+  animation-play-state: paused;
+}
 
 /* —— Multi-messenger FAB (bottom-right): YourGood Lottie as on ffspace —— */
 .chat-fab {
@@ -1851,19 +1975,33 @@ body.topic-open { overflow: hidden; }
   border: 1px solid var(--line-strong);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
 }
-/* Lottie fills the 64×64 button (animation already has circle + icon cycle) */
+/* Lottie fills the button — TG ↔ WA ↔ Max morph (YourGood / ffspace asset) */
 .chat-fab__lottie {
   display: block;
   width: 64px;
   height: 64px;
   pointer-events: none;
   filter: drop-shadow(0 10px 22px rgba(28, 31, 38, 0.22));
-  transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.25s var(--ease);
+  transition:
+    opacity 0.35s var(--ease),
+    visibility 0.35s,
+    transform 0.4s var(--ease),
+    width 0.35s,
+    height 0.35s;
+  will-change: transform, opacity;
 }
 .chat-fab__lottie svg {
   display: block;
   width: 100% !important;
   height: 100% !important;
+}
+/* Soft crossfade pulse while icons morph inside Lottie */
+@keyframes chat-lottie-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+.chat-fab:not(.is-open) .chat-fab__lottie {
+  animation: chat-lottie-breathe 2.8s ease-in-out infinite;
 }
 .chat-fab.is-open .chat-fab__lottie {
   opacity: 0;
@@ -2022,8 +2160,10 @@ body.topic-open { overflow: hidden; }
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .float-phone,
   .float-phone__icon,
-  .float-phone__ring {
+  .float-phone__ring,
+  .chat-fab:not(.is-open) .chat-fab__lottie {
     animation: none !important;
   }
 }
@@ -2297,7 +2437,19 @@ html[data-display-mode="2k"] .site-header {
   width: min(var(--max), calc(100% - 36px));
 }
 html[data-display-mode="2k"] .site-header.is-scrolled {
-  width: min(860px, calc(100% - 28px));
+  width: min(980px, calc(100% - 28px));
+}
+html[data-display-mode="2k"] .float-phone {
+  width: 66px;
+  height: 66px;
+}
+html[data-display-mode="2k"] .chat-fab__toggle,
+html[data-display-mode="2k"] .chat-fab__lottie {
+  width: 72px;
+  height: 72px;
+}
+html[data-display-mode="2k"] .phone-reel {
+  width: min(140px, 14vw);
 }
 html[data-display-mode="2k"] .logo-img { height: 48px; max-width: 200px; }
 html[data-display-mode="2k"] .nav { font-size: 15px; gap: 22px; }
@@ -2371,10 +2523,34 @@ html[data-display-mode="4k"] .site-header {
   width: min(var(--max), calc(100% - 48px));
 }
 html[data-display-mode="4k"] .site-header.is-scrolled {
-  width: min(980px, calc(100% - 40px));
+  width: min(1100px, calc(100% - 40px));
 }
 html[data-display-mode="4k"] .logo-img { height: 58px; max-width: 240px; }
 html[data-display-mode="4k"] .nav { font-size: 17px; gap: 28px; }
+html[data-display-mode="4k"] .float-phone {
+  width: 76px;
+  height: 76px;
+  left: max(28px, env(safe-area-inset-left, 0px));
+  bottom: max(28px, env(safe-area-inset-bottom, 0px));
+}
+html[data-display-mode="4k"] .float-phone__icon svg {
+  width: 32px;
+  height: 32px;
+}
+html[data-display-mode="4k"] .chat-fab {
+  right: max(24px, env(safe-area-inset-right, 0px));
+  bottom: max(24px, env(safe-area-inset-bottom, 0px));
+}
+html[data-display-mode="4k"] .chat-fab__toggle,
+html[data-display-mode="4k"] .chat-fab__lottie {
+  width: 84px;
+  height: 84px;
+}
+html[data-display-mode="4k"] .phone-reel {
+  width: min(160px, 12vw);
+  bottom: max(130px, calc(env(safe-area-inset-bottom, 0px) + 110px));
+  right: max(28px, env(safe-area-inset-right, 0px));
+}
 html[data-display-mode="4k"] .header-phone { font-size: 17px; }
 html[data-display-mode="4k"] .btn {
   min-height: 58px;
@@ -2469,10 +2645,33 @@ html[data-display-mode="5k"] .site-header {
   width: min(var(--max), calc(100% - 64px));
 }
 html[data-display-mode="5k"] .site-header.is-scrolled {
-  width: min(1120px, calc(100% - 48px));
+  width: min(1280px, calc(100% - 48px));
 }
 html[data-display-mode="5k"] .logo-img { height: 68px; max-width: 280px; }
 html[data-display-mode="5k"] .nav { font-size: 19px; gap: 32px; }
+html[data-display-mode="5k"] .float-phone {
+  width: 88px;
+  height: 88px;
+  left: max(36px, env(safe-area-inset-left, 0px));
+  bottom: max(36px, env(safe-area-inset-bottom, 0px));
+}
+html[data-display-mode="5k"] .float-phone__icon svg {
+  width: 36px;
+  height: 36px;
+}
+html[data-display-mode="5k"] .chat-fab {
+  right: max(32px, env(safe-area-inset-right, 0px));
+  bottom: max(32px, env(safe-area-inset-bottom, 0px));
+}
+html[data-display-mode="5k"] .chat-fab__toggle,
+html[data-display-mode="5k"] .chat-fab__lottie {
+  width: 96px;
+  height: 96px;
+}
+html[data-display-mode="5k"] .phone-reel {
+  width: min(190px, 11vw);
+  bottom: max(150px, calc(env(safe-area-inset-bottom, 0px) + 130px));
+}
 html[data-display-mode="5k"] .header-phone { font-size: 19px; }
 html[data-display-mode="5k"] .btn {
   min-height: 66px;
