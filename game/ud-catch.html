@@ -336,21 +336,37 @@
   } catch (_) {}
 
   function speedLevel() {
-    /* boxes only: ramps hard so 100 is unreachable in normal play */
-    const byScore = state.score * 1.35;
-    const byTime = state.elapsed * 3.1;
-    return Math.min(MAX_SPEED_LVL, 1 + byScore + byTime);
+    /*
+      Playable early, serious after ~50 boxes, near 100 only late.
+      score 0  → ~1
+      score 50 → ~50
+      score 80 → ~85
+      score 95 → ~100
+    */
+    const s = state.score;
+    let lvl;
+    if (s <= 50) {
+      lvl = 1 + (s / 50) * 49; /* 1 → 50 */
+    } else if (s <= 80) {
+      lvl = 50 + ((s - 50) / 30) * 30; /* 50 → 80 */
+    } else {
+      lvl = 80 + ((s - 80) / 15) * 20; /* 80 → 100 by ~95 */
+    }
+    /* tiny time creep — no AFK farming, but doesn't spike early */
+    const timeBoost = Math.min(8, state.elapsed * 0.08);
+    return Math.min(MAX_SPEED_LVL, lvl + timeBoost);
   }
 
   function fallSpeed() {
     const lvl = speedLevel();
-    /* px/sec: ~140 start → ~1100 at max — impossible to clear late game */
-    return 140 + (lvl / MAX_SPEED_LVL) * 960;
+    /* px/sec: ~100 start → ~880 at max (hard late, fair early) */
+    return 100 + (lvl / MAX_SPEED_LVL) * 780;
   }
 
   function spawnInterval() {
     const lvl = speedLevel();
-    return Math.max(0.18, 1.05 - (lvl / MAX_SPEED_LVL) * 0.92);
+    /* slower cadence early; denser only at high speed */
+    return Math.max(0.32, 1.25 - (lvl / MAX_SPEED_LVL) * 0.85);
   }
 
   function playerW() {
@@ -464,10 +480,11 @@
     state.spawnTimer -= dt;
     if (state.spawnTimer <= 0) {
       spawnBox();
-      /* late game: multi-spawn chaos so 100 is unreachable */
-      if (speedLevel() > 55 && Math.random() < 0.45) spawnBox();
-      if (speedLevel() > 80 && Math.random() < 0.55) spawnBox();
-      state.spawnTimer = spawnInterval() * (0.7 + Math.random() * 0.45);
+      /* multi-spawn only after mid/late game */
+      const lvl = speedLevel();
+      if (lvl > 70 && Math.random() < 0.28) spawnBox();
+      if (lvl > 90 && Math.random() < 0.4) spawnBox();
+      state.spawnTimer = spawnInterval() * (0.85 + Math.random() * 0.35);
     }
 
     const py = FLOOR_Y - playerH();
