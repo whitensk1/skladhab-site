@@ -8,6 +8,85 @@
     el.textContent = String(new Date().getFullYear());
   });
 
+  /*
+    Contact cloak — phones are NOT in HTML as tel:+7… / wa.me/…
+    Stored as XOR’d digit bytes; assembled only in the browser on paint/click.
+    Stops dumb scrapers & grepping the HTML. Does NOT stop a full headless
+    browser that runs our JS (true crypto needs a server secret).
+  */
+  const contactCloak = (function () {
+    const K = [0x13, 0x37, 0xa5, 0xc3, 0x91];
+    /* pre-encoded digit strings — no plaintext numbers in source */
+    const BAG = {
+      o: [36, 3, 156, 246, 163, 38, 2, 149, 242, 162, 34],
+      a: [36, 14, 147, 247, 164, 37, 7, 147, 243, 167, 38],
+    };
+    const digits = (id) => {
+      const arr = BAG[id];
+      if (!arr) return "";
+      let s = "";
+      for (let i = 0; i < arr.length; i++) {
+        s += String.fromCharCode(arr[i] ^ K[i % K.length]);
+      }
+      return s;
+    };
+    const pretty = (d) => {
+      const x = String(d || "").replace(/\D/g, "");
+      if (x.length === 11 && x[0] === "7") {
+        return (
+          "+7 (" +
+          x.slice(1, 4) +
+          ") " +
+          x.slice(4, 7) +
+          "-" +
+          x.slice(7, 9) +
+          "-" +
+          x.slice(9)
+        );
+      }
+      return x ? "+" + x : "";
+    };
+    const e164 = (d) => {
+      const x = String(d || "").replace(/\D/g, "");
+      return x ? "+" + x : "";
+    };
+
+    const DEFAULT_WA =
+      "Здравствуйте! Пишу с сайта: интересует фулфилмент в Москве (FBO/FBS, упаковка, отгрузка). Хочу обсудить сотрудничество.";
+
+    document.querySelectorAll("[data-tel]").forEach((el) => {
+      /* Max uses data-tel only as phone bag id; click handled elsewhere */
+      if (el.hasAttribute("data-open-max")) return;
+
+      const id = el.getAttribute("data-tel");
+      const action = el.getAttribute("data-tel-action") || "call";
+      const d = digits(id);
+      if (!d) return;
+
+      if (el.hasAttribute("data-tel-show")) {
+        el.textContent = pretty(d);
+      }
+      if (el.hasAttribute("data-tel-aria")) {
+        const base = el.getAttribute("data-tel-aria") || "Позвонить";
+        el.setAttribute("aria-label", base + ": " + pretty(d));
+      }
+
+      el.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (action === "wa") {
+          const text = el.getAttribute("data-wa-text") || DEFAULT_WA;
+          const url =
+            "https://wa.me/" + d + "?text=" + encodeURIComponent(text);
+          window.open(url, "_blank", "noopener,noreferrer");
+          return;
+        }
+        window.location.href = "tel:" + e164(d);
+      });
+    });
+
+    return { digits, pretty, e164 };
+  })();
+
   /* 2K / 4K / 5K display mode — scale UI + show status badge */
   (function displayMode() {
     const root = document.documentElement;
@@ -445,7 +524,8 @@
 
     const openMax = (el) => {
       const profile = (el.getAttribute("data-max-profile") || "").trim();
-      const phone = String(el.getAttribute("data-max-phone") || "").replace(/\D/g, "");
+      const bag = el.getAttribute("data-tel") || "a";
+      const phone = (contactCloak.digits(bag) || "").replace(/\D/g, "");
       const ua = navigator.userAgent || "";
       const isAndroid = /Android/i.test(ua);
       const isIOS = /iPhone|iPad|iPod/i.test(ua);
@@ -1184,8 +1264,10 @@
       const success = form.querySelector(".form-success");
       if (success) {
         success.classList.add("is-visible");
+        const office = contactCloak.pretty(contactCloak.digits("o"));
         success.textContent =
-          "Заявка принята. Мы свяжемся с вами для индивидуального расчёта. Также можно позвонить: +7 (495) 255-01-31";
+          "Заявка принята. Мы свяжемся с вами для индивидуального расчёта." +
+          (office ? " Также можно позвонить: " + office : "");
       }
 
       const mailto = form.getAttribute("data-mailto");

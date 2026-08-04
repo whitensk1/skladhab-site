@@ -20,7 +20,6 @@
     "name": "Успешное Дело",
     "legalName": "ООО «ТПК «Успешное Дело»",
     "alternateName": "DLUCK",
-    "telephone": "+74952550131",
     "email": "info@dluck.ru",
     "taxID": "7736253420",
     "address": {
@@ -48,7 +47,7 @@
         <a href="#contact">Контакты</a>
       </nav>
       <div class="header-actions">
-        <a class="header-phone" href="tel:+74952550131">+7 (495) 255-01-31</a>
+        <a class="header-phone" href="#contact" data-tel="o" data-tel-action="call" data-tel-show>Позвонить</a>
         <a class="btn btn-primary" href="#contact">Расчёт</a>
       </div>
     </div>
@@ -113,7 +112,7 @@
 
             <div class="hero-cta">
               <a class="btn btn-primary btn-lg" href="#contact">Получить индивидуальный расчёт</a>
-              <a class="btn btn-ghost" href="tel:+74952550131">Позвонить</a>
+              <a class="btn btn-ghost" href="#contact" data-tel="o" data-tel-action="call">Позвонить</a>
             </div>
 
             <p class="hero-transparency-line" data-hero-transparency-line aria-hidden="true">
@@ -544,7 +543,7 @@
         <div id="contact" class="contact-panel">
           <p class="eyebrow">Индивидуальный расчёт</p>
           <h2>Связаться</h2>
-          <a class="contact-phone" href="tel:+74952550131">+7 (495) 255-01-31</a>
+          <a class="contact-phone" href="#contact" data-tel="o" data-tel-action="call" data-tel-show>Позвонить</a>
           <p class="muted">Москва, Волоколамское шоссе, 73 · круглосуточно 24/7</p>
           <p class="muted"><a href="mailto:info@dluck.ru">info@dluck.ru</a></p>
 
@@ -588,7 +587,7 @@
           <img src="media/brand/logo-ud.png" alt="Успешное Дело" class="footer-logo" width="280" height="96" />
           <div class="footer-tag">Фулфилмент в Москве · индивидуально</div>
           <div class="footer-links">
-            <a href="tel:+74952550131">+7 (495) 255-01-31</a>
+            <a href="#contact" data-tel="o" data-tel-action="call" data-tel-show>Позвонить</a>
             <a href="mailto:info@dluck.ru">info@dluck.ru</a>
             <a href="privacy.html">Политика ПДн</a>
           </div>
@@ -653,7 +652,7 @@
   </div>
 
   <!-- Bottom-left: call FAB -->
-  <a class="float-phone" href="tel:+79645606065" aria-label="Позвонить: +7 964 560-60-65">
+  <a class="float-phone" href="#contact" data-tel="a" data-tel-action="call" data-tel-aria="Позвонить" aria-label="Позвонить">
     <span class="float-phone__ring" aria-hidden="true"></span>
     <span class="float-phone__icon" aria-hidden="true">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
@@ -686,8 +685,10 @@
       </a>
       <a
         class="chat-fab__link chat-fab__link--wa"
-        href="https://wa.me/79645606065?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%9F%D0%B8%D1%88%D1%83%20%D1%81%20%D1%81%D0%B0%D0%B9%D1%82%D0%B0%3A%20%D0%B8%D0%BD%D1%82%D0%B5%D1%80%D0%B5%D1%81%D1%83%D0%B5%D1%82%20%D1%84%D1%83%D0%BB%D1%84%D0%B8%D0%BB%D0%BC%D0%B5%D0%BD%D1%82%20%D0%B2%20%D0%9C%D0%BE%D1%81%D0%BA%D0%B2%D0%B5%20%28FBO/FBS%2C%20%D1%83%D0%BF%D0%B0%D0%BA%D0%BE%D0%B2%D0%BA%D0%B0%2C%20%D0%BE%D1%82%D0%B3%D1%80%D1%83%D0%B7%D0%BA%D0%B0%29.%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%BE%D0%B1%D1%81%D1%83%D0%B4%D0%B8%D1%82%D1%8C%20%D1%81%D0%BE%D1%82%D1%80%D1%83%D0%B4%D0%BD%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE."
-        target="_blank"
+        href="#contact"
+        data-tel="a"
+        data-tel-action="wa"
+        data-wa-text="Здравствуйте! Пишу с сайта: интересует фулфилмент в Москве (FBO/FBS, упаковка, отгрузка). Хочу обсудить сотрудничество."
         rel="noopener noreferrer"
         aria-label="WhatsApp"
       >
@@ -702,7 +703,7 @@
         class="chat-fab__link chat-fab__link--max"
         href="https://max.ru/"
         data-open-max
-        data-max-phone="79645606065"
+        data-tel="a"
         rel="noopener noreferrer"
         aria-label="Max"
       >
@@ -724,7 +725,7 @@
   </div>
 
   <div class="sticky-cta">
-    <a class="btn btn-primary" href="tel:+79645606065">+7 964 560-60-65</a>
+    <a class="btn btn-primary" href="#contact" data-tel="a" data-tel-action="call" data-tel-show>Позвонить</a>
   </div>
   <script src="js/main.js" defer></script>
 </body>
