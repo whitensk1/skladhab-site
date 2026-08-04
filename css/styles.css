@@ -2482,6 +2482,19 @@ body.topic-open { overflow: hidden; }
   pointer-events: none;
   animation: none !important;
 }
+/* Double-up chevron — only on last panel (bottom of site) */
+.panel-nav__btn--top {
+  width: 42px;
+  height: 42px;
+  margin: 0 auto 2px;
+  color: rgba(28, 31, 38, 0.62);
+}
+.panel-nav__btn--top[hidden] {
+  display: none !important;
+}
+.panel-nav__btn--top:hover {
+  color: var(--accent);
+}
 .panel-nav__btn svg {
   display: block;
 }

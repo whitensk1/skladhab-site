@@ -274,6 +274,7 @@
     const panels = Array.from(document.querySelectorAll("[data-panel]"));
     const prevBtn = document.querySelector("[data-panel-prev]");
     const nextBtn = document.querySelector("[data-panel-next]");
+    const topBtn = document.querySelector("[data-panel-top]");
     if (!panels.length) return;
 
     const root = document.documentElement;
@@ -371,14 +372,29 @@
     const sync = () => {
       if (gliding) return;
       const i = getIndex();
+      const atEnd = i >= panels.length - 1;
+      /* also true near absolute page bottom (long last panel / footer scroll) */
+      const scrollMax =
+        Math.max(
+          0,
+          (document.documentElement.scrollHeight || 0) - (window.innerHeight || 0)
+        );
+      const nearDocBottom =
+        scrollMax > 40 && window.pageYOffset >= scrollMax - 120;
+      const showTop = atEnd || nearDocBottom;
+
       if (prevBtn) {
         prevBtn.disabled = i <= 0;
         prevBtn.classList.toggle("is-disabled", i <= 0);
       }
       if (nextBtn) {
-        const atEnd = i >= panels.length - 1;
         nextBtn.disabled = atEnd;
         nextBtn.classList.toggle("is-disabled", atEnd);
+      }
+      if (topBtn) {
+        topBtn.classList.toggle("is-hidden", !showTop);
+        if (showTop) topBtn.removeAttribute("hidden");
+        else topBtn.setAttribute("hidden", "");
       }
       const panel = panels[i];
       const label = panel ? String(panel.getAttribute("data-next") || "").trim() : "";
@@ -394,6 +410,13 @@
 
     if (prevBtn) prevBtn.addEventListener("click", () => go(-1));
     if (nextBtn) nextBtn.addEventListener("click", () => go(1));
+    if (topBtn) {
+      topBtn.addEventListener("click", () => {
+        if (gliding) return;
+        if (panels[0]) softScrollTo(panels[0]);
+        else window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+      });
+    }
     onScroll(sync);
     window.addEventListener("resize", sync);
     sync();
