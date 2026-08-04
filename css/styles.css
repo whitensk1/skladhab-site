@@ -540,6 +540,32 @@ strong { font-weight: 700; }
   gap: 36px;
   align-items: center;
 }
+.snap-intro {
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+  isolation: isolate;
+}
+/* Original UD logo as oversized soft watermark behind left text */
+.snap-logo-bg {
+  position: absolute;
+  left: -18%;
+  top: 42%;
+  transform: translateY(-50%) rotate(-6deg);
+  width: min(120%, 520px);
+  max-width: none;
+  height: auto;
+  opacity: 0.14;
+  filter: brightness(1.35) contrast(1.05);
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+  mix-blend-mode: screen;
+}
+.snap-intro > *:not(.snap-logo-bg) {
+  position: relative;
+  z-index: 1;
+}
 .snap-intro .eyebrow {
   color: #f0a0d8;
 }
@@ -1521,6 +1547,11 @@ body.topic-open { overflow: hidden; }
   }
   .stats-premium { grid-template-columns: 1fr; }
   .snap { padding: 56px 0; }
+  .snap-logo-bg {
+    left: -8%;
+    width: min(95%, 360px);
+    opacity: 0.11;
+  }
   .steps-detail { grid-template-columns: 1fr; }
   .step-card { grid-template-columns: 1fr; }
   .step-card .step-photo { aspect-ratio: 16 / 10; min-height: 0; }
