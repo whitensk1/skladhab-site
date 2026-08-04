@@ -1907,26 +1907,30 @@ body.topic-open { overflow: hidden; }
    Mode class is set by JS (data-display-mode); media queries are a fallback.
    -------------------------------------------------------------------------- */
 
+/* Always top-right — keep clear of bottom peeks / sticky chrome */
 .display-mode-badge {
   position: fixed;
-  top: max(14px, env(safe-area-inset-top, 0px));
-  right: max(16px, env(safe-area-inset-right, 0px));
-  z-index: 70;
+  top: max(16px, env(safe-area-inset-top, 0px));
+  right: max(18px, env(safe-area-inset-right, 0px));
+  left: auto;
+  bottom: auto;
+  transform: none;
+  z-index: 80;
   pointer-events: none;
   user-select: none;
   padding: 8px 16px;
   border-radius: 999px;
-  background: rgba(28, 31, 38, 0.42);
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(28, 31, 38, 0.48);
+  border: 1px solid rgba(255, 255, 255, 0.24);
   backdrop-filter: blur(14px) saturate(1.15);
   -webkit-backdrop-filter: blur(14px) saturate(1.15);
-  color: rgba(255, 255, 255, 0.88);
+  color: rgba(255, 255, 255, 0.9);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.04em;
   line-height: 1.25;
   white-space: nowrap;
-  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.14);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.16);
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.4s var(--ease), visibility 0.4s;
@@ -1935,11 +1939,13 @@ body.topic-open { overflow: hidden; }
   opacity: 1;
   visibility: visible;
 }
-/* On large modes header is taller — nudge badge slightly down if needed */
 html[data-display-mode="2k"] .display-mode-badge,
 html[data-display-mode="4k"] .display-mode-badge,
 html[data-display-mode="5k"] .display-mode-badge {
-  top: max(18px, env(safe-area-inset-top, 0px));
+  top: max(16px, env(safe-area-inset-top, 0px));
+  right: max(18px, env(safe-area-inset-right, 0px));
+  left: auto;
+  bottom: auto;
 }
 @media (max-width: 960px) {
   .display-mode-badge {
