@@ -404,7 +404,10 @@ strong { font-weight: 700; }
   backdrop-filter: blur(20px) saturate(1.15);
   -webkit-backdrop-filter: blur(20px) saturate(1.15);
   color: var(--ink);
-  transition: box-shadow 0.65s var(--ease), border-color 0.65s var(--ease);
+  transition:
+    box-shadow 0.65s var(--ease),
+    border-color 0.65s var(--ease),
+    background 0.65s var(--ease);
 }
 /* corner/edge brand tint — switches with data-mp (WB / Ozon / Yandex) */
 .hero-glass::before {
@@ -417,49 +420,55 @@ strong { font-weight: 700; }
   opacity: 1;
   transition: background 0.65s var(--ease), opacity 0.65s var(--ease);
   background:
-    radial-gradient(ellipse 55% 50% at 0% 0%, rgba(203, 17, 171, 0.16), transparent 58%),
-    radial-gradient(ellipse 50% 45% at 100% 0%, rgba(203, 17, 171, 0.12), transparent 55%),
-    radial-gradient(ellipse 55% 50% at 100% 100%, rgba(160, 12, 140, 0.12), transparent 58%),
-    radial-gradient(ellipse 45% 40% at 0% 100%, rgba(203, 17, 171, 0.1), transparent 55%);
+    radial-gradient(ellipse 70% 60% at 0% 0%, rgba(203, 17, 171, 0.28), transparent 60%),
+    radial-gradient(ellipse 60% 55% at 100% 0%, rgba(203, 17, 171, 0.2), transparent 58%),
+    radial-gradient(ellipse 65% 55% at 100% 100%, rgba(160, 12, 140, 0.18), transparent 60%),
+    radial-gradient(ellipse 55% 50% at 0% 100%, rgba(203, 17, 171, 0.16), transparent 58%);
 }
 .hero-glass[data-mp="wb"] {
+  background: rgba(255, 245, 252, 0.78);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.95) inset,
-    0 24px 64px rgba(203, 17, 171, 0.12);
-  border-color: rgba(203, 17, 171, 0.12);
+    0 0 0 1px rgba(203, 17, 171, 0.18),
+    0 24px 64px rgba(203, 17, 171, 0.22);
+  border-color: rgba(203, 17, 171, 0.32);
 }
 .hero-glass[data-mp="wb"]::before {
   background:
-    radial-gradient(ellipse 55% 50% at 0% 0%, rgba(203, 17, 171, 0.18), transparent 58%),
-    radial-gradient(ellipse 50% 45% at 100% 0%, rgba(203, 17, 171, 0.14), transparent 55%),
-    radial-gradient(ellipse 55% 50% at 100% 100%, rgba(160, 12, 140, 0.12), transparent 58%),
-    radial-gradient(ellipse 45% 40% at 0% 100%, rgba(203, 17, 171, 0.1), transparent 55%);
+    radial-gradient(ellipse 75% 65% at 8% 0%, rgba(203, 17, 171, 0.38), transparent 58%),
+    radial-gradient(ellipse 65% 55% at 100% 12%, rgba(230, 27, 192, 0.28), transparent 55%),
+    radial-gradient(ellipse 70% 60% at 92% 100%, rgba(160, 12, 140, 0.26), transparent 58%),
+    radial-gradient(ellipse 55% 50% at 0% 100%, rgba(203, 17, 171, 0.2), transparent 55%);
 }
 .hero-glass[data-mp="ozon"] {
+  background: rgba(245, 248, 255, 0.8);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.95) inset,
-    0 24px 64px rgba(0, 91, 255, 0.12);
-  border-color: rgba(0, 91, 255, 0.12);
+    0 0 0 1px rgba(0, 91, 255, 0.16),
+    0 24px 64px rgba(0, 91, 255, 0.2);
+  border-color: rgba(0, 91, 255, 0.3);
 }
 .hero-glass[data-mp="ozon"]::before {
   background:
-    radial-gradient(ellipse 55% 50% at 0% 0%, rgba(0, 91, 255, 0.16), transparent 58%),
-    radial-gradient(ellipse 50% 45% at 100% 0%, rgba(0, 91, 255, 0.13), transparent 55%),
-    radial-gradient(ellipse 55% 50% at 100% 100%, rgba(0, 70, 199, 0.12), transparent 58%),
-    radial-gradient(ellipse 45% 40% at 0% 100%, rgba(0, 91, 255, 0.1), transparent 55%);
+    radial-gradient(ellipse 75% 65% at 8% 0%, rgba(0, 91, 255, 0.34), transparent 58%),
+    radial-gradient(ellipse 65% 55% at 100% 12%, rgba(43, 123, 255, 0.26), transparent 55%),
+    radial-gradient(ellipse 70% 60% at 92% 100%, rgba(0, 70, 199, 0.24), transparent 58%),
+    radial-gradient(ellipse 55% 50% at 0% 100%, rgba(0, 91, 255, 0.18), transparent 55%);
 }
 .hero-glass[data-mp="ym"] {
+  background: rgba(255, 252, 240, 0.82);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.95) inset,
-    0 24px 64px rgba(255, 204, 0, 0.16);
-  border-color: rgba(255, 204, 0, 0.22);
+    0 0 0 1px rgba(255, 204, 0, 0.28),
+    0 24px 64px rgba(255, 204, 0, 0.22);
+  border-color: rgba(255, 204, 0, 0.42);
 }
 .hero-glass[data-mp="ym"]::before {
   background:
-    radial-gradient(ellipse 55% 50% at 0% 0%, rgba(255, 204, 0, 0.22), transparent 58%),
-    radial-gradient(ellipse 50% 45% at 100% 0%, rgba(255, 204, 0, 0.16), transparent 55%),
-    radial-gradient(ellipse 55% 50% at 100% 100%, rgba(230, 184, 0, 0.14), transparent 58%),
-    radial-gradient(ellipse 45% 40% at 0% 100%, rgba(255, 204, 0, 0.12), transparent 55%);
+    radial-gradient(ellipse 75% 65% at 8% 0%, rgba(255, 204, 0, 0.42), transparent 58%),
+    radial-gradient(ellipse 65% 55% at 100% 12%, rgba(255, 224, 102, 0.32), transparent 55%),
+    radial-gradient(ellipse 70% 60% at 92% 100%, rgba(230, 184, 0, 0.28), transparent 58%),
+    radial-gradient(ellipse 55% 50% at 0% 100%, rgba(255, 204, 0, 0.22), transparent 55%);
 }
 .hero-glass > * {
   position: relative;
@@ -476,24 +485,25 @@ strong { font-weight: 700; }
   color: var(--ink);
 }
 
-/* Seller block: pill full-width on top, marketplace logos row below */
+/* Compact centered pill + natural-size logos underneath (no stretched cards) */
 .hero-for {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  gap: 12px;
+  align-items: center;
+  gap: 14px;
   width: 100%;
-  margin: 0 0 20px;
+  margin: 0 0 22px;
 }
 .hero-for__pill {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  padding: 16px 18px;
-  border-radius: 18px;
+  width: auto;
+  max-width: 100%;
+  padding: 10px 22px;
+  border-radius: 999px;
   font-weight: 800;
-  font-size: clamp(0.95rem, 1.8vw, 1.15rem);
+  font-size: clamp(0.9rem, 1.6vw, 1.05rem);
   letter-spacing: -0.02em;
   color: #fff;
   background: rgba(0, 0, 0, 0.18);
@@ -505,50 +515,51 @@ strong { font-weight: 700; }
 .hero-for[data-mp="wb"] .hero-for__pill {
   background: linear-gradient(135deg, #e61bc0, #cb11ab 50%, #a00a88);
   color: #fff;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 8px 22px rgba(203, 17, 171, 0.35);
 }
 .hero-for[data-mp="ozon"] .hero-for__pill {
   background: linear-gradient(135deg, #2b7bff, #005bff 50%, #0046c7);
   color: #fff;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 8px 22px rgba(0, 91, 255, 0.32);
 }
 .hero-for[data-mp="ym"] .hero-for__pill {
   background: linear-gradient(135deg, #ffe066, #ffcc00 50%, #e6b800);
   color: #1a1a1a;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 22px rgba(255, 204, 0, 0.35);
 }
 .hero-for__logos {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  align-items: stretch;
-  gap: 10px;
-  width: 100%;
-  min-width: 0;
-}
-.hero-mp {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  min-height: 72px;
-  aspect-ratio: 2.4 / 1;
-  padding: 8px 10px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.88);
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  gap: 18px 28px;
+  width: auto;
+  max-width: 100%;
+}
+.hero-mp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  height: auto;
+  min-height: 0;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
   /* gray by default; full color when active */
   filter: grayscale(1);
-  opacity: 0.55;
-  transition: filter 0.5s var(--ease), opacity 0.5s, transform 0.5s, box-shadow 0.5s, background 0.5s;
+  opacity: 0.48;
+  transition: filter 0.5s var(--ease), opacity 0.5s, transform 0.5s;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow: visible;
 }
 .hero-mp img {
-  width: 100%;
-  height: 100%;
-  max-width: none;
-  max-height: none;
+  width: auto;
+  height: 40px;
+  max-width: min(140px, 28vw);
+  max-height: 48px;
   object-fit: contain;
   object-position: center;
   display: block;
@@ -556,18 +567,14 @@ strong { font-weight: 700; }
 .hero-mp.is-active {
   filter: grayscale(0);
   opacity: 1;
-  transform: scale(1.02);
-  background: #fff;
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.16);
+  transform: scale(1.08);
+  background: transparent;
+  box-shadow: none;
 }
-.hero-for[data-mp="wb"] .hero-mp[data-mp-icon="wb"].is-active {
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.2);
-}
-.hero-for[data-mp="ozon"] .hero-mp[data-mp-icon="ozon"].is-active {
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.2);
-}
+.hero-for[data-mp="wb"] .hero-mp[data-mp-icon="wb"].is-active,
+.hero-for[data-mp="ozon"] .hero-mp[data-mp-icon="ozon"].is-active,
 .hero-for[data-mp="ym"] .hero-mp[data-mp-icon="ym"].is-active {
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.16);
+  box-shadow: none;
 }
 
 /* Same width band as H1 (full glass content width) */
@@ -2451,16 +2458,14 @@ body.topic-open { overflow: hidden; }
   }
   .hero-for {
     flex-direction: column;
+    align-items: center;
   }
-  .hero-for__logos { grid-template-columns: repeat(3, 1fr); }
-  .hero-mp {
-    min-height: 56px;
-    aspect-ratio: 2.2 / 1;
-    padding: 6px 8px;
+  .hero-for__logos {
+    gap: 14px 18px;
   }
   .hero-mp img {
-    width: 100%;
-    height: 100%;
+    height: 32px;
+    max-width: min(110px, 26vw);
   }
   .hero-feature__icon img { width: 32px; height: 32px; }
   .marquee {
@@ -2638,13 +2643,9 @@ html[data-display-mode="4k"] .site-header.is-scrolled {
   width: min(1100px, calc(100% - 40px));
 }
 html[data-display-mode="4k"] .logo-img { height: 68px; max-width: 120px; }
-html[data-display-mode="4k"] .hero-mp {
-  min-height: 96px;
-  aspect-ratio: 2.4 / 1;
-}
 html[data-display-mode="4k"] .hero-mp img {
-  width: 100%;
-  height: 100%;
+  height: 52px;
+  max-width: 180px;
 }
 html[data-display-mode="4k"] .nav { font-size: 17px; gap: 28px; }
 html[data-display-mode="4k"] .float-phone {
@@ -2770,13 +2771,9 @@ html[data-display-mode="5k"] .site-header.is-scrolled {
   width: min(1280px, calc(100% - 48px));
 }
 html[data-display-mode="5k"] .logo-img { height: 78px; max-width: 140px; }
-html[data-display-mode="5k"] .hero-mp {
-  min-height: 112px;
-  aspect-ratio: 2.4 / 1;
-}
 html[data-display-mode="5k"] .hero-mp img {
-  width: 100%;
-  height: 100%;
+  height: 60px;
+  max-width: 200px;
 }
 html[data-display-mode="5k"] .nav { font-size: 19px; gap: 32px; }
 html[data-display-mode="5k"] .float-phone {
