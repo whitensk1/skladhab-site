@@ -318,6 +318,14 @@
   /* Office managers peek from windows with pep-talk / mild sarcasm */
   const MANAGERS = [
     {
+      name: "Маша",
+      gender: "f",
+      hair: "long-straight-blonde",
+      skin: "#f3d0b8",
+      figure: "curvy",
+      phrase: "Осторожно с ящиками — у меня тоже хрупкий груз, ха!",
+    },
+    {
       name: "Марина",
       gender: "f",
       hair: "curly-dark",
@@ -337,13 +345,6 @@
       hair: "short-brown",
       skin: "#d4a574",
       phrase: "Ну давай, герой паллет — клиент уже нервничает!",
-    },
-    {
-      name: "Юля",
-      gender: "f",
-      hair: "ponytail-brown",
-      skin: "#e2b48c",
-      phrase: "Я в тебя верю… ну, процентов на сорок. Шучу — давай!",
     },
     {
       name: "Арина",
@@ -373,14 +374,6 @@
       skin: "#f2cbb4",
       id: "andrey2",
       phrase: "Брат, это не тетрис. Хотя… почти тетрис. Давай!",
-    },
-    {
-      name: "Маша",
-      gender: "f",
-      hair: "blonde",
-      skin: "#f3d0b8",
-      figure: "curvy",
-      phrase: "Осторожно с ящиками — у меня тоже хрупкий груз, ха!",
     },
   ];
 
@@ -568,23 +561,30 @@
 
     /* shoulders / bust (cartoon, peeking from window) */
     if (m.gender === "f") {
-      const bodyW = curvy ? 46 : 36;
-      const bodyH = curvy ? 22 : 16;
+      const bodyW = curvy ? 54 : 36;
+      const bodyH = curvy ? 28 : 16;
       ctx.fillStyle = "#cb11ab";
-      roundRect(-bodyW / 2, 16, bodyW, bodyH, 6);
+      roundRect(-bodyW / 2, 14, bodyW, bodyH + 2, 7);
       ctx.fill();
       if (curvy) {
-        /* stylized fuller figure — simple shapes under blouse */
+        /* fuller bust — clearly readable silhouette in the window */
         ctx.fillStyle = m.skin;
         ctx.beginPath();
-        ctx.ellipse(-11, 22, 10, 9, 0, 0, Math.PI * 2);
-        ctx.ellipse(11, 22, 10, 9, 0, 0, Math.PI * 2);
+        ctx.ellipse(-13, 24, 13, 12, -0.08, 0, Math.PI * 2);
+        ctx.ellipse(13, 24, 13, 12, 0.08, 0, Math.PI * 2);
         ctx.fill();
         ctx.fillStyle = "#e85cc8";
-        roundRect(-bodyW / 2 + 2, 16, bodyW - 4, 12, 5);
+        roundRect(-bodyW / 2 + 3, 14, bodyW - 6, 14, 6);
+        ctx.fill();
+        /* neckline */
+        ctx.fillStyle = m.skin;
+        ctx.beginPath();
+        ctx.moveTo(-10, 14);
+        ctx.quadraticCurveTo(0, 28, 10, 14);
+        ctx.closePath();
         ctx.fill();
         ctx.fillStyle = "#fff";
-        roundRect(-9, 16, 18, 9, 3);
+        roundRect(-10, 14, 20, 8, 3);
         ctx.fill();
       } else {
         ctx.fillStyle = "#fff";
@@ -613,16 +613,43 @@
     const isBlonde =
       m.hair === "blonde" ||
       m.hair === "short-blond" ||
-      m.hair === "short-blonde";
+      m.hair === "short-blonde" ||
+      m.hair === "long-straight-blonde";
     ctx.fillStyle = isBlonde
-      ? "#e8c96a"
+      ? "#f0d078"
       : m.hair === "bob-auburn"
         ? "#a85a3a"
         : m.hair === "short-brown" || m.hair === "ponytail-brown"
           ? "#5c3a22"
           : "#2a1a12";
 
-    if (m.hair === "curly-dark") {
+    if (m.hair === "long-straight-blonde") {
+      /* long straight blonde — past shoulders, flat ends */
+      ctx.fillStyle = "#f2d27a";
+      ctx.beginPath();
+      ctx.ellipse(0, -5, 17.5, 13, 0, Math.PI, 0);
+      ctx.fill();
+      /* crown / fringe */
+      ctx.beginPath();
+      ctx.ellipse(0, -8, 15, 9, 0, Math.PI, 0);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(-14, -4);
+      ctx.quadraticCurveTo(-6, 8, -2, 2);
+      ctx.lineTo(-12, -6);
+      ctx.fill();
+      /* long straight sheets left/right */
+      ctx.fillStyle = "#e8c45e";
+      roundRect(-19, -2, 9, 36, 3);
+      roundRect(10, -2, 9, 36, 3);
+      ctx.fillStyle = "#f2d27a";
+      roundRect(-17.5, -4, 7, 34, 2.5);
+      roundRect(10.5, -4, 7, 34, 2.5);
+      /* slight highlight strands */
+      ctx.fillStyle = "rgba(255, 245, 200, 0.55)";
+      roundRect(-15.5, 0, 2.5, 28, 1);
+      roundRect(13, 0, 2.5, 28, 1);
+    } else if (m.hair === "curly-dark") {
       for (const p of [
         [-12, -8],
         [0, -14],
@@ -660,8 +687,7 @@
       ctx.fill();
       ctx.fillRect(-16, -2, 8, 22);
       ctx.fillRect(8, -2, 8, 22);
-      if (m.hair === "blonde" && curvy) {
-        /* longer blonde waves */
+      if (m.hair === "blonde") {
         ctx.beginPath();
         ctx.ellipse(-15, 10, 7, 12, -0.15, 0, Math.PI * 2);
         ctx.ellipse(15, 10, 7, 12, 0.15, 0, Math.PI * 2);
@@ -708,8 +734,8 @@
     if (!p) return;
     const m = p.m;
     const curvy = m.figure === "curvy";
-    const winW = curvy ? 128 : 118;
-    const winH = curvy ? 118 : 108;
+    const winW = curvy ? 136 : 118;
+    const winH = curvy ? 128 : 108;
     const edge = 10;
     /* slide-in */
     const appear = Math.min(1, p.t / 0.35);
@@ -752,7 +778,7 @@
     roundRect(x + 6, y + 26, winW - 12, winH - 34, 6);
     ctx.fill();
 
-    drawManagerFace(m, x + winW / 2, y + 62, 1.05);
+    drawManagerFace(m, x + winW / 2, y + (curvy ? 58 : 62), curvy ? 1.12 : 1.05);
 
     /* speech bubble above/beside */
     const bubbleMax = 150;
