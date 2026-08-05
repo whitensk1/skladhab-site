@@ -1,4 +1,22 @@
+# https://fbo-fbs.ru
 User-agent: *
 Allow: /
 
-Sitemap: https://skladhab.ru/sitemap.xml
+# Do not waste crawl budget on source drafts
+Disallow: /src/
+Disallow: /docs/
+Disallow: /content/
+Disallow: /pages/
+
+# Yandex / Google / common bots
+User-agent: Yandex
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+Sitemap: https://fbo-fbs.ru/sitemap.xml
+Host: https://fbo-fbs.ru

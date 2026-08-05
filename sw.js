@@ -1,5 +1,5 @@
 /* Успешное Дело — light SW: shell only, never cache big video */
-const CACHE = "ud-site-v19-video-full";
+const CACHE = "ud-site-v20-seo";
 const PRECACHE = [
   "./",
   "./index.html",
@@ -9,6 +9,8 @@ const PRECACHE = [
   "./media/brand/logo-ud-mark.webp",
   "./media/brand/logo-ud-mark.png",
   "./media/hero/warehouse-still.jpg",
+  "./robots.txt",
+  "./sitemap.xml",
 ];
 
 self.addEventListener("install", (event) => {
