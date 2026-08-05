@@ -813,14 +813,14 @@ strong { font-weight: 700; }
   color: #fff;
   box-shadow: 0 8px 22px rgba(124, 92, 255, 0.38);
 }
-/* Logos only in a row — no colored plates / glow */
+/* Logos only in a row — block-sized, no colored plates */
 .hero-for__logos {
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
   justify-content: center;
-  gap: clamp(10px, 1.8vw, 20px);
-  width: min(88%, 720px);
+  gap: clamp(12px, 2vw, 22px);
+  width: min(94%, 880px);
   max-width: 100%;
   margin: 0 auto;
   box-sizing: border-box;
@@ -832,7 +832,7 @@ strong { font-weight: 700; }
   justify-content: center;
   flex: 1 1 0;
   min-width: 0;
-  max-width: 160px;
+  max-width: 200px;
   height: auto;
   aspect-ratio: auto;
   min-height: 0;
@@ -871,7 +871,8 @@ strong { font-weight: 700; }
   width: 100%;
   height: auto;
   max-width: 100%;
-  max-height: 44px;
+  /* ~same visual mass as the old plates */
+  max-height: 72px;
   object-fit: contain;
   object-position: center;
   display: block;
@@ -884,12 +885,11 @@ strong { font-weight: 700; }
 .hero-mp.is-active {
   filter: grayscale(0) saturate(1.05);
   opacity: 1;
-  transform: scale(1.06);
+  transform: scale(1.05);
 }
 .hero-mp.is-active .hero-mp__logo--wide {
   filter: none;
 }
-/* no brand plate shadows */
 .hero-for[data-mp="wb"] .hero-mp[data-mp-icon="wb"].is-active,
 .hero-for[data-mp="ozon"] .hero-mp[data-mp-icon="ozon"].is-active,
 .hero-for[data-mp="ym"] .hero-mp[data-mp-icon="ym"].is-active,
@@ -900,16 +900,16 @@ strong { font-weight: 700; }
 @media (max-width: 720px) {
   .hero-for__logos {
     width: 100%;
-    gap: 8px;
+    gap: 10px;
     flex-wrap: wrap;
   }
   .hero-mp {
-    flex: 1 1 calc(50% - 8px);
-    max-width: calc(50% - 4px);
+    flex: 1 1 calc(50% - 10px);
+    max-width: calc(50% - 5px);
   }
   .hero-mp__logo--wide,
   .hero-mp__logo.hero-mp__logo--wide {
-    max-height: 36px;
+    max-height: 56px;
   }
 }
 
