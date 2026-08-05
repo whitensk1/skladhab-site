@@ -1294,7 +1294,9 @@ strong { font-weight: 700; }
   grid-template-areas:
     "intro stats"
     "topics topics";
-  gap: 28px 36px;
+  column-gap: 36px;
+  /* tight to the topics strip — no air between stats and pills */
+  row-gap: 12px;
   align-items: start;
 }
 .snap-intro {
@@ -1307,6 +1309,8 @@ strong { font-weight: 700; }
 }
 .snap-inner > .stats-premium {
   grid-area: stats;
+  /* sit on the bottom edge of the top row, flush against the topics strip */
+  align-self: end;
 }
 .about-topics {
   grid-area: topics;
@@ -3065,11 +3069,15 @@ body.topic-open { overflow: hidden; }
   }
   .feature-grid--5 { grid-template-columns: 1fr 1fr; }
   .snap-inner {
-    gap: 22px;
+    row-gap: 12px;
+    column-gap: 22px;
     grid-template-columns: 1fr 1fr;
     grid-template-areas:
       "intro stats"
       "topics topics";
+  }
+  .snap-inner > .stats-premium {
+    align-self: end;
   }
   .about-topics {
     flex-wrap: wrap;
