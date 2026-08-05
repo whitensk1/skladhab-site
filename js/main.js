@@ -290,6 +290,24 @@
     };
     if (heroWrap) setHeroMode(false);
 
+    /* True full-file buffer (short loops) — not just canplay */
+    const isFullyBuffered = (video) => {
+      try {
+        const d = video.duration;
+        if (!d || !isFinite(d) || d < 0.05) return false;
+        if (!video.buffered || video.buffered.length === 0) return false;
+        for (let i = 0; i < video.buffered.length; i++) {
+          const start = video.buffered.start(i);
+          const end = video.buffered.end(i);
+          if (start <= 0.15 && end >= d - 0.2) return true;
+        }
+        const end = video.buffered.end(video.buffered.length - 1);
+        return end >= d - 0.2;
+      } catch (_) {
+        return false;
+      }
+    };
+
     const ensureSources = (video) => {
       const src = video.getAttribute("data-src");
       if (src && !video.querySelector("source") && !video.getAttribute("src")) {
@@ -299,33 +317,50 @@
         s.type = "video/mp4";
         video.appendChild(s);
       }
-      if (video.preload === "none") video.preload = "metadata";
+      /* auto = keep downloading whole file for short clips */
+      video.preload = "auto";
       try {
         video.load();
       } catch (_) {}
     };
 
-    const markReady = (video) => {
+    const startPlayback = (video) => {
       setLoading(video, false);
-      if (video === heroVideo && !video.paused) setHeroMode(true);
+      const p = video.play();
+      if (p && typeof p.then === "function") {
+        p.then(() => {
+          if (video === heroVideo) setHeroMode(true);
+        }).catch(() => {
+          if (video === heroVideo) setHeroMode(false);
+          setLoading(video, true);
+        });
+      } else if (!video.paused && video === heroVideo) {
+        setHeroMode(true);
+      }
+    };
+
+    /* Only play when fully buffered — loader stays until then */
+    const tryStartWhenFull = (video) => {
+      if (skipVideo) return;
+      if (!inView.get(video)) return;
+      if (!isFullyBuffered(video) && video.readyState < 4) {
+        setLoading(video, true);
+        try {
+          video.pause();
+        } catch (_) {}
+        return;
+      }
+      startPlayback(video);
     };
 
     const playVideo = (video) => {
       if (skipVideo) return;
       ensureSources(video);
-      if (video.readyState < 2) setLoading(video, true);
-      const p = video.play();
-      if (p && typeof p.then === "function") {
-        p.then(() => {
-          markReady(video);
-          if (video === heroVideo) setHeroMode(true);
-        }).catch(() => {
-          if (video === heroVideo) setHeroMode(false);
-        });
-      } else if (!video.paused && video === heroVideo) {
-        markReady(video);
-        setHeroMode(true);
-      }
+      setLoading(video, true);
+      try {
+        video.pause();
+      } catch (_) {}
+      tryStartWhenFull(video);
     };
 
     const pauseVideo = (video) => {
@@ -335,6 +370,8 @@
       if (video === heroVideo) setHeroMode(false);
     };
 
+    const inView = new Map();
+
     videos.forEach((video) => {
       ensureLoader(video);
       video.addEventListener("loadstart", () => {
@@ -342,16 +379,23 @@
           setLoading(video, true);
         }
       });
-      video.addEventListener("waiting", () => setLoading(video, true));
-      video.addEventListener("stalled", () => setLoading(video, true));
-      const readyEv = () => markReady(video);
-      video.addEventListener("canplay", readyEv);
-      video.addEventListener("playing", readyEv);
-      video.addEventListener("canplaythrough", readyEv);
+      video.addEventListener("progress", () => tryStartWhenFull(video));
+      video.addEventListener("loadedmetadata", () => tryStartWhenFull(video));
+      video.addEventListener("canplaythrough", () => tryStartWhenFull(video));
+      /* mid-play rebuffer: pause + loader until full again */
+      video.addEventListener("waiting", () => {
+        if (!inView.get(video)) return;
+        setLoading(video, true);
+        try {
+          video.pause();
+        } catch (_) {}
+      });
+      video.addEventListener("stalled", () => {
+        if (!inView.get(video)) return;
+        setLoading(video, true);
+      });
       video.addEventListener("error", () => setLoading(video, false));
     });
-
-    const inView = new Map();
 
     const sync = () => {
       if (document.hidden) {

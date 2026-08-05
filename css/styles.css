@@ -866,7 +866,7 @@ strong { font-weight: 700; }
   user-select: none;
   border-radius: 0;
 }
-/* Sharp logo on top */
+/* Sharp logo on top — clip white JPEG bars top/bottom (~2–4px + slight scale) */
 .hero-mp__logo {
   position: relative;
   z-index: 2;
@@ -880,7 +880,14 @@ strong { font-weight: 700; }
   display: block;
   border-radius: 22%;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
-  transform: scale(1.04);
+  /* crop white strips: hide a bit more top/bottom than left/right */
+  clip-path: inset(2px 0 2px 0 round 22%);
+  transform: scale(1.1);
+  transform-origin: center center;
+}
+.hero-mp__blur {
+  /* same crop idea for the soft backdrop icon */
+  clip-path: inset(3% 0 3% 0);
 }
 .hero-mp.is-active {
   filter: grayscale(0) saturate(1.05);
