@@ -2454,36 +2454,17 @@ body.topic-open { overflow: hidden; }
   margin-bottom: 14px;
 }
 .footer-inline .footer-links a:hover { color: var(--accent); }
-.seo-block {
-  margin: 18px auto 8px;
-  max-width: 52rem;
-  text-align: left;
-  padding: 14px 16px;
-  border-radius: 14px;
-  border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.55);
-  font-size: 13px;
-  line-height: 1.55;
-  color: var(--muted);
-}
-.seo-block__title {
-  margin: 0 0 8px;
-  font-size: 14.5px;
-  font-weight: 800;
-  color: var(--ink);
-  letter-spacing: -0.02em;
-}
-.seo-block p { margin: 0 0 8px; }
-.seo-block p:last-child { margin-bottom: 0; }
-.seo-block a {
-  color: var(--accent);
-  font-weight: 600;
-  text-decoration: none;
-}
-.seo-block a:hover { text-decoration: underline; }
-.seo-block__nav {
-  font-size: 12.5px;
-  opacity: 0.95;
+/* Screen-reader / crawler text — out of visual layout (not display:none) */
+.seo-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 .footer-inline .footer-legal {
   margin: 0;
