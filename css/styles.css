@@ -28,6 +28,8 @@
   --wb: #cb11ab;
   --ozon: #005bff;
   --ym: #ffcc00;
+  /* МегаМаркет brand purple */
+  --mega: #7c5cff;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -631,6 +633,21 @@ strong { font-weight: 700; }
     radial-gradient(ellipse 70% 60% at 92% 100%, rgba(230, 184, 0, 0.28), transparent 58%),
     radial-gradient(ellipse 55% 50% at 0% 100%, rgba(255, 204, 0, 0.22), transparent 55%);
 }
+.hero-glass[data-mp="mega"] {
+  background: rgba(248, 245, 255, var(--glass-a));
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, calc(0.4 + var(--glass-a) * 0.55)) inset,
+    0 0 0 1px rgba(124, 92, 255, calc(0.1 + var(--glass-a) * 0.18)),
+    0 24px 64px rgba(124, 92, 255, calc(0.08 + var(--glass-a) * 0.16));
+  border-color: rgba(124, 92, 255, calc(0.14 + var(--glass-a) * 0.28));
+}
+.hero-glass[data-mp="mega"]::before {
+  background:
+    radial-gradient(ellipse 75% 65% at 8% 0%, rgba(124, 92, 255, 0.38), transparent 58%),
+    radial-gradient(ellipse 65% 55% at 100% 12%, rgba(167, 139, 250, 0.3), transparent 55%),
+    radial-gradient(ellipse 70% 60% at 92% 100%, rgba(99, 68, 214, 0.26), transparent 58%),
+    radial-gradient(ellipse 55% 50% at 0% 100%, rgba(124, 92, 255, 0.2), transparent 55%);
+}
 
 /* Delicate vertical opacity rail — narrower shell, longer track, airy ends */
 .hero-opacity {
@@ -791,14 +808,19 @@ strong { font-weight: 700; }
   color: #1a1a1a;
   box-shadow: 0 8px 22px rgba(255, 204, 0, 0.35);
 }
-/* Wider band, low landscape cards under seller pill */
+.hero-for[data-mp="mega"] .hero-for__pill {
+  background: linear-gradient(135deg, #9b87f5, #7c5cff 50%, #6344d6);
+  color: #fff;
+  box-shadow: 0 8px 22px rgba(124, 92, 255, 0.38);
+}
+/* Four wide logo plates under seller pill */
 .hero-for__logos {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   align-items: stretch;
-  gap: clamp(10px, 1.5vw, 14px);
-  width: min(72%, 720px);
-  min-width: min(100%, 340px);
+  gap: clamp(8px, 1.2vw, 12px);
+  width: min(92%, 820px);
+  min-width: min(100%, 300px);
   max-width: 100%;
   margin: 0 auto;
   box-sizing: border-box;
@@ -809,17 +831,16 @@ strong { font-weight: 700; }
   align-items: center;
   justify-content: center;
   width: 100%;
-  /* low & wide (was ~square 1.15:1) */
-  aspect-ratio: 2.35 / 1;
-  min-height: 52px;
-  max-height: 78px;
-  padding: 8px 14px;
-  border-radius: 14px;
+  aspect-ratio: 2.9 / 1;
+  min-height: 44px;
+  max-height: 72px;
+  padding: 6px 10px;
+  border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.22);
   overflow: hidden;
   isolation: isolate;
   box-sizing: border-box;
-  filter: grayscale(0.55) saturate(0.75);
+  filter: grayscale(0.45) saturate(0.8);
   opacity: 0.72;
   transform: scale(1);
   transition:
@@ -840,6 +861,9 @@ strong { font-weight: 700; }
 .hero-mp[data-mp-icon="ym"] {
   background: linear-gradient(145deg, #ffe566 0%, #ffcc00 48%, #d4a800 100%);
 }
+.hero-mp[data-mp-icon="mega"] {
+  background: linear-gradient(145deg, #a78bfa 0%, #7c5cff 48%, #5b3fd4 100%);
+}
 /* Soft brand glow blob */
 .hero-mp__glow {
   position: absolute;
@@ -847,7 +871,7 @@ strong { font-weight: 700; }
   z-index: 0;
   pointer-events: none;
   border-radius: 50%;
-  opacity: 0.55;
+  opacity: 0.5;
   filter: blur(22px);
 }
 .hero-mp[data-mp-icon="wb"] .hero-mp__glow {
@@ -859,44 +883,34 @@ strong { font-weight: 700; }
 .hero-mp[data-mp-icon="ym"] .hero-mp__glow {
   background: radial-gradient(circle at 40% 35%, #fff3a0 0%, transparent 62%);
 }
-/* Enlarged blurred logo as atmosphere */
-.hero-mp__blur {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 160%;
-  height: 160%;
-  max-width: none;
-  max-height: none;
-  object-fit: cover;
-  object-position: center;
-  transform: translate(-50%, -50%) scale(1.15);
-  filter: blur(14px) saturate(1.25);
-  opacity: 0.42;
-  z-index: 1;
-  pointer-events: none;
-  user-select: none;
-  border-radius: 0;
-  clip-path: inset(3% 0 3% 0);
+.hero-mp[data-mp-icon="mega"] .hero-mp__glow {
+  background: radial-gradient(circle at 40% 35%, #c4b5fd 0%, transparent 62%);
 }
-/* Sharp logo on top — clip white JPEG bars top/bottom (~2–4px + slight scale) */
-.hero-mp__logo {
+/* Wide prepared logos (385×131) — fill the plate */
+.hero-mp__pic {
   position: relative;
   z-index: 2;
-  width: auto;
-  height: min(78%, 42px);
-  aspect-ratio: 1;
-  max-width: 42px;
-  max-height: 42px;
-  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+}
+.hero-mp__logo--wide,
+.hero-mp__logo.hero-mp__logo--wide {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: contain;
   object-position: center;
   display: block;
-  border-radius: 22%;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
-  /* crop white strips: hide a bit more top/bottom than left/right */
-  clip-path: inset(2px 0 2px 0 round 22%);
-  transform: scale(1.1);
-  transform-origin: center center;
+  border-radius: 0;
+  box-shadow: none;
+  clip-path: none;
+  transform: none;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.12));
 }
 .hero-mp.is-active {
   filter: grayscale(0) saturate(1.05);
@@ -907,12 +921,8 @@ strong { font-weight: 700; }
     0 12px 28px rgba(15, 18, 28, 0.16),
     0 0 0 1px rgba(255, 255, 255, 0.12) inset;
 }
-.hero-mp.is-active .hero-mp__blur {
-  opacity: 0.55;
-  filter: blur(12px) saturate(1.35);
-}
-.hero-mp.is-active .hero-mp__logo {
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
+.hero-mp.is-active .hero-mp__logo--wide {
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.16));
 }
 .hero-for[data-mp="wb"] .hero-mp[data-mp-icon="wb"].is-active {
   box-shadow:
@@ -929,24 +939,25 @@ strong { font-weight: 700; }
     0 12px 30px rgba(255, 204, 0, 0.4),
     0 0 0 1px rgba(255, 255, 255, 0.22) inset;
 }
+.hero-for[data-mp="mega"] .hero-mp[data-mp-icon="mega"].is-active {
+  box-shadow:
+    0 12px 30px rgba(124, 92, 255, 0.42),
+    0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+}
 
 @media (max-width: 720px) {
   .hero-for__logos {
-    width: min(94%, 420px);
+    width: 100%;
     min-width: 0;
-    gap: 8px;
+    gap: 6px;
+    grid-template-columns: repeat(2, 1fr);
   }
   .hero-mp {
-    aspect-ratio: 2.1 / 1;
-    min-height: 46px;
-    max-height: 64px;
-    padding: 6px 10px;
-    border-radius: 12px;
-  }
-  .hero-mp__logo {
-    height: min(80%, 34px);
-    max-width: 34px;
-    max-height: 34px;
+    aspect-ratio: 2.6 / 1;
+    min-height: 40px;
+    max-height: 56px;
+    padding: 5px 8px;
+    border-radius: 10px;
   }
 }
 

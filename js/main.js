@@ -1046,7 +1046,7 @@
     if (!bar) return;
     const glass = document.querySelector(".hero-glass");
     const icons = Array.from(bar.querySelectorAll("[data-mp-icon]"));
-    const cycle = ["wb", "ozon", "ym"];
+    const cycle = ["wb", "ozon", "ym", "mega"];
     let i = 0;
     const apply = () => {
       const key = cycle[i];
