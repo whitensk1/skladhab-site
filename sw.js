@@ -1,5 +1,5 @@
-/* Успешное Дело — light SW: shell only, never cache big video */
-const CACHE = "ud-site-v23-mp-narrow";
+/* Успешное Дело — SW: shell cache, no infinite revalidation thrash */
+const CACHE = "ud-site-v24-stable";
 const PRECACHE = [
   "./",
   "./index.html",
@@ -9,8 +9,6 @@ const PRECACHE = [
   "./media/brand/logo-ud-mark.webp",
   "./media/brand/logo-ud-mark.png",
   "./media/hero/warehouse-still.jpg",
-  "./robots.txt",
-  "./sitemap.xml",
 ];
 
 self.addEventListener("install", (event) => {
@@ -48,7 +46,7 @@ self.addEventListener("fetch", (event) => {
   }
   if (url.origin !== self.location.origin) return;
 
-  /* never intercept game / video / large media — go network */
+  /* videos & game: always network, never via SW */
   if (url.pathname.includes("/game/")) return;
   if (/\.(mp4|webm|mov)(\?|$)/i.test(url.pathname)) return;
 
@@ -59,11 +57,14 @@ self.addEventListener("fetch", (event) => {
     (req.headers.get("accept") || "").includes("text/html");
 
   if (isHTML) {
+    /* network-first, short path — no hang if offline use cache */
     event.respondWith(
       fetch(req)
         .then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {});
+          if (res && res.ok) {
+            const copy = res.clone();
+            caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {});
+          }
           return res;
         })
         .catch(() => caches.match(req).then((c) => c || caches.match("./index.html")))
@@ -71,22 +72,33 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  /* css/js/small images: stale-while-revalidate */
-  const isStatic = /\.(css|js|png|jpe?g|webp|svg|ico|woff2?)(\?|$)/i.test(url.pathname);
+  const isStatic = /\.(css|js|png|jpe?g|webp|svg|ico|woff2?|json|txt|xml|webmanifest)(\?|$)/i.test(
+    url.pathname
+  );
   if (!isStatic) return;
 
+  /* cache-first: return cached immediately so tab doesn't stay “loading” */
   event.respondWith(
     caches.match(req).then((cached) => {
-      const network = fetch(req)
-        .then((res) => {
-          if (res && res.ok && (res.type === "basic" || res.type === "cors")) {
-            const copy = res.clone();
-            caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {});
-          }
-          return res;
-        })
-        .catch(() => cached);
-      return cached || network;
+      if (cached) {
+        /* quiet background refresh — does not block the page */
+        fetch(req)
+          .then((res) => {
+            if (res && res.ok) {
+              const copy = res.clone();
+              caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {});
+            }
+          })
+          .catch(() => {});
+        return cached;
+      }
+      return fetch(req).then((res) => {
+        if (res && res.ok) {
+          const copy = res.clone();
+          caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {});
+        }
+        return res;
+      });
     })
   );
 });

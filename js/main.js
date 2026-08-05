@@ -229,7 +229,11 @@
     imgs.forEach((img) => io.observe(img));
   })();
 
-  /* Lazy videos: inject source only when visible; skip on Save-Data / 2G */
+  /*
+    Lazy videos — load once when near viewport, play when buffered enough.
+    IMPORTANT: never call video.load() repeatedly (that restarts download forever
+    and keeps the browser tab in a permanent “loading” state).
+  */
   (function lazyVideos() {
     const reduced =
       window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -244,11 +248,11 @@
 
     const heroWrap = document.querySelector(".hero-bg");
     const heroVideo = document.querySelector(".hero-bg-video");
+    const inView = new Map();
 
     const hostOf = (video) =>
       video.closest(".hero-bg, .about-show, .phone-reel__bezel") || video.parentElement;
 
-    /* Soft brand logo pulse while the file buffers */
     const ensureLoader = (video) => {
       const host = hostOf(video);
       if (!host) return null;
@@ -269,6 +273,7 @@
       const host = hostOf(video);
       if (!host) return;
       if (on) {
+        if (video.dataset.played === "1") return; /* don't flash loader during loop */
         ensureLoader(video);
         host.classList.add("is-video-loading");
         host.classList.remove("is-video-ready");
@@ -290,77 +295,70 @@
     };
     if (heroWrap) setHeroMode(false);
 
-    /* True full-file buffer (short loops) — not just canplay */
-    const isFullyBuffered = (video) => {
+    const isBufferedEnough = (video) => {
       try {
+        /* HAVE_ENOUGH_DATA */
+        if (video.readyState >= 4) return true;
         const d = video.duration;
         if (!d || !isFinite(d) || d < 0.05) return false;
         if (!video.buffered || video.buffered.length === 0) return false;
-        for (let i = 0; i < video.buffered.length; i++) {
-          const start = video.buffered.start(i);
-          const end = video.buffered.end(i);
-          if (start <= 0.15 && end >= d - 0.2) return true;
-        }
         const end = video.buffered.end(video.buffered.length - 1);
-        return end >= d - 0.2;
+        /* short clips: ~70% or full is fine; don't require perfect 100% forever */
+        return end >= Math.min(d - 0.15, d * 0.7);
       } catch (_) {
-        return false;
+        return video.readyState >= 3;
       }
     };
 
-    const ensureSources = (video) => {
+    /* Attach source exactly once */
+    const armSource = (video) => {
+      if (video.dataset.armed === "1") return;
       const src = video.getAttribute("data-src");
-      if (src && !video.querySelector("source") && !video.getAttribute("src")) {
-        setLoading(video, true);
-        const s = document.createElement("source");
-        s.src = src;
-        s.type = "video/mp4";
-        video.appendChild(s);
-      }
-      /* auto = keep downloading whole file for short clips */
+      if (!src) return;
+      video.dataset.armed = "1";
+      setLoading(video, true);
+      const s = document.createElement("source");
+      s.src = src;
+      s.type = "video/mp4";
+      video.appendChild(s);
       video.preload = "auto";
       try {
         video.load();
       } catch (_) {}
+      /* safety: never leave loader forever if buffer API is flaky */
+      window.setTimeout(() => {
+        if (video.dataset.played === "1") return;
+        if (inView.get(video) && video.readyState >= 2) startPlayback(video);
+      }, 12000);
     };
 
     const startPlayback = (video) => {
+      if (video.dataset.played === "1" && !video.paused) {
+        setLoading(video, false);
+        return;
+      }
       setLoading(video, false);
       const p = video.play();
       if (p && typeof p.then === "function") {
         p.then(() => {
+          video.dataset.played = "1";
+          setLoading(video, false);
           if (video === heroVideo) setHeroMode(true);
         }).catch(() => {
           if (video === heroVideo) setHeroMode(false);
-          setLoading(video, true);
         });
-      } else if (!video.paused && video === heroVideo) {
-        setHeroMode(true);
+      } else {
+        video.dataset.played = "1";
+        if (video === heroVideo && !video.paused) setHeroMode(true);
       }
     };
 
-    /* Only play when fully buffered — loader stays until then */
-    const tryStartWhenFull = (video) => {
+    const tryPlay = (video) => {
       if (skipVideo) return;
       if (!inView.get(video)) return;
-      if (!isFullyBuffered(video) && video.readyState < 4) {
-        setLoading(video, true);
-        try {
-          video.pause();
-        } catch (_) {}
-        return;
-      }
-      startPlayback(video);
-    };
-
-    const playVideo = (video) => {
-      if (skipVideo) return;
-      ensureSources(video);
-      setLoading(video, true);
-      try {
-        video.pause();
-      } catch (_) {}
-      tryStartWhenFull(video);
+      armSource(video);
+      if (isBufferedEnough(video)) startPlayback(video);
+      else setLoading(video, true);
     };
 
     const pauseVideo = (video) => {
@@ -370,46 +368,38 @@
       if (video === heroVideo) setHeroMode(false);
     };
 
-    const inView = new Map();
-
     videos.forEach((video) => {
       ensureLoader(video);
-      video.addEventListener("loadstart", () => {
-        if (video.getAttribute("data-src") || video.querySelector("source")) {
-          setLoading(video, true);
-        }
+      video.addEventListener("progress", () => tryPlay(video));
+      video.addEventListener("loadeddata", () => tryPlay(video));
+      video.addEventListener("canplay", () => tryPlay(video));
+      video.addEventListener("canplaythrough", () => tryPlay(video));
+      video.addEventListener("playing", () => {
+        video.dataset.played = "1";
+        setLoading(video, false);
+        if (video === heroVideo) setHeroMode(true);
       });
-      video.addEventListener("progress", () => tryStartWhenFull(video));
-      video.addEventListener("loadedmetadata", () => tryStartWhenFull(video));
-      video.addEventListener("canplaythrough", () => tryStartWhenFull(video));
-      /* mid-play rebuffer: pause + loader until full again */
+      video.addEventListener("error", () => {
+        setLoading(video, false);
+        if (video === heroVideo) setHeroMode(false);
+      });
+      /* brief rebuffer during loop — don't pause forever or restart load */
       video.addEventListener("waiting", () => {
-        if (!inView.get(video)) return;
-        setLoading(video, true);
-        try {
-          video.pause();
-        } catch (_) {}
+        if (video.dataset.played !== "1") setLoading(video, true);
       });
-      video.addEventListener("stalled", () => {
-        if (!inView.get(video)) return;
-        setLoading(video, true);
-      });
-      video.addEventListener("error", () => setLoading(video, false));
     });
 
-    const sync = () => {
-      if (document.hidden) {
-        videos.forEach(pauseVideo);
-        return;
+    const onVisibility = (video, visible) => {
+      if (visible) {
+        inView.set(video, true);
+        if (!document.hidden) tryPlay(video);
+      } else {
+        inView.set(video, false);
+        pauseVideo(video);
       }
-      videos.forEach((video) => {
-        if (inView.get(video)) playVideo(video);
-        else pauseVideo(video);
-      });
     };
 
     if (skipVideo) {
-      /* posters / stills only — fastest mobile path */
       if (heroWrap) setHeroMode(false);
       videos.forEach((v) => setLoading(v, false));
       return;
@@ -421,39 +411,42 @@
           entries.forEach((e) => {
             const video = e.target;
             const delay = Number(video.getAttribute("data-lazy-delay") || 0);
-            const visible = e.isIntersecting && e.intersectionRatio > 0.12;
+            const visible = e.isIntersecting && e.intersectionRatio > 0.08;
             if (visible) {
-              if (delay > 0 && !video.dataset.lazyArmed) {
+              if (delay > 0 && video.dataset.lazyArmed !== "1") {
                 video.dataset.lazyArmed = "1";
                 setLoading(video, true);
-                window.setTimeout(() => {
-                  inView.set(video, true);
-                  sync();
-                }, delay);
+                window.setTimeout(() => onVisibility(video, true), delay);
               } else {
-                inView.set(video, true);
+                onVisibility(video, true);
               }
             } else {
-              inView.set(video, false);
+              onVisibility(video, false);
             }
           });
-          sync();
         },
-        { threshold: [0, 0.12, 0.35], rootMargin: "40px 0px" }
+        { threshold: [0, 0.1, 0.25], rootMargin: "60px 0px" }
       );
       videos.forEach((v) => {
         inView.set(v, false);
         io.observe(v);
       });
     } else {
-      videos.forEach((v) => playVideo(v));
+      videos.forEach((v) => {
+        inView.set(v, true);
+        tryPlay(v);
+      });
     }
 
-    document.addEventListener("visibilitychange", sync);
-    if (heroVideo) {
-      heroVideo.addEventListener("error", () => setHeroMode(false));
-      heroVideo.addEventListener("playing", () => setHeroMode(true));
-    }
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        videos.forEach(pauseVideo);
+      } else {
+        videos.forEach((v) => {
+          if (inView.get(v)) tryPlay(v);
+        });
+      }
+    });
   })();
 
   /* Soft panel transitions + resistance to accidental flicks */
