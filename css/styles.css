@@ -402,7 +402,9 @@ strong { font-weight: 700; }
   z-index: 0;
   background: url("../media/hero/warehouse-still.jpg") center / cover no-repeat;
   filter: grayscale(0.2) brightness(0.92);
-  opacity: 0.78;
+  /* always visible until video mode takes over */
+  opacity: 0.82;
+  visibility: visible;
   transition: opacity 0.4s ease, visibility 0.4s ease;
 }
 .hero-bg.is-still .hero-bg-video {
@@ -410,11 +412,19 @@ strong { font-weight: 700; }
   visibility: hidden;
 }
 .hero-bg.is-still .hero-bg-still {
-  opacity: 0.78;
+  opacity: 0.82;
   visibility: visible;
 }
-/* Video buffering: pulsing brand logo + soft ring */
-.hero-bg,
+/* Default without class: still must show (JS sets is-still on load) */
+.hero-bg:not(.is-video) .hero-bg-still {
+  opacity: 0.82;
+  visibility: visible;
+}
+.hero-bg:not(.is-video) .hero-bg-video {
+  opacity: 0;
+}
+/* Video buffering: pulsing brand logo + soft ring
+   (do NOT reset .hero-bg position — it must stay absolute full-bleed) */
 .about-show,
 .phone-reel__bezel {
   position: relative;

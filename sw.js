@@ -1,5 +1,5 @@
 /* Успешное Дело — light SW: shell only, never cache big video */
-const CACHE = "ud-site-v17-loader";
+const CACHE = "ud-site-v18-hero-fix";
 const PRECACHE = [
   "./",
   "./index.html",
