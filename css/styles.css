@@ -1115,8 +1115,8 @@ strong { font-weight: 700; }
 /* About presentation reel (logo → warehouse → trucks → pallets → office) */
 .about-show {
   position: relative;
-  margin-top: 22px;
-  max-width: 440px;
+  margin-top: 18px;
+  max-width: min(100%, 400px);
   border-radius: 18px;
   overflow: hidden;
   border: 1px solid rgba(203, 17, 171, 0.14);
@@ -1291,15 +1291,41 @@ strong { font-weight: 700; }
   z-index: 2;
   display: grid;
   grid-template-columns: 1fr 1.15fr;
-  gap: 36px;
-  align-items: center;
+  grid-template-areas:
+    "intro stats"
+    "topics topics";
+  gap: 28px 36px;
+  align-items: start;
 }
 .snap-intro {
+  grid-area: intro;
   position: relative;
   z-index: 1;
   /* clip watermark to left column so it never covers metrics */
   overflow: hidden;
   isolation: isolate;
+}
+.snap-inner > .stats-premium {
+  grid-area: stats;
+}
+.about-topics {
+  grid-area: topics;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  justify-content: stretch;
+  gap: 10px;
+  width: 100%;
+  margin: 0;
+}
+.about-topics .pill {
+  flex: 1 1 0;
+  min-width: 0;
+  justify-content: center;
+  text-align: center;
+  white-space: nowrap;
+  padding: 12px 10px;
+  font-size: clamp(12px, 1.25vw, 13.5px);
 }
 /* UD logo watermark — soft on light lilac */
 .snap-logo-bg {
@@ -1320,22 +1346,6 @@ strong { font-weight: 700; }
 .snap-intro > *:not(.snap-logo-bg) {
   position: relative;
   z-index: 2;
-}
-.snap-intro .pills-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  max-width: 420px;
-}
-.snap-intro .pills-grid .pill {
-  justify-content: center;
-  width: 100%;
-}
-/* last pill centered on second row when odd count */
-.snap-intro .pills-grid .pill:last-child:nth-child(odd) {
-  grid-column: 1 / -1;
-  max-width: calc(50% - 5px);
-  justify-self: center;
 }
 .snap-intro .eyebrow {
   color: var(--accent);
@@ -3054,7 +3064,20 @@ body.topic-open { overflow: hidden; }
     grid-column: span 1;
   }
   .feature-grid--5 { grid-template-columns: 1fr 1fr; }
-  .snap-inner { gap: 28px; }
+  .snap-inner {
+    gap: 22px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "intro stats"
+      "topics topics";
+  }
+  .about-topics {
+    flex-wrap: wrap;
+  }
+  .about-topics .pill {
+    flex: 1 1 calc(33.33% - 10px);
+    white-space: normal;
+  }
   .steps-detail { grid-template-columns: 1fr; }
   .step-card { grid-template-columns: 0.85fr 1.15fr; }
   .nav { display: none; }
@@ -3131,21 +3154,28 @@ body.topic-open { overflow: hidden; }
   .section-convenience .feature-grid,
   .feature-grid--5,
   .field-row { grid-template-columns: 1fr; }
+  .snap-inner {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "intro"
+      "stats"
+      "topics";
+  }
   .faq-layout {
     grid-template-areas:
       "faq"
       "contact"
       "foot";
   }
-  .stats-premium { grid-template-columns: 1fr; }
+  .stats-premium { grid-template-columns: 1fr 1fr; }
+  .about-topics .pill {
+    flex: 1 1 calc(50% - 8px);
+  }
   .snap-logo-bg {
     left: -12%;
     top: 40%;
     width: min(100%, 360px);
     opacity: 0.12;
-  }
-  .snap-intro .pills-grid {
-    max-width: none;
   }
   .steps-detail { grid-template-columns: 1fr; }
   .step-card { grid-template-columns: 1fr; }
