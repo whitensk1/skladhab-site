@@ -245,6 +245,39 @@
     const heroWrap = document.querySelector(".hero-bg");
     const heroVideo = document.querySelector(".hero-bg-video");
 
+    const hostOf = (video) =>
+      video.closest(".hero-bg, .about-show, .phone-reel__bezel") || video.parentElement;
+
+    /* Soft brand logo pulse while the file buffers */
+    const ensureLoader = (video) => {
+      const host = hostOf(video);
+      if (!host) return null;
+      let loader = host.querySelector(":scope > .video-loader");
+      if (!loader) {
+        loader = document.createElement("div");
+        loader.className = "video-loader";
+        loader.setAttribute("aria-hidden", "true");
+        loader.innerHTML =
+          '<span class="video-loader__ring"></span>' +
+          '<img class="video-loader__logo" src="media/brand/logo-ud-mark.webp" alt="" width="56" height="40" decoding="async" />';
+        host.appendChild(loader);
+      }
+      return loader;
+    };
+
+    const setLoading = (video, on) => {
+      const host = hostOf(video);
+      if (!host) return;
+      if (on) {
+        ensureLoader(video);
+        host.classList.add("is-video-loading");
+        host.classList.remove("is-video-ready");
+      } else {
+        host.classList.remove("is-video-loading");
+        host.classList.add("is-video-ready");
+      }
+    };
+
     const setHeroMode = (playing) => {
       if (!heroWrap) return;
       if (playing) {
@@ -260,6 +293,7 @@
     const ensureSources = (video) => {
       const src = video.getAttribute("data-src");
       if (src && !video.querySelector("source") && !video.getAttribute("src")) {
+        setLoading(video, true);
         const s = document.createElement("source");
         s.src = src;
         s.type = "video/mp4";
@@ -271,17 +305,25 @@
       } catch (_) {}
     };
 
+    const markReady = (video) => {
+      setLoading(video, false);
+      if (video === heroVideo && !video.paused) setHeroMode(true);
+    };
+
     const playVideo = (video) => {
       if (skipVideo) return;
       ensureSources(video);
+      if (video.readyState < 2) setLoading(video, true);
       const p = video.play();
       if (p && typeof p.then === "function") {
         p.then(() => {
+          markReady(video);
           if (video === heroVideo) setHeroMode(true);
         }).catch(() => {
           if (video === heroVideo) setHeroMode(false);
         });
       } else if (!video.paused && video === heroVideo) {
+        markReady(video);
         setHeroMode(true);
       }
     };
@@ -292,6 +334,22 @@
       } catch (_) {}
       if (video === heroVideo) setHeroMode(false);
     };
+
+    videos.forEach((video) => {
+      ensureLoader(video);
+      video.addEventListener("loadstart", () => {
+        if (video.getAttribute("data-src") || video.querySelector("source")) {
+          setLoading(video, true);
+        }
+      });
+      video.addEventListener("waiting", () => setLoading(video, true));
+      video.addEventListener("stalled", () => setLoading(video, true));
+      const readyEv = () => markReady(video);
+      video.addEventListener("canplay", readyEv);
+      video.addEventListener("playing", readyEv);
+      video.addEventListener("canplaythrough", readyEv);
+      video.addEventListener("error", () => setLoading(video, false));
+    });
 
     const inView = new Map();
 
@@ -309,6 +367,7 @@
     if (skipVideo) {
       /* posters / stills only — fastest mobile path */
       if (heroWrap) setHeroMode(false);
+      videos.forEach((v) => setLoading(v, false));
       return;
     }
 
@@ -322,6 +381,7 @@
             if (visible) {
               if (delay > 0 && !video.dataset.lazyArmed) {
                 video.dataset.lazyArmed = "1";
+                setLoading(video, true);
                 window.setTimeout(() => {
                   inView.set(video, true);
                   sync();
