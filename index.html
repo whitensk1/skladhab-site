@@ -857,20 +857,30 @@
         <span class="game-launch__text">Получи скидку</span>
       </span>
     </button>
-    <aside class="phone-reel" data-phone-reel aria-label="Видео со склада">
-      <div class="phone-reel__bezel">
-        <div class="phone-reel__notch" aria-hidden="true"></div>
-        <video
-          class="phone-reel__video"
-          muted
-          loop
-          playsinline
-          preload="none"
-          poster="media/hero/phone-still-01.jpg?v=v3b"
-          data-lazy-video
-          data-src="media/hero/phone-warehouse.mp4?v=v3b"
-          data-lazy-delay="2200"
-        ></video>
+    <aside
+      class="phone-reel"
+      data-phone-reel
+      role="button"
+      tabindex="0"
+      aria-expanded="false"
+      aria-label="Видео со склада — нажмите, чтобы открыть"
+    >
+      <div class="phone-reel__float">
+        <div class="phone-reel__bezel">
+          <div class="phone-reel__notch" aria-hidden="true"></div>
+          <video
+            class="phone-reel__video"
+            muted
+            loop
+            playsinline
+            preload="none"
+            poster="media/hero/phone-still-01.jpg?v=v3b"
+            data-lazy-video
+            data-src="media/hero/phone-warehouse.mp4?v=v3b"
+            data-lazy-delay="2200"
+          ></video>
+        </div>
+        <a class="phone-reel__cta" href="#contact" data-phone-cta tabindex="-1">Оставить заявку</a>
       </div>
     </aside>
   </div>

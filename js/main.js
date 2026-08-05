@@ -1683,7 +1683,53 @@
     });
   })();
 
-  /* Service worker: cache static assets for snappier revisits (GitHub Pages) */
+  /* Phone reel: peek 2/3, expand on click, blink CTA, then tuck back */
+  (function phoneReelPeek() {
+    const reel = document.querySelector("[data-phone-reel]");
+    if (!reel) return;
+    const cta = reel.querySelector("[data-phone-cta]");
+    const SHOW_MS = 5200;
+    let hideTimer = 0;
+
+    const open = () => {
+      reel.classList.add("is-open");
+      reel.setAttribute("aria-expanded", "true");
+      if (cta) cta.setAttribute("tabindex", "0");
+      window.clearTimeout(hideTimer);
+      hideTimer = window.setTimeout(close, SHOW_MS);
+    };
+
+    const close = () => {
+      reel.classList.remove("is-open");
+      reel.setAttribute("aria-expanded", "false");
+      if (cta) cta.setAttribute("tabindex", "-1");
+      window.clearTimeout(hideTimer);
+      hideTimer = 0;
+    };
+
+    reel.addEventListener("click", (e) => {
+      /* CTA navigates to form — don't toggle closed */
+      if (e.target.closest("[data-phone-cta]")) return;
+      if (reel.classList.contains("is-open")) {
+        /* second click while open restarts the timer */
+        open();
+        return;
+      }
+      open();
+    });
+
+    reel.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        if (reel.classList.contains("is-open")) open();
+        else open();
+      } else if (e.key === "Escape") {
+        close();
+      }
+    });
+  })();
+
+  /* Service worker: cache static assets for snappier revisits */
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
       const swUrl = "sw.js";

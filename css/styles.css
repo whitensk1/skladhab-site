@@ -1149,20 +1149,40 @@ strong { font-weight: 700; }
   contain: layout style;
 }
 .phone-stack > * { pointer-events: auto; }
-/* only the phone gently floats — badge stays put higher above */
+/*
+  Phone peek: 1/3 off the right edge by default (2/3 visible).
+  Click → full open + blinking CTA, then auto-hide.
+  Float runs on inner wrapper so tuck transform is free.
+*/
 .phone-reel {
   position: relative;
   right: auto;
   bottom: auto;
   z-index: 1;
   width: 100%;
-  pointer-events: none;
-  animation: phone-reel-float 7s ease-in-out infinite;
+  pointer-events: auto;
+  cursor: pointer;
+  /* hide ~1/3 behind the right edge of the viewport */
+  transform: translate3d(33%, 0, 0);
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
   filter: none;
 }
+.phone-reel.is-open {
+  transform: translate3d(0, 0, 0);
+}
+.phone-reel__float {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  animation: phone-reel-float 7s ease-in-out infinite;
+  will-change: transform;
+}
 .phone-reel__bezel {
   position: relative;
+  width: 100%;
   border-radius: 22px;
   padding: 7px;
   background: linear-gradient(160deg, #2a2d34 0%, #12141a 55%, #0a0b0e 100%);
@@ -1191,11 +1211,54 @@ strong { font-weight: 700; }
   object-fit: cover;
   border-radius: 16px;
   background: #0e1014;
-  /* no live CSS filters on video — big GPU win */
+}
+.phone-reel__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-align: center;
+  line-height: 1.2;
+  color: #fff;
+  text-decoration: none;
+  white-space: nowrap;
+  background: linear-gradient(135deg, #e61bc0, #cb11ab 55%, #a00a88);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 8px 20px rgba(203, 17, 171, 0.4);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px) scale(0.92);
+  pointer-events: none;
+  transition:
+    opacity 0.35s ease,
+    visibility 0.35s,
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.phone-reel.is-open .phone-reel__cta {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+  animation: phone-cta-blink 1.15s ease-in-out infinite;
 }
 @keyframes phone-reel-float {
   0%, 100% { transform: translate3d(0, 0, 0) rotate(-2deg); }
   50% { transform: translate3d(0, -8px, 0) rotate(1.5deg); }
+}
+@keyframes phone-cta-blink {
+  0%, 100% {
+    filter: brightness(1);
+    box-shadow: 0 8px 20px rgba(203, 17, 171, 0.4);
+  }
+  50% {
+    filter: brightness(1.18);
+    box-shadow: 0 10px 26px rgba(203, 17, 171, 0.62), 0 0 0 3px rgba(203, 17, 171, 0.2);
+  }
 }
 /* 70% lifted well above the phone bezel */
 .phone-stack .game-launch {
@@ -1224,7 +1287,8 @@ strong { font-weight: 700; }
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .phone-reel { animation: none; will-change: auto; }
+  .phone-reel__float { animation: none; will-change: auto; }
+  .phone-reel.is-open .phone-reel__cta { animation: none; }
 }
 /* Light complex premium backdrop — layered lilac mesh, orbs, soft grain */
 .snap-bg {

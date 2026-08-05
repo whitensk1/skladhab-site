@@ -1,5 +1,5 @@
 /* Успешное Дело — SW: shell cache, no infinite revalidation thrash */
-const CACHE = "ud-site-v25-about-layout";
+const CACHE = "ud-site-v26-phone-peek";
 const PRECACHE = [
   "./",
   "./index.html",
