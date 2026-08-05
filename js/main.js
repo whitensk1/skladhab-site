@@ -195,10 +195,50 @@
     );
   }
 
-  /* Lazy videos: load/play only when visible; pause off-screen & in hidden tab */
+  /* Progressive images: low-res first, upgrade to full when near viewport */
+  (function progressiveImages() {
+    const imgs = Array.from(document.querySelectorAll("img[data-src-full]"));
+    if (!imgs.length) return;
+    const upgrade = (img) => {
+      const full = img.getAttribute("data-src-full");
+      if (!full || img.dataset.upgraded === "1") return;
+      img.dataset.upgraded = "1";
+      const hi = new Image();
+      hi.decoding = "async";
+      hi.onload = () => {
+        img.src = full;
+        img.classList.add("is-hires");
+      };
+      hi.src = full;
+    };
+    if (!("IntersectionObserver" in window)) {
+      imgs.forEach(upgrade);
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            upgrade(e.target);
+            io.unobserve(e.target);
+          }
+        });
+      },
+      { rootMargin: "120px 0px", threshold: 0.01 }
+    );
+    imgs.forEach((img) => io.observe(img));
+  })();
+
+  /* Lazy videos: inject source only when visible; skip on Save-Data / 2G */
   (function lazyVideos() {
     const reduced =
       window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    const saveData = !!(conn && conn.saveData);
+    const slowNet =
+      conn && (conn.effectiveType === "slow-2g" || conn.effectiveType === "2g");
+    const skipVideo = reduced || saveData || slowNet;
+
     const videos = Array.from(document.querySelectorAll("video[data-lazy-video]"));
     if (!videos.length) return;
 
@@ -218,7 +258,13 @@
     if (heroWrap) setHeroMode(false);
 
     const ensureSources = (video) => {
-      /* kick network after we decide to play (preload=none) */
+      const src = video.getAttribute("data-src");
+      if (src && !video.querySelector("source") && !video.getAttribute("src")) {
+        const s = document.createElement("source");
+        s.src = src;
+        s.type = "video/mp4";
+        video.appendChild(s);
+      }
       if (video.preload === "none") video.preload = "metadata";
       try {
         video.load();
@@ -226,7 +272,7 @@
     };
 
     const playVideo = (video) => {
-      if (reduced) return;
+      if (skipVideo) return;
       ensureSources(video);
       const p = video.play();
       if (p && typeof p.then === "function") {
@@ -260,6 +306,12 @@
       });
     };
 
+    if (skipVideo) {
+      /* posters / stills only — fastest mobile path */
+      if (heroWrap) setHeroMode(false);
+      return;
+    }
+
     if ("IntersectionObserver" in window) {
       const io = new IntersectionObserver(
         (entries) => {
@@ -283,7 +335,7 @@
           });
           sync();
         },
-        { threshold: [0, 0.12, 0.35], rootMargin: "80px 0px" }
+        { threshold: [0, 0.12, 0.35], rootMargin: "40px 0px" }
       );
       videos.forEach((v) => {
         inView.set(v, false);

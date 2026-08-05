@@ -1,20 +1,23 @@
-/* Успешное Дело — lightweight static cache for GitHub Pages */
-const CACHE = "ud-site-v15";
+/* Успешное Дело — light SW: shell only, never cache big video */
+const CACHE = "ud-site-v16-perf";
 const PRECACHE = [
   "./",
   "./index.html",
   "./css/styles.css",
   "./js/main.js",
+  "./js/form-config.js",
+  "./media/brand/logo-ud-mark.webp",
   "./media/brand/logo-ud-mark.png",
-  "./media/brand/logo-ud.png",
-  "./media/hero/phone-still-01.jpg?v=v3",
+  "./media/hero/warehouse-still.jpg",
 ];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches
       .open(CACHE)
-      .then((cache) => cache.addAll(PRECACHE.map((u) => new Request(u, { cache: "reload" }))))
+      .then((cache) =>
+        cache.addAll(PRECACHE.map((u) => new Request(u, { cache: "reload" })))
+      )
       .then(() => self.skipWaiting())
       .catch(() => self.skipWaiting())
   );
@@ -43,8 +46,9 @@ self.addEventListener("fetch", (event) => {
   }
   if (url.origin !== self.location.origin) return;
 
-  /* skip game / API noise */
+  /* never intercept game / video / large media — go network */
   if (url.pathname.includes("/game/")) return;
+  if (/\.(mp4|webm|mov)(\?|$)/i.test(url.pathname)) return;
 
   const isHTML =
     req.mode === "navigate" ||
@@ -53,7 +57,6 @@ self.addEventListener("fetch", (event) => {
     (req.headers.get("accept") || "").includes("text/html");
 
   if (isHTML) {
-    /* network-first for HTML so deploys show up */
     event.respondWith(
       fetch(req)
         .then((res) => {
@@ -66,7 +69,10 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  /* cache-first for static assets (css/js/img/video/fonts) */
+  /* css/js/small images: stale-while-revalidate */
+  const isStatic = /\.(css|js|png|jpe?g|webp|svg|ico|woff2?)(\?|$)/i.test(url.pathname);
+  if (!isStatic) return;
+
   event.respondWith(
     caches.match(req).then((cached) => {
       const network = fetch(req)

@@ -1,0 +1,5 @@
+file 'clip-A-clothes.2s.mp4'
+file 'clip-E-fold.2s.mp4'
+file 'clip-B-pack.2s.mp4'
+file 'clip-D-carry.2s.mp4'
+file 'clip-C-pallet.2s.mp4'

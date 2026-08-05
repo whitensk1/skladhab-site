@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Phone reel variants v2 — без скотча</title>
+<style>
+  body{margin:0;font-family:system-ui,sans-serif;background:#111;color:#eee;padding:24px}
+  h1{font-size:1.2rem;font-weight:700;margin:0 0 8px}
+  p{color:#aaa;margin:0 0 24px;font-size:.95rem}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;max-width:960px}
+  .card{background:#1a1a1e;border:1px solid #333;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px}
+  .card h2{margin:0;font-size:1rem}
+  .card .desc{font-size:.82rem;color:#9aa;line-height:1.4}
+  video{width:100%;max-width:280px;margin:0 auto;border-radius:18px;background:#000;aspect-ratio:9/16;object-fit:cover}
+  a{color:#e8a;font-size:.85rem}
+  .note{color:#8c8;font-size:.85rem;margin-bottom:16px}
+</style>
+</head>
+<body>
+  <h1>Варианты телефона v2 (~10 сек, сцены по 2 сек)</h1>
+  <p class="note">Без скотча · логотип UD на форме · упаковка вещей, коробки, паллеты</p>
+  <p>Выберите вариант — напишите 1, 2 или 3.</p>
+  <div class="grid">
+    <div class="card">
+      <h2>Вариант 1 — упаковка → склад</h2>
+      <div class="desc">вещи в коробку → складывание → стол → несёт коробку → паллет</div>
+      <video controls muted playsinline loop src="variant-1-web.mp4"></video>
+      <a href="variant-1-web.mp4" download>скачать</a>
+    </div>
+    <div class="card">
+      <h2>Вариант 2 — от стола к паллету</h2>
+      <div class="desc">складывание → вещи → стол → паллет → несёт</div>
+      <video controls muted playsinline loop src="variant-2-web.mp4"></video>
+      <a href="variant-2-web.mp4" download>скачать</a>
+    </div>
+    <div class="card">
+      <h2>Вариант 3 — складской поток</h2>
+      <div class="desc">несёт → паллет → стол → вещи → складывание</div>
+      <video controls muted playsinline loop src="variant-3-web.mp4"></video>
+      <a href="variant-3-web.mp4" download>скачать</a>
+    </div>
+  </div>
+</body>
+</html>

@@ -6,13 +6,15 @@
   <title>Успешное Дело — фулфилмент в Москве</title>
   <meta name="description" content="Успешное Дело (DLUCK): фулфилмент FBO/FBS в Москве. Упаковка, Честный Знак, свой автопарк. Индивидуальный расчёт." />
   <meta name="theme-color" content="#cb11ab" />
-  <link rel="icon" type="image/png" href="media/brand/logo-ud.png" />
+  <link rel="icon" type="image/png" href="media/brand/logo-ud-mark.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
   <noscript><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" /></noscript>
   <link rel="stylesheet" href="css/styles.css" />
-  <link rel="preload" href="media/brand/logo-ud-mark.png" as="image" />
+  <!-- tiny header logo first (was ~600KB PNG) -->
+  <link rel="preload" href="media/brand/logo-ud-mark.webp" as="image" type="image/webp" />
+  <link rel="preload" href="media/hero/warehouse-still.jpg" as="image" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -34,7 +36,10 @@
   <header class="site-header">
     <div class="inner">
       <a class="logo" href="index.html" aria-label="Успешное Дело">
-        <img src="media/brand/logo-ud-mark.png" alt="Успешное Дело" class="logo-img" width="120" height="80" />
+        <picture>
+          <source srcset="media/brand/logo-ud-mark.webp" type="image/webp" />
+          <img src="media/brand/logo-ud-mark.png" alt="Успешное Дело" class="logo-img" width="120" height="80" decoding="async" fetchpriority="high" />
+        </picture>
       </a>
       <button type="button" class="nav-toggle" id="nav-toggle" aria-label="Меню" aria-expanded="false">
         <span></span><span></span><span></span>
@@ -58,10 +63,17 @@
       <div class="hero-bg" aria-hidden="true">
         <!-- Still is fallback only; hidden once video plays (see main.js) -->
         <div class="hero-bg-still"></div>
-        <video class="hero-bg-video" muted loop playsinline preload="metadata" data-lazy-video>
-          <source src="media/hero/warehouse-ai.mp4" type="video/mp4" />
-          <source src="media/hero/warehouse-loop.mp4" type="video/mp4" />
-        </video>
+        <!-- poster/still first; video source injected when in view (saves mobile bandwidth) -->
+        <video
+          class="hero-bg-video"
+          muted
+          loop
+          playsinline
+          preload="none"
+          poster="media/hero/warehouse-still.jpg"
+          data-lazy-video
+          data-src="media/hero/warehouse-ai.mp4"
+        ></video>
       </div>
       <div class="container">
         <div class="hero-stage">
@@ -143,11 +155,13 @@
         <div class="snap-intro">
           <img
             class="snap-logo-bg"
-            src="media/brand/logo-ud.png"
+            src="media/brand/logo-ud.webp"
             alt=""
             aria-hidden="true"
             width="640"
             height="220"
+            loading="lazy"
+            decoding="async"
           />
           <p class="eyebrow">с 2018 года</p>
           <h2>Успешное Дело</h2>
@@ -182,17 +196,17 @@
               loop
               playsinline
               preload="none"
-              poster="media/hero/about-still-logo.jpg?v=nologo2"
+              poster="media/hero/about-still-logo.jpg?v=perf1"
               data-lazy-video
-            >
-              <source src="media/hero/about-show.mp4?v=nologo2" type="video/mp4" />
-            </video>
+              data-src="media/hero/about-show.mp4?v=perf1"
+              data-lazy-delay="400"
+            ></video>
           </div>
         </div>
 
         <div class="stats stats-premium" aria-label="Ключевые показатели">
           <article class="stat stat--photo stat--revenue">
-            <img class="stat-bg" src="media/icons/bg-revenue.jpg?v=light" alt="" loading="lazy" width="640" height="640" />
+            <img class="stat-bg" src="media/icons/bg-revenue-sm.jpg" alt="" loading="lazy" decoding="async" width="640" height="640" data-src-full="media/icons/bg-revenue.webp" />
             <div class="stat-body">
               <strong>~5&nbsp;млрд&nbsp;₽</strong>
               <span>выручка за прошлый год</span>
@@ -200,7 +214,7 @@
             </div>
           </article>
           <article class="stat stat--photo">
-            <img class="stat-bg" src="media/icons/bg-team.jpg?v=light2" alt="" loading="lazy" width="640" height="640" />
+            <img class="stat-bg" src="media/icons/bg-team-sm.jpg" alt="" loading="lazy" decoding="async" width="640" height="640" data-src-full="media/icons/bg-team.webp" />
             <div class="stat-body">
               <strong>~100</strong>
               <span>человек в штате</span>
@@ -208,7 +222,7 @@
             </div>
           </article>
           <article class="stat stat--photo">
-            <img class="stat-bg" src="media/icons/bg-warehouse.jpg?v=light" alt="" loading="lazy" width="640" height="640" />
+            <img class="stat-bg" src="media/icons/bg-warehouse-sm.jpg" alt="" loading="lazy" decoding="async" width="640" height="640" data-src-full="media/icons/bg-warehouse.webp" />
             <div class="stat-body">
               <strong>~2&nbsp;000&nbsp;м²</strong>
               <span>собственные склады</span>
@@ -216,7 +230,7 @@
             </div>
           </article>
           <article class="stat stat--photo">
-            <img class="stat-bg" src="media/icons/bg-packages.jpg?v=light" alt="" loading="lazy" width="640" height="640" />
+            <img class="stat-bg" src="media/icons/bg-packages-sm.jpg" alt="" loading="lazy" decoding="async" width="640" height="640" data-src-full="media/icons/bg-packages.webp" />
             <div class="stat-body">
               <strong>~5&nbsp;млн</strong>
               <span>единиц продукции в год</span>
@@ -606,8 +620,11 @@
         </div>
 
         <footer class="footer-inline">
-          <img class="footer-watermark" src="media/brand/logo-ud.png" alt="" aria-hidden="true" width="640" height="220" />
-          <img src="media/brand/logo-ud.png" alt="Успешное Дело" class="footer-logo" width="280" height="96" />
+          <img class="footer-watermark" src="media/brand/logo-ud.webp" alt="" aria-hidden="true" width="640" height="220" loading="lazy" decoding="async" />
+          <picture>
+            <source srcset="media/brand/logo-ud.webp" type="image/webp" />
+            <img src="media/brand/logo-ud.png" alt="Успешное Дело" class="footer-logo" width="280" height="96" loading="lazy" decoding="async" />
+          </picture>
           <div class="footer-tag">Фулфилмент в Москве · индивидуально</div>
           <div class="footer-links">
             <a href="#contact" data-tel="o" data-tel-action="call" data-tel-show>Позвонить</a>
@@ -679,10 +696,9 @@
           preload="none"
           poster="media/hero/phone-still-01.jpg?v=v3b"
           data-lazy-video
-          data-lazy-delay="1600"
-        >
-          <source src="media/hero/phone-warehouse.mp4?v=v3b" type="video/mp4" />
-        </video>
+          data-src="media/hero/phone-warehouse.mp4?v=v3b"
+          data-lazy-delay="2200"
+        ></video>
       </div>
     </aside>
   </div>
